@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel Web - Dominican Breeze</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <div class="bg-shape bg-a"></div>
+  <div class="bg-shape bg-b"></div>
+
+  <main class="wrap">
+    <section id="loginCard" class="card login-card">
+      <h1>Panel de Reservas</h1>
+      <p class="muted">Accede para ver reservas, ingresos y operación diaria.</p>
+      <form id="loginForm" class="form-grid">
+        <label>
+          Correo
+          <input id="email" type="email" required placeholder="admin@dominicabreeze.com" />
+        </label>
+        <label>
+          Contraseña
+          <input id="password" type="password" required placeholder="********" />
+        </label>
+        <button type="submit">Entrar</button>
+      </form>
+      <p id="loginMsg" class="msg"></p>
+    </section>
+
+    <section id="dashboard" class="hidden">
+      <header class="topbar card">
+        <div>
+          <h2>Dashboard Operativo</h2>
+          <p class="muted">Reservas, ingresos y márgenes en tiempo real</p>
+        </div>
+        <div class="topbar-actions">
+          <button id="refreshBtn" class="btn-light">Actualizar</button>
+          <button id="logoutBtn" class="btn-danger">Salir</button>
+        </div>
+      </header>
+
+      <section class="kpis">
+        <article class="kpi card">
+          <h3>Ingresos Hoy</h3>
+          <p id="kpiIncomeToday" class="kpi-value">$0.00</p>
+        </article>
+        <article class="kpi card">
+          <h3>Reservas Pendientes</h3>
+          <p id="kpiPending" class="kpi-value">0</p>
+        </article>
+        <article class="kpi card">
+          <h3>Reservas Confirmadas</h3>
+          <p id="kpiConfirmed" class="kpi-value">0</p>
+        </article>
+        <article class="kpi card">
+          <h3>Margen Bruto Total</h3>
+          <p id="kpiMargin" class="kpi-value">$0.00</p>
+        </article>
+      </section>
+
+      <section class="grid-2">
+        <article class="card">
+          <div class="section-head">
+            <h3>Reservas Recientes</h3>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Codigo</th>
+                  <th>Cliente</th>
+                  <th>Fecha</th>
+                  <th>Estado</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody id="reservationsBody"></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="section-head">
+            <h3>Ingresos Diarios</h3>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Dia</th>
+                  <th>Moneda</th>
+                  <th>Ingreso</th>
+                </tr>
+              </thead>
+              <tbody id="incomeBody"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="grid-2">
+        <article class="card">
+          <div class="section-head">
+            <h3>Registrar Gasto Operativo</h3>
+          </div>
+          <form id="expenseForm" class="form-grid compact">
+            <label>
+              Reserva ID (opcional)
+              <input id="expenseReservationId" type="text" placeholder="uuid de reserva" />
+            </label>
+            <label>
+              Categoria
+              <input id="expenseCategory" type="text" required placeholder="combustible, peaje, comision" />
+            </label>
+            <label>
+              Monto
+              <input id="expenseAmount" type="number" step="0.01" required placeholder="0.00" />
+            </label>
+            <label>
+              Moneda
+              <input id="expenseCurrency" type="text" value="USD" required />
+            </label>
+            <label>
+              Fecha
+              <input id="expenseDate" type="date" required />
+            </label>
+            <label>
+              Nota
+              <input id="expenseNotes" type="text" placeholder="detalle" />
+            </label>
+            <button type="submit">Guardar Gasto</button>
+          </form>
+          <p id="expenseMsg" class="msg"></p>
+        </article>
+
+        <article class="card">
+          <div class="section-head">
+            <h3>Margen por Reserva</h3>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Codigo</th>
+                  <th>Pagado</th>
+                  <th>Gastos</th>
+                  <th>Margen</th>
+                </tr>
+              </thead>
+              <tbody id="marginBody"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+    </section>
+  </main>
+
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

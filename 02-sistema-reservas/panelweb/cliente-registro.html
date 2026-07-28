@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registro de Cliente</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="wrap">
+    <section class="card login-card">
+      <h1>Crear cuenta de cliente</h1>
+      <p class="muted">Puedes registrarte antes de reservar o automáticamente al completar una reserva.</p>
+      <form id="registerForm" class="form-grid">
+        <label>
+          Nombre completo
+          <input id="full_name" type="text" required />
+        </label>
+        <label>
+          Correo
+          <input id="email" type="email" required />
+        </label>
+        <label>
+          Telefono
+          <input id="phone" type="text" />
+        </label>
+        <label>
+          Contrasena
+          <input id="password" type="password" minlength="8" required />
+        </label>
+        <button type="submit">Registrarme</button>
+      </form>
+      <p id="msg" class="msg"></p>
+    </section>
+  </main>
+  <script type="module" src="./cliente-registro.js"></script>
+</body>
+</html>
