@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "cleanUrls": false,
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/01-website-mirror/site/dominicanbreeze.framer.website/index.html"
+    },
+    {
+      "source": "/en",
+      "destination": "/01-website-mirror/site/dominicanbreeze.framer.website/en/index.html"
+    },
+    {
+      "source": "/framerusercontent.com/:path*",
+      "destination": "/01-website-mirror/external/framerusercontent.com/:path*"
+    },
+    {
+      "source": "/connect.facebook.net/:path*",
+      "destination": "/01-website-mirror/external/connect.facebook.net/:path*"
+    },
+    {
+      "source": "/en/:path*",
+      "destination": "/01-website-mirror/site/dominicanbreeze.framer.website/en/:path*"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/01-website-mirror/site/dominicanbreeze.framer.website/:path*"
+    }
+  ]
+}
