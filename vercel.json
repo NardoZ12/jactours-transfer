@@ -1,6 +1,13 @@
 {
   "version": 2,
   "cleanUrls": false,
+  "redirects": [
+    {
+      "source": "/dominicanbreeze.framer.website/:path*",
+      "destination": "/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/",
