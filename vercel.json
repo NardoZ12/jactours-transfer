@@ -11,11 +11,11 @@
   "rewrites": [
     {
       "source": "/",
-      "destination": "/01-website-mirror/site/dominicanbreeze.framer.website/index.html"
+      "destination": "/01-website-mirror/site/index.html"
     },
     {
       "source": "/en",
-      "destination": "/01-website-mirror/site/dominicanbreeze.framer.website/en/index.html"
+      "destination": "/01-website-mirror/site/en/index.html"
     },
     {
       "source": "/framerusercontent.com/:path*",
@@ -27,11 +27,11 @@
     },
     {
       "source": "/en/:path*",
-      "destination": "/01-website-mirror/site/dominicanbreeze.framer.website/en/:path*"
+      "destination": "/01-website-mirror/site/en/:path*"
     },
     {
       "source": "/:path*",
-      "destination": "/01-website-mirror/site/dominicanbreeze.framer.website/:path*"
+      "destination": "/01-website-mirror/site/:path*"
     }
   ]
 }
