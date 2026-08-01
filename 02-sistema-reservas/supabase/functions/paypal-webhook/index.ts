@@ -132,10 +132,15 @@ Deno.serve(async (req) => {
         raw_payload: body,
       }).eq("id", payment.id);
 
-      await supabase.from("reservations").update({
-        payment_status: "paid",
-        status: "confirmed",
-      }).eq("id", payment.reservation_id);
+      await supabase.rpc("recompute_reservation_financials", {
+        p_reservation_id: payment.reservation_id,
+      });
+
+      await supabase.from("reservation_events").insert({
+        reservation_id: payment.reservation_id,
+        event_type: "payment_captured_webhook",
+        new_value: captureId,
+      });
     }
 
     if (eventType === "PAYMENT.CAPTURE.DENIED" || eventType === "PAYMENT.CAPTURE.REFUNDED") {
@@ -144,9 +149,9 @@ Deno.serve(async (req) => {
         raw_payload: body,
       }).eq("id", payment.id);
 
-      await supabase.from("reservations").update({
-        payment_status: eventType === "PAYMENT.CAPTURE.REFUNDED" ? "refunded" : "unpaid",
-      }).eq("id", payment.reservation_id);
+      await supabase.rpc("recompute_reservation_financials", {
+        p_reservation_id: payment.reservation_id,
+      });
     }
 
     return new Response(JSON.stringify({ ok: true }), {

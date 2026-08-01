@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estado de Reserva | Jac Tours & Transfer</title>
+  <meta name="description" content="Consulta en tiempo real el estado de tu reserva, pagos y detalles de servicio." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/reservas.css" />
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>Estado de tu Reserva</h1>
+      <p class="muted">Consulta por codigo de reserva y correo.</p>
+      <form id="statusForm" class="grid">
+        <label>
+          Codigo de reserva
+          <input id="queryCode" required placeholder="DB-YYMMDD-XXXXXX" />
+        </label>
+        <label>
+          Correo
+          <input id="queryEmail" type="email" required />
+        </label>
+        <button type="submit" style="grid-column: 1 / -1;">Consultar</button>
+      </form>
+      <p id="statusMsg" class="msg"></p>
+    </section>
+
+    <section id="statusContainer" class="card" hidden style="margin-top: 14px;">
+      <h2>Detalle</h2>
+      <div class="grid-3" style="margin-top: 12px;">
+        <div><strong>Codigo:</strong> <span id="rCode">-</span></div>
+        <div><strong>Cliente:</strong> <span id="rName">-</span></div>
+        <div><strong>Fecha:</strong> <span id="rDate">-</span></div>
+        <div><strong>Estado:</strong> <span class="badge" id="rStatus">-</span></div>
+        <div><strong>Pago:</strong> <span class="badge" id="rPayStatus">-</span></div>
+        <div><strong>Total:</strong> <span id="rTotal">-</span></div>
+        <div><strong>Pagado:</strong> <span id="rPaid">-</span></div>
+        <div><strong>Pendiente:</strong> <span id="rDue">-</span></div>
+      </div>
+
+      <div class="table-wrap">
+        <h3>Extras</h3>
+        <table>
+          <thead>
+            <tr><th>Extra</th><th>Cant.</th><th>Total</th></tr>
+          </thead>
+          <tbody id="extrasBody"></tbody>
+        </table>
+      </div>
+
+      <div class="table-wrap">
+        <h3>Pagos</h3>
+        <table>
+          <thead>
+            <tr><th>Fecha</th><th>Estado</th><th>Monto</th></tr>
+          </thead>
+          <tbody id="paymentsBody"></tbody>
+        </table>
+      </div>
+
+      <p style="margin-top: 12px;"><a id="manageLink" href="cancelar-reprogramar.html">Cancelar/Reprogramar</a></p>
+    </section>
+  </main>
+  <script type="module" src="assets/reservas.js"></script>
+</body>
+</html>

@@ -5,24 +5,39 @@ Este paquete agrega la base operativa para Dominican Breeze:
 - Webhooks y endpoints de PayPal en Supabase Functions.
 - Panel web administrativo inicial.
 
+Actualizado para Jac Tours & Transfer con:
+- Flujo E2E de reserva con extras, impuestos, descuentos y deposito.
+- Consulta de estado de reserva para cliente.
+- Cancelacion/reprogramacion con reglas.
+- Cupo por slot (fecha/hora) para evitar sobreventa.
+- Modulos base de back office (reservas, calendario, finanzas/reportes).
+
 ## Estructura
 - supabase/migrations/20260728_init.sql
 - supabase/migrations/20260728_customer_accounts.sql
+- supabase/migrations/20260731_reservas_e2e.sql
 - supabase/functions/create-reservation/index.ts
 - supabase/functions/register-customer/index.ts
 - supabase/functions/create-paypal-order/index.ts
 - supabase/functions/capture-paypal-order/index.ts
 - supabase/functions/paypal-webhook/index.ts
+- supabase/functions/reservation-status/index.ts
+- supabase/functions/manage-reservation/index.ts
 - panelweb/index.html
 - panelweb/cliente-registro.html
 - panelweb/main.js
 - panelweb/styles.css
+- panelweb/reservas.html
+- panelweb/calendario-operativo.html
+- panelweb/ingresos-gastos-reportes.html
+- panelweb/modules.js
 
 ## Paso 1: Crear proyecto Supabase
 1. Crea un proyecto en Supabase.
 2. Ejecuta la migracion SQL completa en SQL Editor:
    - supabase/migrations/20260728_init.sql
    - supabase/migrations/20260728_customer_accounts.sql
+   - supabase/migrations/20260731_reservas_e2e.sql
 3. Crea al menos un usuario admin en auth.users.
 4. Inserta su rol en public.profiles.
 

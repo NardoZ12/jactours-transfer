@@ -3,11 +3,6 @@
   "cleanUrls": false,
   "redirects": [
     {
-      "source": "/dominicanbreeze.framer.website/:path*",
-      "destination": "/:path*",
-      "permanent": true
-    },
-    {
       "source": "/index",
       "destination": "/",
       "permanent": true
@@ -16,6 +11,36 @@
       "source": "/index.html",
       "destination": "/",
       "permanent": true
+    },
+    {
+      "source": "/servicios/isla-saona-cl%C3%A1sica",
+      "destination": "/servicios/isla-saona-clasica.html",
+      "permanent": true
+    },
+    {
+      "source": "/en/servicios/isla-saona-cl%C3%A1sica",
+      "destination": "/en/servicios/isla-saona-clasica.html",
+      "permanent": true
+    },
+    {
+      "source": "/servicios/isla-saona-clÃ¡sica.html",
+      "destination": "/servicios/isla-saona-clasica.html",
+      "permanent": true
+    },
+    {
+      "source": "/en/servicios/isla-saona-clÃ¡sica.html",
+      "destination": "/en/servicios/isla-saona-clasica.html",
+      "permanent": true
+    }
+  ],
+  "routes": [
+    {
+      "handle": "filesystem"
+    },
+    {
+      "src": "/.*",
+      "status": 404,
+      "dest": "/404.html"
     }
   ]
 }

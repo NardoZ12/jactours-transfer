@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout de Reserva | Jac Tours & Transfer</title>
+  <meta name="description" content="Completa tu reserva en Jac Tours & Transfer con pago seguro y confirmacion automatica." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/reservas.css" />
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>Checkout de Reserva</h1>
+      <p class="muted">Reserva por producto, fecha, pax, extras y paga deposito o total.</p>
+
+      <form id="checkoutForm" class="grid">
+        <label>
+          Servicio (service_id)
+          <input id="serviceId" required placeholder="uuid del servicio" />
+        </label>
+        <label>
+          Fecha de servicio
+          <input id="serviceDate" type="date" required />
+        </label>
+        <label>
+          Hora
+          <input id="serviceTime" type="time" />
+        </label>
+        <label>
+          Modo de pago
+          <select id="paymentMode">
+            <option value="total">Pago total</option>
+            <option value="deposito">Deposito</option>
+          </select>
+        </label>
+
+        <label>
+          Nombre completo
+          <input id="customerName" required />
+        </label>
+        <label>
+          Email
+          <input id="customerEmail" type="email" required />
+        </label>
+        <label>
+          Telefono
+          <input id="customerPhone" required />
+        </label>
+        <label>
+          Hotel / Origen
+          <input id="hotel" />
+        </label>
+
+        <label>
+          Pickup / Direccion
+          <input id="pickupAddress" />
+        </label>
+        <label>
+          Notas
+          <textarea id="notes"></textarea>
+        </label>
+
+        <div class="grid-3" style="grid-column: 1 / -1;">
+          <label>
+            Adultos
+            <input id="adults" type="number" min="0" value="2" required />
+          </label>
+          <label>
+            Ninos
+            <input id="children" type="number" min="0" value="0" />
+          </label>
+          <label>
+            Infantes
+            <input id="infants" type="number" min="0" value="0" />
+          </label>
+        </div>
+
+        <div class="grid-3" style="grid-column: 1 / -1;">
+          <label>
+            Impuestos
+            <input id="taxAmount" type="number" step="0.01" min="0" value="0" />
+          </label>
+          <label>
+            Descuento
+            <input id="discount" type="number" step="0.01" min="0" value="0" />
+          </label>
+          <label>
+            Comision
+            <input id="commissionAmount" type="number" step="0.01" min="0" value="0" />
+          </label>
+        </div>
+
+        <label style="grid-column: 1 / -1;">
+          Deposito (%)
+          <input id="depositPercent" type="number" min="0" max="100" value="30" />
+        </label>
+
+        <h3 style="grid-column: 1 / -1;">Extras</h3>
+        <div class="extra-row grid" style="grid-column: 1 / -1;" data-code="extra-1">
+          <label>
+            Nombre extra
+            <input data-extra-title value="Extra opcional" />
+          </label>
+          <div class="grid">
+            <label>
+              Cantidad
+              <input data-extra-qty type="number" min="1" value="1" />
+            </label>
+            <label>
+              Precio unitario
+              <input data-extra-price type="number" min="0" step="0.01" value="0" />
+            </label>
+          </div>
+        </div>
+
+        <button type="submit" style="grid-column: 1 / -1;">Continuar a pago</button>
+      </form>
+      <p id="checkoutMsg" class="msg"></p>
+    </section>
+  </main>
+  <script type="module" src="assets/reservas.js"></script>
+</body>
+</html>

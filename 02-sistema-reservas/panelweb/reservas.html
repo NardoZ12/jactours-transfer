@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Back Office Reservas | Jac Tours & Transfer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="wrap">
+    <section class="card" style="padding: 18px;">
+      <h1>Reservas</h1>
+      <p class="muted">Embudo comercial, estado de reserva y estado de pago.</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Codigo</th>
+              <th>Cliente</th>
+              <th>Fecha</th>
+              <th>Estado</th>
+              <th>Pago</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody id="reservasBody"></tbody>
+        </table>
+      </div>
+      <p id="reservasMsg" class="msg"></p>
+      <p><a href="./index.html">Volver al dashboard</a></p>
+    </section>
+  </main>
+  <script type="module" src="./modules.js"></script>
+</body>
+</html>

@@ -9,6 +9,15 @@ function randomPassword() {
   return `${crypto.randomUUID()}A1!`;
 }
 
+function toNumber(value: unknown, fallback = 0) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
+}
+
+function roundMoney(value: number) {
+  return Math.round(value * 100) / 100;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -93,14 +102,56 @@ Deno.serve(async (req) => {
       });
     }
 
-    const adults = Number(body.adults || 0);
-    const children = Number(body.children || 0);
-    const infants = Number(body.infants || 0);
+    const adults = toNumber(body.adults, 0);
+    const children = toNumber(body.children, 0);
+    const infants = toNumber(body.infants, 0);
     const pax = adults + children + infants;
 
-    const subtotal = Number(service.base_price) * Math.max(pax, 1);
-    const discount = Number(body.discount || 0);
-    const total = Math.max(subtotal - discount, 0);
+    const rawExtras = Array.isArray(body.extras) ? body.extras : [];
+    const extras = rawExtras
+      .map((item: Record<string, unknown>) => {
+        const quantity = Math.max(toNumber(item.quantity, 1), 1);
+        const unitPrice = Math.max(toNumber(item.unit_price, 0), 0);
+        return {
+          code: item.code ? String(item.code) : null,
+          title: String(item.title || "Extra"),
+          quantity,
+          unit_price: roundMoney(unitPrice),
+          total: roundMoney(quantity * unitPrice),
+        };
+      })
+      .filter((extra: { total: number }) => extra.total > 0);
+
+    const extrasAmount = roundMoney(extras.reduce((acc: number, item: { total: number }) => acc + item.total, 0));
+    const subtotal = roundMoney(Number(service.base_price) * Math.max(pax, 1));
+    const discount = roundMoney(Math.max(toNumber(body.discount, 0), 0));
+    const taxAmount = roundMoney(Math.max(toNumber(body.tax_amount, 0), 0));
+    const commissionAmount = roundMoney(Math.max(toNumber(body.commission_amount, 0), 0));
+    const grandTotal = roundMoney(Math.max(subtotal + extrasAmount + taxAmount - discount + commissionAmount, 0));
+    const depositPct = Math.max(Math.min(toNumber(body.deposit_percent, 100), 100), 0);
+    const paymentDueMode = depositPct > 0 && depositPct < 100 ? "deposito" : "total";
+    const depositRequired = roundMoney(grandTotal * (depositPct / 100));
+
+    const slotTime = body.service_time || "00:00:00";
+
+    const { data: slot } = await supabase
+      .from("service_inventory_slots")
+      .select("id,capacity,reserved")
+      .eq("service_id", service.id)
+      .eq("service_date", body.service_date)
+      .eq("service_time", slotTime)
+      .eq("unit_key", "general")
+      .maybeSingle();
+
+    const currentReserved = Number(slot?.reserved || 0);
+    const slotCapacity = Number(slot?.capacity || service.capacity_total || 9999);
+
+    if (currentReserved + pax > slotCapacity) {
+      return new Response(JSON.stringify({ error: "No hay cupo disponible para la fecha/hora seleccionada" }), {
+        status: 409,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     const payload = {
       service_id: service.id,
@@ -117,8 +168,15 @@ Deno.serve(async (req) => {
       children,
       infants,
       subtotal,
+      extras_amount: extrasAmount,
+      tax_amount: taxAmount,
+      commission_amount: commissionAmount,
       discount,
-      total,
+      total: grandTotal,
+      grand_total: grandTotal,
+      deposit_required: depositRequired,
+      amount_due: grandTotal,
+      payment_due_mode: paymentDueMode,
       currency: body.currency || service.currency || "USD",
       sales_channel: "web",
       status: "pending",
@@ -128,7 +186,7 @@ Deno.serve(async (req) => {
     const { data: reservation, error: reservationError } = await supabase
       .from("reservations")
       .insert(payload)
-      .select("id,reservation_code,total,currency,status,payment_status")
+      .select("id,reservation_code,total,grand_total,currency,status,payment_status,customer_token")
       .single();
 
     if (reservationError || !reservation) {
@@ -137,6 +195,64 @@ Deno.serve(async (req) => {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    if (extras.length > 0) {
+      const extrasRows = extras.map((item: { code: string | null; title: string; quantity: number; unit_price: number; total: number }) => ({
+        reservation_id: reservation.id,
+        code: item.code,
+        title: item.title,
+        quantity: item.quantity,
+        unit_price: item.unit_price,
+        total: item.total,
+      }));
+
+      const { error: extrasError } = await supabase.from("reservation_extras").insert(extrasRows);
+      if (extrasError) {
+        return new Response(JSON.stringify({ error: extrasError.message }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
+    if (slot?.id) {
+      const { error: slotUpdateError } = await supabase
+        .from("service_inventory_slots")
+        .update({ reserved: currentReserved + pax })
+        .eq("id", slot.id);
+
+      if (slotUpdateError) {
+        return new Response(JSON.stringify({ error: slotUpdateError.message }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    } else {
+      const { error: slotInsertError } = await supabase
+        .from("service_inventory_slots")
+        .insert({
+          service_id: service.id,
+          service_date: body.service_date,
+          service_time: slotTime,
+          unit_key: "general",
+          capacity: slotCapacity,
+          reserved: pax,
+        });
+
+      if (slotInsertError) {
+        return new Response(JSON.stringify({ error: slotInsertError.message }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+
+    await supabase.from("reservation_events").insert({
+      reservation_id: reservation.id,
+      event_type: "reservation_created",
+      new_value: reservation.status,
+      notes: `Reserva creada por ${normalizedEmail}`,
+    });
 
     return new Response(JSON.stringify({ reservation, customerUserCreated, customerAuthUserId }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

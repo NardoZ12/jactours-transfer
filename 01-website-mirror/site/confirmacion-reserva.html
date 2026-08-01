@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Confirmacion de Reserva | Jac Tours & Transfer</title>
+  <meta name="description" content="Confirma tu pago y recibe el codigo de reserva en Jac Tours & Transfer." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/reservas.css" />
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>Confirmacion de Reserva</h1>
+      <p class="muted">Si volviste desde PayPal, confirma el pago para cerrar la reserva.</p>
+      <p>OrderId detectado: <strong id="orderIdValue">-</strong></p>
+      <label>
+        OrderId
+        <input id="orderId" placeholder="ID de orden PayPal" />
+      </label>
+      <div class="actions" style="margin-top: 12px;">
+        <button id="capturePaymentBtn">Confirmar pago</button>
+        <a href="estado-reserva.html">Ir a estado de reserva</a>
+      </div>
+      <p id="confirmationMsg" class="msg"></p>
+    </section>
+  </main>
+  <script type="module" src="assets/reservas.js"></script>
+</body>
+</html>

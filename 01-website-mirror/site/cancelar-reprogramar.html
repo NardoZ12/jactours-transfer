@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cancelar o Reprogramar | Jac Tours & Transfer</title>
+  <meta name="description" content="Gestiona cambios de reserva con reglas de cancelacion y reprogramacion." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/reservas.css" />
+</head>
+<body>
+  <main class="wrap">
+    <section class="card">
+      <h1>Cancelar / Reprogramar Reserva</h1>
+      <p class="muted">Las solicitudes se validan segun la politica de la actividad.</p>
+      <form id="manageForm" class="grid">
+        <label>
+          Token de reserva
+          <input id="token" placeholder="token de cliente" />
+        </label>
+        <label>
+          Accion
+          <select id="action">
+            <option value="cancel">Cancelar</option>
+            <option value="reschedule">Reprogramar</option>
+          </select>
+        </label>
+        <label>
+          Nueva fecha (si reprograma)
+          <input id="newServiceDate" type="date" />
+        </label>
+        <label>
+          Nueva hora (si reprograma)
+          <input id="newServiceTime" type="time" />
+        </label>
+        <label style="grid-column: 1 / -1;">
+          Motivo
+          <textarea id="reason"></textarea>
+        </label>
+        <button type="submit" style="grid-column: 1 / -1;">Enviar solicitud</button>
+      </form>
+      <p id="manageMsg" class="msg"></p>
+    </section>
+  </main>
+  <script type="module" src="assets/reservas.js"></script>
+</body>
+</html>

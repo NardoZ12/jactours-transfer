@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
   }
 
   try {
-    const { reservationId } = await req.json();
+    const { reservationId, amountMode, customAmount } = await req.json();
     if (!reservationId) {
       return new Response(JSON.stringify({ error: "reservationId is required" }), {
         status: 400,
@@ -59,7 +59,7 @@ Deno.serve(async (req) => {
 
     const { data: reservation, error: reservationError } = await supabase
       .from("reservations")
-      .select("id,reservation_code,total,currency,payment_status,status")
+      .select("id,reservation_code,total,grand_total,deposit_required,currency,payment_status,status")
       .eq("id", reservationId)
       .single();
 
@@ -68,6 +68,37 @@ Deno.serve(async (req) => {
         status: 404,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
+
+    const { data: capturedPayments } = await supabase
+      .from("payments")
+      .select("amount")
+      .eq("reservation_id", reservation.id)
+      .eq("status", "captured");
+
+    const alreadyPaid = (capturedPayments || []).reduce((acc, item) => acc + Number(item.amount || 0), 0);
+    const baseTotal = Number(reservation.grand_total || reservation.total || 0);
+    const remaining = Math.max(baseTotal - alreadyPaid, 0);
+
+    if (remaining <= 0) {
+      return new Response(JSON.stringify({ error: "La reserva ya esta completamente pagada" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    let amountToCharge = remaining;
+    if (amountMode === "deposito") {
+      const depositTarget = Number(reservation.deposit_required || 0);
+      const missingDeposit = Math.max(depositTarget - alreadyPaid, 0);
+      amountToCharge = Math.max(Math.min(missingDeposit || remaining, remaining), 0.01);
+    }
+
+    if (customAmount != null) {
+      const parsedCustom = Number(customAmount);
+      if (Number.isFinite(parsedCustom) && parsedCustom > 0) {
+        amountToCharge = Math.min(parsedCustom, remaining);
+      }
     }
 
     const accessToken = await getPaypalAccessToken();
@@ -86,7 +117,7 @@ Deno.serve(async (req) => {
             custom_id: reservation.reservation_code,
             amount: {
               currency_code: reservation.currency || "USD",
-              value: Number(reservation.total).toFixed(2),
+              value: Number(amountToCharge).toFixed(2),
             },
           },
         ],
@@ -109,7 +140,7 @@ Deno.serve(async (req) => {
       provider: "paypal",
       status: "created",
       paypal_order_id: order.id,
-      amount: reservation.total,
+      amount: amountToCharge,
       currency: reservation.currency || "USD",
       raw_payload: order,
     });
@@ -125,6 +156,8 @@ Deno.serve(async (req) => {
       JSON.stringify({
         orderId: order.id,
         approveLink,
+        amount: amountToCharge,
+        remaining,
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );

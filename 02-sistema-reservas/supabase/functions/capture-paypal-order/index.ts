@@ -107,20 +107,23 @@ Deno.serve(async (req) => {
       });
     }
 
-    const { error: reservationUpdateError } = await supabase
-      .from("reservations")
-      .update({
-        payment_status: "paid",
-        status: "confirmed",
-      })
-      .eq("id", payment.reservation_id);
+    const { error: recomputeError } = await supabase.rpc("recompute_reservation_financials", {
+      p_reservation_id: payment.reservation_id,
+    });
 
-    if (reservationUpdateError) {
-      return new Response(JSON.stringify({ error: reservationUpdateError.message }), {
+    if (recomputeError) {
+      return new Response(JSON.stringify({ error: recomputeError.message }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    await supabase.from("reservation_events").insert({
+      reservation_id: payment.reservation_id,
+      event_type: "payment_captured",
+      new_value: captureId,
+      notes: `Pago capturado para orden ${orderId}`,
+    });
 
     return new Response(JSON.stringify({ ok: true, captureId, captureData }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
