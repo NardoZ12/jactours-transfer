@@ -17,27 +17,5 @@
       "destination": "/",
       "permanent": true
     }
-  ],
-  "rewrites": [
-    {
-      "source": "/",
-      "destination": "/dominicanbreeze.framer.website/index.html"
-    },
-    {
-      "source": "/en",
-      "destination": "/dominicanbreeze.framer.website/en/index.html"
-    },
-    {
-      "source": "/en/:path*",
-      "destination": "/dominicanbreeze.framer.website/en/:path*"
-    },
-    {
-      "source": "/servicios/:path*",
-      "destination": "/dominicanbreeze.framer.website/servicios/:path*"
-    },
-    {
-      "source": "/:path*",
-      "destination": "/dominicanbreeze.framer.website/:path*"
-    }
   ]
 }
