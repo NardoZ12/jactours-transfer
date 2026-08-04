@@ -448,55 +448,84 @@ fbq('track', 'PageView');
     }
   </style>
 
-  <div class="quick-access" aria-label="Acceso de usuario">
-    <button class="qa-toggle" type="button" aria-expanded="false" aria-controls="qa-panel" title="Acceso de usuario">
-      <svg class="qa-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <path d="M12 12.2a4.1 4.1 0 1 0 0-8.2 4.1 4.1 0 0 0 0 8.2Z" stroke="currentColor" stroke-width="1.8"/>
-        <path d="M4.4 20a7.6 7.6 0 0 1 15.2 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-      </svg>
-    </button>
-    <div class="qa-panel" id="qa-panel" role="menu">
-      <a class="qa-login" role="menuitem" href="/02-sistema-reservas/panelweb/index.html">Iniciar sesion</a>
-      <a class="qa-register" role="menuitem" href="/02-sistema-reservas/panelweb/cliente-registro.html">Registrarse</a>
-    </div>
-  </div>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
-      var quickAccess = document.querySelector(".quick-access");
-      var navbar = document.querySelector('header [data-framer-name="Navbar"]');
-      var toggleButton = quickAccess ? quickAccess.querySelector(".qa-toggle") : null;
+      var quickAccess = null;
 
-      if (!quickAccess || !navbar || navbar.contains(quickAccess)) {
-        if (!quickAccess || !toggleButton) {
-          return;
+      var createQuickAccess = function () {
+        var wrapper = document.createElement("div");
+        wrapper.className = "quick-access";
+        wrapper.setAttribute("aria-label", "Acceso de usuario");
+        wrapper.innerHTML =
+          '<button class="qa-toggle" type="button" aria-expanded="false" aria-controls="qa-panel" title="Acceso de usuario">' +
+            '<svg class="qa-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
+              '<path d="M12 12.2a4.1 4.1 0 1 0 0-8.2 4.1 4.1 0 0 0 0 8.2Z" stroke="currentColor" stroke-width="1.8"/>' +
+              '<path d="M4.4 20a7.6 7.6 0 0 1 15.2 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
+            '</svg>' +
+          '</button>' +
+          '<div class="qa-panel" id="qa-panel" role="menu">' +
+            '<a class="qa-login" role="menuitem" href="/02-sistema-reservas/panelweb/index.html">Iniciar sesion</a>' +
+            '<a class="qa-register" role="menuitem" href="/02-sistema-reservas/panelweb/cliente-registro.html">Registrarse</a>' +
+          '</div>';
+
+        var toggleButton = wrapper.querySelector(".qa-toggle");
+        if (toggleButton) {
+          toggleButton.addEventListener("click", function (event) {
+            event.stopPropagation();
+            var willOpen = !wrapper.classList.contains("is-open");
+            wrapper.classList.toggle("is-open", willOpen);
+            toggleButton.setAttribute("aria-expanded", willOpen ? "true" : "false");
+          });
         }
-      } else {
-        navbar.appendChild(quickAccess);
-        quickAccess.classList.add("quick-access--in-header");
-      }
 
-      if (!toggleButton) {
-        return;
-      }
-
-      var closeMenu = function () {
-        quickAccess.classList.remove("is-open");
-        toggleButton.setAttribute("aria-expanded", "false");
+        return wrapper;
       };
 
-      toggleButton.addEventListener("click", function (event) {
-        event.stopPropagation();
-        var willOpen = !quickAccess.classList.contains("is-open");
-        if (willOpen) {
-          quickAccess.classList.add("is-open");
-          toggleButton.setAttribute("aria-expanded", "true");
-        } else {
-          closeMenu();
+      var closeMenu = function () {
+        if (!quickAccess) {
+          return;
         }
+        quickAccess.classList.remove("is-open");
+        var toggleButton = quickAccess.querySelector(".qa-toggle");
+        if (toggleButton) {
+          toggleButton.setAttribute("aria-expanded", "false");
+        }
+      };
+
+      var ensureMounted = function () {
+        var navbar = document.querySelector('header [data-framer-name="Navbar"]');
+        if (!navbar) {
+          return;
+        }
+
+        if (!quickAccess || !document.body.contains(quickAccess)) {
+          quickAccess = createQuickAccess();
+        }
+
+        if (!navbar.contains(quickAccess)) {
+          navbar.appendChild(quickAccess);
+          quickAccess.classList.add("quick-access--in-header");
+        }
+      };
+
+      ensureMounted();
+
+      var retries = 0;
+      var retryTimer = setInterval(function () {
+        ensureMounted();
+        retries += 1;
+        if (retries > 30) {
+          clearInterval(retryTimer);
+        }
+      }, 300);
+
+      var observer = new MutationObserver(function () {
+        ensureMounted();
       });
+      observer.observe(document.documentElement, { childList: true, subtree: true });
 
       document.addEventListener("click", function (event) {
-        if (!quickAccess.contains(event.target)) {
+        if (!event.target.closest(".quick-access")) {
           closeMenu();
         }
       });
