@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ingresos, Gastos y Reportes | Jac Tours & Transfer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="wrap">
+    <section class="card" style="padding: 18px;">
+      <h1>Ingresos, Gastos y Reportes</h1>
+      <p class="muted">Resumen financiero y cuentas por cobrar.</p>
+      <section class="kpis" id="reportKpis"></section>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Reserva</th>
+              <th>Total</th>
+              <th>Pagado</th>
+              <th>Pendiente</th>
+              <th>Estado pago</th>
+            </tr>
+          </thead>
+          <tbody id="financeBody"></tbody>
+        </table>
+      </div>
+      <p id="financeMsg" class="msg"></p>
+      <p><a href="./index.html">Volver al dashboard</a></p>
+    </section>
+  </main>
+  <script type="module" src="./modules.js"></script>
+</body>
+</html>
