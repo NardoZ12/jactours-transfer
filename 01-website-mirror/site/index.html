@@ -337,6 +337,69 @@ fbq('track', 'PageView');
     <!-- End of headEnd -->
 <style data-custom-hide-framer-badge>#n0ccwk,[title^='Create a free website with Framer']{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}</style></head>
 <body>
+  <style>
+    .quick-access {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      display: flex;
+      gap: 10px;
+      z-index: 9999;
+      font-family: "Sora", "Inter", sans-serif;
+    }
+
+    .quick-access a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      transition: transform 0.2s ease, opacity 0.2s ease;
+    }
+
+    .quick-access a:hover {
+      transform: translateY(-1px);
+      opacity: 0.9;
+    }
+
+    .quick-access .qa-login {
+      color: #ffffff;
+      background: rgba(8, 44, 84, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+    }
+
+    .quick-access .qa-register {
+      color: #062238;
+      background: rgba(255, 228, 138, 0.94);
+      border: 1px solid rgba(6, 34, 56, 0.18);
+    }
+
+    @media (max-width: 809px) {
+      .quick-access {
+        left: 12px;
+        right: 12px;
+        top: auto;
+        bottom: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .quick-access a {
+        flex: 1 1 auto;
+        min-width: 148px;
+      }
+    }
+  </style>
+
+  <div class="quick-access" aria-label="Accesos rapidos">
+    <a class="qa-login" href="/02-sistema-reservas/panelweb/index.html">Iniciar sesion</a>
+    <a class="qa-register" href="/02-sistema-reservas/panelweb/cliente-registro.html">Registrarse</a>
+  </div>
 	<script async src="https://events.framer.com/script?v=2" data-fid="54f8cc6db7befd500b0fed1de41c1fca0e8685b691cc88082e852f18e7f6a041" data-no-nt></script>
 	<!-- Start of bodyStart -->
     

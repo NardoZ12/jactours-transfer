@@ -16,6 +16,7 @@ Actualizado para Jac Tours & Transfer con:
 - supabase/migrations/20260728_init.sql
 - supabase/migrations/20260728_customer_accounts.sql
 - supabase/migrations/20260731_reservas_e2e.sql
+- supabase/migrations/20260804_staff_admin_setup.sql
 - supabase/functions/create-reservation/index.ts
 - supabase/functions/register-customer/index.ts
 - supabase/functions/create-paypal-order/index.ts
@@ -38,12 +39,16 @@ Actualizado para Jac Tours & Transfer con:
    - supabase/migrations/20260728_init.sql
    - supabase/migrations/20260728_customer_accounts.sql
    - supabase/migrations/20260731_reservas_e2e.sql
+   - supabase/migrations/20260804_staff_admin_setup.sql
 3. Crea al menos un usuario admin en auth.users.
-4. Inserta su rol en public.profiles.
+4. Asigna su rol de backoffice con la funcion helper.
 
 Ejemplo:
-insert into public.profiles (user_id, full_name, role)
-values ('UUID_DEL_USUARIO', 'Administrador', 'admin');
+select public.grant_staff_role_by_email(
+  'admin@jactourspuntacana.com',
+  'admin',
+  'Administrador Jac Tours'
+);
 
 ## Paso 2: Crear servicios iniciales
 insert into public.services (slug, title, category, base_price, currency)
