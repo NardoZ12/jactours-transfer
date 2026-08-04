@@ -341,7 +341,7 @@ fbq('track', 'PageView');
     .quick-access {
       position: relative;
       display: flex;
-      gap: 10px;
+      gap: 0;
       z-index: 2;
       font-family: "Sora", "Inter", sans-serif;
     }
@@ -351,21 +351,75 @@ fbq('track', 'PageView');
       align-items: center;
     }
 
-    .quick-access a {
+    .quick-access .qa-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-width: 56px;
+      height: 44px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.34);
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      transition: transform 0.2s ease, background-color 0.2s ease;
+    }
+
+    .quick-access .qa-toggle:hover {
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.24);
+    }
+
+    .quick-access .qa-icon {
+      width: 18px;
+      height: 18px;
+      display: inline-block;
+      flex: 0 0 auto;
+    }
+
+    .quick-access .qa-panel {
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      display: grid;
+      gap: 8px;
+      min-width: 190px;
+      padding: 10px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      background: rgba(6, 20, 32, 0.9);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      opacity: 0;
+      transform: translateY(-6px);
+      pointer-events: none;
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .quick-access.is-open .qa-panel {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .quick-access .qa-panel a {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       padding: 10px 14px;
-      border-radius: 999px;
+      border-radius: 12px;
       font-size: 14px;
       font-weight: 700;
       text-decoration: none;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
       transition: transform 0.2s ease, opacity 0.2s ease;
     }
 
-    .quick-access a:hover {
+    .quick-access .qa-panel a:hover {
       transform: translateY(-1px);
       opacity: 0.9;
     }
@@ -384,33 +438,74 @@ fbq('track', 'PageView');
 
     @media (max-width: 809px) {
       .quick-access {
-        justify-content: center;
-        flex-wrap: wrap;
-        width: 100%;
+        margin-left: 8px;
       }
 
-      .quick-access a {
-        flex: 1 1 140px;
-        min-width: 132px;
+      .quick-access .qa-panel {
+        right: -8px;
+        min-width: 176px;
       }
     }
   </style>
 
-  <div class="quick-access" aria-label="Accesos rapidos">
-    <a class="qa-login" href="/02-sistema-reservas/panelweb/index.html">Iniciar sesion</a>
-    <a class="qa-register" href="/02-sistema-reservas/panelweb/cliente-registro.html">Registrarse</a>
+  <div class="quick-access" aria-label="Acceso de usuario">
+    <button class="qa-toggle" type="button" aria-expanded="false" aria-controls="qa-panel" title="Acceso de usuario">
+      <svg class="qa-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12 12.2a4.1 4.1 0 1 0 0-8.2 4.1 4.1 0 0 0 0 8.2Z" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M4.4 20a7.6 7.6 0 0 1 15.2 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <div class="qa-panel" id="qa-panel" role="menu">
+      <a class="qa-login" role="menuitem" href="/02-sistema-reservas/panelweb/index.html">Iniciar sesion</a>
+      <a class="qa-register" role="menuitem" href="/02-sistema-reservas/panelweb/cliente-registro.html">Registrarse</a>
+    </div>
   </div>
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       var quickAccess = document.querySelector(".quick-access");
       var navbar = document.querySelector('header [data-framer-name="Navbar"]');
+      var toggleButton = quickAccess ? quickAccess.querySelector(".qa-toggle") : null;
 
       if (!quickAccess || !navbar || navbar.contains(quickAccess)) {
+        if (!quickAccess || !toggleButton) {
+          return;
+        }
+      } else {
+        navbar.appendChild(quickAccess);
+        quickAccess.classList.add("quick-access--in-header");
+      }
+
+      if (!toggleButton) {
         return;
       }
 
-      navbar.appendChild(quickAccess);
-      quickAccess.classList.add("quick-access--in-header");
+      var closeMenu = function () {
+        quickAccess.classList.remove("is-open");
+        toggleButton.setAttribute("aria-expanded", "false");
+      };
+
+      toggleButton.addEventListener("click", function (event) {
+        event.stopPropagation();
+        var willOpen = !quickAccess.classList.contains("is-open");
+        if (willOpen) {
+          quickAccess.classList.add("is-open");
+          toggleButton.setAttribute("aria-expanded", "true");
+        } else {
+          closeMenu();
+        }
+      });
+
+      document.addEventListener("click", function (event) {
+        if (!quickAccess.contains(event.target)) {
+          closeMenu();
+        }
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+          closeMenu();
+        }
+      });
     });
   </script>
 	<script async src="https://events.framer.com/script?v=2" data-fid="54f8cc6db7befd500b0fed1de41c1fca0e8685b691cc88082e852f18e7f6a041" data-no-nt></script>
