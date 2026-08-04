@@ -381,10 +381,10 @@ fbq('track', 'PageView');
       flex: 0 0 auto;
     }
 
-    .quick-access .qa-panel {
-      position: absolute;
-      top: calc(100% + 10px);
-      right: 0;
+    .qa-panel {
+      position: fixed;
+      top: 0;
+      left: 0;
       display: grid;
       gap: 8px;
       min-width: 190px;
@@ -395,19 +395,20 @@ fbq('track', 'PageView');
       box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
+      z-index: 10001;
       opacity: 0;
       transform: translateY(-6px);
       pointer-events: none;
       transition: opacity 0.2s ease, transform 0.2s ease;
     }
 
-    .quick-access.is-open .qa-panel {
+    .qa-panel.is-open {
       opacity: 1;
       transform: translateY(0);
       pointer-events: auto;
     }
 
-    .quick-access .qa-panel a {
+    .qa-panel a {
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -419,7 +420,7 @@ fbq('track', 'PageView');
       transition: transform 0.2s ease, opacity 0.2s ease;
     }
 
-    .quick-access .qa-panel a:hover {
+    .qa-panel a:hover {
       transform: translateY(-1px);
       opacity: 0.9;
     }
@@ -441,8 +442,7 @@ fbq('track', 'PageView');
         margin-left: 8px;
       }
 
-      .quick-access .qa-panel {
-        right: -8px;
+      .qa-panel {
         min-width: 176px;
       }
     }
@@ -451,6 +451,7 @@ fbq('track', 'PageView');
   <script>
     document.addEventListener("DOMContentLoaded", function () {
       var quickAccess = null;
+      var panel = null;
 
       var createQuickAccess = function () {
         var wrapper = document.createElement("div");
@@ -462,30 +463,85 @@ fbq('track', 'PageView');
               '<path d="M12 12.2a4.1 4.1 0 1 0 0-8.2 4.1 4.1 0 0 0 0 8.2Z" stroke="currentColor" stroke-width="1.8"/>' +
               '<path d="M4.4 20a7.6 7.6 0 0 1 15.2 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
             '</svg>' +
-          '</button>' +
-          '<div class="qa-panel" id="qa-panel" role="menu">' +
-            '<a class="qa-login" role="menuitem" href="/02-sistema-reservas/panelweb/index.html">Iniciar sesion</a>' +
-            '<a class="qa-register" role="menuitem" href="/02-sistema-reservas/panelweb/cliente-registro.html">Registrarse</a>' +
-          '</div>';
+          '</button>';
 
         var toggleButton = wrapper.querySelector(".qa-toggle");
         if (toggleButton) {
           toggleButton.addEventListener("click", function (event) {
             event.stopPropagation();
-            var willOpen = !wrapper.classList.contains("is-open");
-            wrapper.classList.toggle("is-open", willOpen);
-            toggleButton.setAttribute("aria-expanded", willOpen ? "true" : "false");
+            var willOpen = !panel || !panel.classList.contains("is-open");
+            if (willOpen) {
+              openMenu();
+            } else {
+              closeMenu();
+            }
           });
         }
 
         return wrapper;
       };
 
-      var closeMenu = function () {
-        if (!quickAccess) {
+      var ensurePanel = function () {
+        if (panel && document.body.contains(panel)) {
+          return panel;
+        }
+
+        panel = document.createElement("div");
+        panel.className = "qa-panel";
+        panel.id = "qa-panel";
+        panel.setAttribute("role", "menu");
+        panel.innerHTML =
+          '<a class="qa-login" role="menuitem" href="/02-sistema-reservas/panelweb/index.html">Iniciar sesion</a>' +
+          '<a class="qa-register" role="menuitem" href="/02-sistema-reservas/panelweb/cliente-registro.html">Registrarse</a>';
+        document.body.appendChild(panel);
+        return panel;
+      };
+
+      var placePanel = function () {
+        if (!quickAccess || !panel) {
           return;
         }
-        quickAccess.classList.remove("is-open");
+
+        var toggleButton = quickAccess.querySelector(".qa-toggle");
+        if (!toggleButton) {
+          return;
+        }
+
+        panel.style.visibility = "hidden";
+        panel.classList.add("is-open");
+        var rect = toggleButton.getBoundingClientRect();
+        var panelWidth = panel.offsetWidth;
+        panel.classList.remove("is-open");
+        panel.style.visibility = "";
+
+        var left = rect.right - panelWidth;
+        if (left < 8) {
+          left = 8;
+        }
+
+        if (left + panelWidth > window.innerWidth - 8) {
+          left = window.innerWidth - panelWidth - 8;
+        }
+
+        panel.style.left = left + "px";
+        panel.style.top = rect.bottom + 10 + "px";
+      };
+
+      var openMenu = function () {
+        ensurePanel();
+        placePanel();
+        panel.classList.add("is-open");
+        var toggleButton = quickAccess ? quickAccess.querySelector(".qa-toggle") : null;
+        if (toggleButton) {
+          toggleButton.setAttribute("aria-expanded", "true");
+        }
+      };
+
+      var closeMenu = function () {
+        if (!quickAccess || !panel) {
+          return;
+        }
+        panel.classList.remove("is-open");
         var toggleButton = quickAccess.querySelector(".qa-toggle");
         if (toggleButton) {
           toggleButton.setAttribute("aria-expanded", "false");
@@ -524,8 +580,20 @@ fbq('track', 'PageView');
       });
       observer.observe(document.documentElement, { childList: true, subtree: true });
 
+      window.addEventListener("resize", function () {
+        if (panel && panel.classList.contains("is-open")) {
+          placePanel();
+        }
+      });
+
+      window.addEventListener("scroll", function () {
+        if (panel && panel.classList.contains("is-open")) {
+          placePanel();
+        }
+      }, true);
+
       document.addEventListener("click", function (event) {
-        if (!event.target.closest(".quick-access")) {
+        if (!event.target.closest(".quick-access") && !event.target.closest(".qa-panel")) {
           closeMenu();
         }
       });
