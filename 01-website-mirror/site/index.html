@@ -339,13 +339,16 @@ fbq('track', 'PageView');
 <body>
   <style>
     .quick-access {
-      position: fixed;
-      top: 16px;
-      right: 16px;
+      position: relative;
       display: flex;
       gap: 10px;
-      z-index: 9999;
+      z-index: 2;
       font-family: "Sora", "Inter", sans-serif;
+    }
+
+    .quick-access.quick-access--in-header {
+      margin-left: auto;
+      align-items: center;
     }
 
     .quick-access a {
@@ -381,17 +384,14 @@ fbq('track', 'PageView');
 
     @media (max-width: 809px) {
       .quick-access {
-        left: 12px;
-        right: 12px;
-        top: auto;
-        bottom: 12px;
         justify-content: center;
         flex-wrap: wrap;
+        width: 100%;
       }
 
       .quick-access a {
-        flex: 1 1 auto;
-        min-width: 148px;
+        flex: 1 1 140px;
+        min-width: 132px;
       }
     }
   </style>
@@ -400,6 +400,19 @@ fbq('track', 'PageView');
     <a class="qa-login" href="/02-sistema-reservas/panelweb/index.html">Iniciar sesion</a>
     <a class="qa-register" href="/02-sistema-reservas/panelweb/cliente-registro.html">Registrarse</a>
   </div>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var quickAccess = document.querySelector(".quick-access");
+      var navbar = document.querySelector('header [data-framer-name="Navbar"]');
+
+      if (!quickAccess || !navbar || navbar.contains(quickAccess)) {
+        return;
+      }
+
+      navbar.appendChild(quickAccess);
+      quickAccess.classList.add("quick-access--in-header");
+    });
+  </script>
 	<script async src="https://events.framer.com/script?v=2" data-fid="54f8cc6db7befd500b0fed1de41c1fca0e8685b691cc88082e852f18e7f6a041" data-no-nt></script>
 	<!-- Start of bodyStart -->
     
