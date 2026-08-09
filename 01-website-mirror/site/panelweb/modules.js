@@ -2,7 +2,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SUPABASE_URL = "https://jxetcadstgvcrfkphofe.supabase.co";
 const SUPABASE_ANON_KEY = "TU_ANON_KEY";
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const LOCAL_PREVIEW = location.protocol === "file:" || new URLSearchParams(location.search).has("preview");
+const supabase = LOCAL_PREVIEW ? null : createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 function money(value) {
   return new Intl.NumberFormat("es-DO", { style: "currency", currency: "USD" }).format(Number(value || 0));
@@ -17,6 +18,8 @@ function todayDate() {
 }
 
 async function ensureSession() {
+  if (LOCAL_PREVIEW) return true;
+
   const { data } = await supabase.auth.getSession();
   if (!data.session) {
     window.location.href = "./index.html";
@@ -30,6 +33,16 @@ async function loadReservasPage() {
   if (!body) return;
 
   if (!(await ensureSession())) return;
+
+  if (LOCAL_PREVIEW) {
+    body.innerHTML = `
+      <tr><td>DB-260808-AX12QZ</td><td>Maria Perez</td><td>2026-08-12</td><td>confirmed</td><td>paid</td><td>$145.00</td></tr>
+      <tr><td>DB-260808-BN77KD</td><td>Carlos Ramirez</td><td>2026-08-13</td><td>pending</td><td>unpaid</td><td>$95.00</td></tr>
+    `;
+    const msg = document.getElementById("reservasMsg");
+    if (msg) msg.textContent = "Vista local activa";
+    return;
+  }
 
   const { data, error } = await supabase
     .from("reservations")
@@ -61,6 +74,17 @@ async function loadManifestPage() {
   if (!form) return;
 
   if (!(await ensureSession())) return;
+
+  if (LOCAL_PREVIEW) {
+    dateInput.value = todayDate();
+    document.getElementById("manifestBody").innerHTML = `
+      <tr><td>09:00</td><td>DB-260808-AX12QZ</td><td>Maria Perez</td><td>Hotel Riu</td><td>809-555-0101</td><td>confirmed</td></tr>
+      <tr><td>11:30</td><td>DB-260808-BN77KD</td><td>Carlos Ramirez</td><td>Zona Colonial</td><td>809-555-0102</td><td>pending</td></tr>
+    `;
+    const msg = document.getElementById("manifestMsg");
+    if (msg) msg.textContent = "Vista local activa";
+    return;
+  }
 
   const dateInput = document.getElementById("manifestDate");
   dateInput.value = todayDate();
@@ -105,6 +129,23 @@ async function loadFinancePage() {
   if (!tbody) return;
 
   if (!(await ensureSession())) return;
+
+  if (LOCAL_PREVIEW) {
+    document.getElementById("reportKpis").innerHTML = `
+      <article class="kpi card"><h3>Ingresos Hoy</h3><p>$420.00</p></article>
+      <article class="kpi card"><h3>Ingresos Semana</h3><p>$1,980.00</p></article>
+      <article class="kpi card"><h3>Ingresos Mes</h3><p>$7,340.00</p></article>
+      <article class="kpi card"><h3>Ticket Promedio</h3><p>$123.00</p></article>
+    `;
+
+    tbody.innerHTML = `
+      <tr><td>DB-260808-AX12QZ</td><td>$145.00</td><td>$120.00</td><td>$25.00</td><td>paid</td></tr>
+      <tr><td>DB-260808-BN77KD</td><td>$95.00</td><td>$95.00</td><td>$0.00</td><td>unpaid</td></tr>
+    `;
+    const msg = document.getElementById("financeMsg");
+    if (msg) msg.textContent = "Vista local activa";
+    return;
+  }
 
   const { data: kpis, error: kpiError } = await supabase
     .from("v_dashboard_kpis")

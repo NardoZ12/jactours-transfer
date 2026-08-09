@@ -3,8 +3,9 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 // Reemplaza estos valores por los de tu proyecto Supabase.
 const SUPABASE_URL = "https://jxetcadstgvcrfkphofe.supabase.co";
 const SUPABASE_ANON_KEY = "TU_ANON_KEY";
+const LOCAL_PREVIEW = location.protocol === "file:" || new URLSearchParams(location.search).has("preview");
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = LOCAL_PREVIEW ? null : createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const loginCard = document.getElementById("loginCard");
 const dashboard = document.getElementById("dashboard");
@@ -33,7 +34,40 @@ function toDateInputValue(date = new Date()) {
 
 document.getElementById("expenseDate").value = toDateInputValue();
 
+const demoReservations = [
+  { reservation_code: "DB-260808-AX12QZ", customer_name: "Maria Perez", service_date: "2026-08-12", status: "confirmed", total: 145 },
+  { reservation_code: "DB-260808-BN77KD", customer_name: "Carlos Ramirez", service_date: "2026-08-13", status: "pending", total: 95 },
+  { reservation_code: "DB-260808-ZT55PA", customer_name: "Ana Gomez", service_date: "2026-08-14", status: "confirmed", total: 230 },
+];
+
+const demoIncome = [
+  { day: toDateInputValue(), currency: "USD", income: 420 },
+  { day: "2026-08-07", currency: "USD", income: 310 },
+  { day: "2026-08-06", currency: "USD", income: 190 },
+];
+
+const demoMargin = [
+  { reservation_code: "DB-260808-AX12QZ", paid_total: 145, total_expenses: 40, gross_margin: 105 },
+  { reservation_code: "DB-260808-BN77KD", paid_total: 95, total_expenses: 20, gross_margin: 75 },
+  { reservation_code: "DB-260808-ZT55PA", paid_total: 230, total_expenses: 85, gross_margin: 145 },
+];
+
+if (LOCAL_PREVIEW) {
+  const localPreviewLink = document.getElementById("localPreviewLink");
+  if (localPreviewLink) {
+    localPreviewLink.textContent = "Vista local activa";
+    localPreviewLink.removeAttribute("href");
+  }
+}
+
 async function checkSession() {
+  if (LOCAL_PREVIEW) {
+    loginCard.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+    await loadDemoDashboard();
+    return;
+  }
+
   const { data } = await supabase.auth.getSession();
   if (data.session) {
     loginCard.classList.add("hidden");
@@ -43,6 +77,11 @@ async function checkSession() {
 }
 
 async function loadDashboard() {
+  if (LOCAL_PREVIEW) {
+    await loadDemoDashboard();
+    return;
+  }
+
   await Promise.all([
     loadReservations(),
     loadIncomeDaily(),
@@ -50,7 +89,50 @@ async function loadDashboard() {
   ]);
 }
 
+async function loadDemoDashboard() {
+  reservationsBody.innerHTML = demoReservations
+    .map((r) => `
+      <tr>
+        <td>${r.reservation_code}</td>
+        <td>${r.customer_name}</td>
+        <td>${r.service_date}</td>
+        <td>${r.status}</td>
+        <td>${money(r.total)}</td>
+      </tr>
+    `)
+    .join("");
+
+  incomeBody.innerHTML = demoIncome
+    .map((r) => `
+      <tr>
+        <td>${r.day}</td>
+        <td>${r.currency}</td>
+        <td>${money(r.income)}</td>
+      </tr>
+    `)
+    .join("");
+
+  marginBody.innerHTML = demoMargin
+    .map((r) => `
+      <tr>
+        <td>${r.reservation_code}</td>
+        <td>${money(r.paid_total)}</td>
+        <td>${money(r.total_expenses)}</td>
+        <td>${money(r.gross_margin)}</td>
+      </tr>
+    `)
+    .join("");
+
+  kpiPending.textContent = String(demoReservations.filter((r) => r.status === "pending").length);
+  kpiConfirmed.textContent = String(demoReservations.filter((r) => r.status === "confirmed").length);
+  kpiIncomeToday.textContent = money(demoIncome.find((row) => row.day === toDateInputValue())?.income || 0);
+  kpiMargin.textContent = money(demoMargin.reduce((acc, row) => acc + Number(row.gross_margin || 0), 0));
+  loginMsg.textContent = "Modo vista local activo. No usa Supabase.";
+}
+
 async function loadReservations() {
+  if (LOCAL_PREVIEW) return;
+
   const { data, error } = await supabase
     .from("reservations")
     .select("reservation_code, customer_name, service_date, status, total")
@@ -81,6 +163,8 @@ async function loadReservations() {
 }
 
 async function loadIncomeDaily() {
+  if (LOCAL_PREVIEW) return;
+
   const { data, error } = await supabase
     .from("v_income_daily")
     .select("day,currency,income")
@@ -108,6 +192,8 @@ async function loadIncomeDaily() {
 }
 
 async function loadMarginTable() {
+  if (LOCAL_PREVIEW) return;
+
   const { data, error } = await supabase
     .from("v_margin_by_reservation")
     .select("reservation_code, paid_total, total_expenses, gross_margin")
@@ -136,6 +222,14 @@ async function loadMarginTable() {
 
 document.getElementById("loginForm").addEventListener("submit", async (e) => {
   e.preventDefault();
+  if (LOCAL_PREVIEW) {
+    loginMsg.textContent = "Modo vista local activo";
+    loginCard.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+    await loadDemoDashboard();
+    return;
+  }
+
   loginMsg.textContent = "Ingresando...";
 
   const email = document.getElementById("email").value;
@@ -154,6 +248,13 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 });
 
 document.getElementById("logoutBtn").addEventListener("click", async () => {
+  if (LOCAL_PREVIEW) {
+    loginCard.classList.remove("hidden");
+    dashboard.classList.add("hidden");
+    loginMsg.textContent = "Modo vista local";
+    return;
+  }
+
   await supabase.auth.signOut();
   dashboard.classList.add("hidden");
   loginCard.classList.remove("hidden");
@@ -163,6 +264,11 @@ document.getElementById("refreshBtn").addEventListener("click", loadDashboard);
 
 document.getElementById("expenseForm").addEventListener("submit", async (e) => {
   e.preventDefault();
+  if (LOCAL_PREVIEW) {
+    expenseMsg.textContent = "Modo vista local: el gasto no se guardó";
+    return;
+  }
+
   expenseMsg.textContent = "Guardando...";
 
   const payload = {
