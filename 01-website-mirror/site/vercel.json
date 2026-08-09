@@ -3,6 +3,51 @@
   "cleanUrls": false,
   "redirects": [
     {
+      "source": "/panelweb",
+      "destination": "https://panel.jactourspuntacana.com/",
+      "permanent": true
+    },
+    {
+      "source": "/panelweb/:path*",
+      "destination": "https://panel.jactourspuntacana.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/signals/:path*",
+      "destination": "/404.html",
+      "permanent": false
+    },
+    {
+      "source": "/e.html",
+      "destination": "/404.html",
+      "permanent": false
+    },
+    {
+      "source": "/n.html",
+      "destination": "/404.html",
+      "permanent": false
+    },
+    {
+      "source": "/n-2.html",
+      "destination": "/404.html",
+      "permanent": false
+    },
+    {
+      "source": "/o.html",
+      "destination": "/404.html",
+      "permanent": false
+    },
+    {
+      "source": "/t.html",
+      "destination": "/404.html",
+      "permanent": false
+    },
+    {
+      "source": "/t-2.html",
+      "destination": "/404.html",
+      "permanent": false
+    },
+    {
       "source": "/index",
       "destination": "/",
       "permanent": true

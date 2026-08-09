@@ -39,14 +39,6 @@
       "destination": "/01-website-mirror/site/index.html"
     },
     {
-      "source": "/panelweb",
-      "destination": "/02-sistema-reservas/panelweb/index.html"
-    },
-    {
-      "source": "/panelweb/:path*",
-      "destination": "/02-sistema-reservas/panelweb/:path*"
-    },
-    {
       "source": "/en",
       "destination": "/01-website-mirror/site/en/index.html"
     },
