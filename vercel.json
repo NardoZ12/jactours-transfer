@@ -1,6 +1,52 @@
 {
   "version": 2,
   "cleanUrls": false,
+  "redirects": [
+    {
+      "source": "/panelweb",
+      "has": [
+        {
+          "type": "host",
+          "value": "jactourspuntacana.com"
+        }
+      ],
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/panelweb/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "jactourspuntacana.com"
+        }
+      ],
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/panelweb",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.jactourspuntacana.com"
+        }
+      ],
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/panelweb/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.jactourspuntacana.com"
+        }
+      ],
+      "destination": "/",
+      "permanent": true
+    }
+  ],
   "rewrites": [
     {
       "source": "/",
