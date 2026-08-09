@@ -1,2 +1,5 @@
 User-agent: *
-Disallow:
+Disallow: /panelweb
+Disallow: /02-sistema-reservas/panelweb
+Disallow: /panelweb/
+Disallow: /02-sistema-reservas/panelweb/

@@ -1,4 +1,7 @@
 User-agent: *
-Allow: /
+Disallow: /panelweb
+Disallow: /panelweb/
+Disallow: /02-sistema-reservas/panelweb
+Disallow: /02-sistema-reservas/panelweb/
 
 Sitemap: https://www.jactourspuntacana.com/sitemap.xml

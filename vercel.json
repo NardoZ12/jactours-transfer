@@ -34,5 +34,25 @@
       "source": "/:path*",
       "destination": "/01-website-mirror/site/:path*"
     }
+  ],
+  "headers": [
+    {
+      "source": "/panelweb",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/panelweb/:path*",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    }
   ]
 }

@@ -19,6 +19,7 @@ Actualizado para Jac Tours & Transfer con:
 - supabase/migrations/20260804_staff_admin_setup.sql
 - supabase/functions/create-reservation/index.ts
 - supabase/functions/register-customer/index.ts
+- supabase/functions/set-admin-password/index.ts
 - supabase/functions/create-paypal-order/index.ts
 - supabase/functions/capture-paypal-order/index.ts
 - supabase/functions/paypal-webhook/index.ts

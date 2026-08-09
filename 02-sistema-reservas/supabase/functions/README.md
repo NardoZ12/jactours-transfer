@@ -3,6 +3,7 @@
 Funciones incluidas:
 - create-reservation: crea una reserva desde la web publica.
 - register-customer: registro manual de cliente por email y contrasena.
+- set-admin-password: crea/actualiza usuario staff en Auth, define contrasena temporal y asigna rol en profiles.
 - create-paypal-order: crea una orden en PayPal a partir de una reserva.
 - capture-paypal-order: captura el pago de una orden de PayPal.
 - paypal-webhook: procesa eventos de PayPal y actualiza pagos/reservas.
@@ -19,6 +20,7 @@ Nota:
 Configura estas variables en Supabase:
 - SUPABASE_URL
 - SUPABASE_SERVICE_ROLE_KEY
+- ADMIN_BOOTSTRAP_SECRET
 - PAYPAL_ENV (sandbox|live)
 - PAYPAL_CLIENT_ID
 - PAYPAL_CLIENT_SECRET
@@ -29,11 +31,37 @@ Configura estas variables en Supabase:
 2. supabase link --project-ref TU_PROJECT_REF
 3. supabase functions deploy create-reservation --no-verify-jwt
 4. supabase functions deploy register-customer --no-verify-jwt
-5. supabase functions deploy create-paypal-order --no-verify-jwt
-6. supabase functions deploy capture-paypal-order --no-verify-jwt
-7. supabase functions deploy paypal-webhook --no-verify-jwt
-8. supabase functions deploy reservation-status --no-verify-jwt
-9. supabase functions deploy manage-reservation --no-verify-jwt
+5. supabase functions deploy set-admin-password --no-verify-jwt
+6. supabase functions deploy create-paypal-order --no-verify-jwt
+7. supabase functions deploy capture-paypal-order --no-verify-jwt
+8. supabase functions deploy paypal-webhook --no-verify-jwt
+9. supabase functions deploy reservation-status --no-verify-jwt
+10. supabase functions deploy manage-reservation --no-verify-jwt
+
+## Bootstrap admin automatico
+Invoca la funcion con un secreto en header para crear/actualizar admin y devolver contrasena temporal.
+
+Ejemplo (PowerShell):
+```powershell
+$headers = @{
+	"Content-Type" = "application/json"
+	"x-admin-secret" = "TU_ADMIN_BOOTSTRAP_SECRET"
+}
+
+$body = @{
+	email = "admin@jactourspuntacana.com"
+	full_name = "Administrador Jac Tours"
+	role = "admin"
+	create_if_missing = $true
+} | ConvertTo-Json
+
+Invoke-RestMethod -Method Post `
+	-Uri "https://TU_PROYECTO.functions.supabase.co/set-admin-password" `
+	-Headers $headers `
+	-Body $body
+```
+
+La respuesta incluye `temporary_password` para iniciar sesion.
 
 ## Flujo E2E recomendado
 1. Checkout publica llama create-reservation.

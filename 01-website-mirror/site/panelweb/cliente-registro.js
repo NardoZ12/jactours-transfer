@@ -1,4 +1,4 @@
-const SUPABASE_FUNCTIONS_BASE = "https://TU_PROYECTO.functions.supabase.co";
+const SUPABASE_FUNCTIONS_BASE = "https://jxetcadstgvcrfkphofe.functions.supabase.co";
 
 const form = document.getElementById("registerForm");
 const msg = document.getElementById("msg");
