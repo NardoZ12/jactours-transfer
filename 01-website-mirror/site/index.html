@@ -339,88 +339,30 @@ fbq('track', 'PageView');
 <body>
   <style>
     .quick-access {
-      position: relative;
+      position: fixed;
+      top: 16px;
+      right: 16px;
       display: flex;
-      gap: 0;
-      z-index: 2;
+      gap: 10px;
+      z-index: 9999;
       font-family: "Sora", "Inter", sans-serif;
     }
 
-    .quick-access.quick-access--in-header {
-      margin-left: auto;
-      align-items: center;
-    }
-
-    .quick-access .qa-toggle {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      min-width: 56px;
-      height: 44px;
-      padding: 0 14px;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.34);
-      background: rgba(255, 255, 255, 0.16);
-      color: #ffffff;
-      cursor: pointer;
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      transition: transform 0.2s ease, background-color 0.2s ease;
-    }
-
-    .quick-access .qa-toggle:hover {
-      transform: translateY(-1px);
-      background: rgba(255, 255, 255, 0.24);
-    }
-
-    .quick-access .qa-icon {
-      width: 18px;
-      height: 18px;
-      display: inline-block;
-      flex: 0 0 auto;
-    }
-
-    .qa-panel {
-      position: fixed;
-      top: 0;
-      left: 0;
-      display: grid;
-      gap: 8px;
-      min-width: 190px;
-      padding: 10px;
-      border-radius: 16px;
-      border: 1px solid rgba(255, 255, 255, 0.28);
-      background: rgba(6, 20, 32, 0.9);
-      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      z-index: 10001;
-      opacity: 0;
-      transform: translateY(-6px);
-      pointer-events: none;
-      transition: opacity 0.2s ease, transform 0.2s ease;
-    }
-
-    .qa-panel.is-open {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
-    }
-
-    .qa-panel a {
+    .quick-access a {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       padding: 10px 14px;
-      border-radius: 12px;
+      border-radius: 999px;
       font-size: 14px;
       font-weight: 700;
       text-decoration: none;
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       transition: transform 0.2s ease, opacity 0.2s ease;
     }
 
-    .qa-panel a:hover {
+    .quick-access a:hover {
       transform: translateY(-1px);
       opacity: 0.9;
     }
@@ -439,172 +381,25 @@ fbq('track', 'PageView');
 
     @media (max-width: 809px) {
       .quick-access {
-        margin-left: 8px;
+        left: 12px;
+        right: 12px;
+        top: auto;
+        bottom: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
       }
 
-      .qa-panel {
-        min-width: 176px;
+      .quick-access a {
+        flex: 1 1 auto;
+        min-width: 148px;
       }
     }
   </style>
 
-  <script>
-    document.addEventListener("DOMContentLoaded", function () {
-      var quickAccess = null;
-      var panel = null;
-
-      var createQuickAccess = function () {
-        var wrapper = document.createElement("div");
-        wrapper.className = "quick-access";
-        wrapper.setAttribute("aria-label", "Acceso de usuario");
-        wrapper.innerHTML =
-          '<button class="qa-toggle" type="button" aria-expanded="false" aria-controls="qa-panel" title="Acceso de usuario">' +
-            '<svg class="qa-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">' +
-              '<path d="M12 12.2a4.1 4.1 0 1 0 0-8.2 4.1 4.1 0 0 0 0 8.2Z" stroke="currentColor" stroke-width="1.8"/>' +
-              '<path d="M4.4 20a7.6 7.6 0 0 1 15.2 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>' +
-            '</svg>' +
-          '</button>';
-
-        var toggleButton = wrapper.querySelector(".qa-toggle");
-        if (toggleButton) {
-          toggleButton.addEventListener("click", function (event) {
-            event.stopPropagation();
-            var willOpen = !panel || !panel.classList.contains("is-open");
-            if (willOpen) {
-              openMenu();
-            } else {
-              closeMenu();
-            }
-          });
-        }
-
-        return wrapper;
-      };
-
-      var ensurePanel = function () {
-        if (panel && document.body.contains(panel)) {
-          return panel;
-        }
-
-        panel = document.createElement("div");
-        panel.className = "qa-panel";
-        panel.id = "qa-panel";
-        panel.setAttribute("role", "menu");
-        panel.innerHTML =
-          '<a class="qa-login" role="menuitem" href="/panelweb/index.html">Iniciar sesion</a>' +
-          '<a class="qa-register" role="menuitem" href="/panelweb/cliente-registro.html">Registrarse</a>';
-        document.body.appendChild(panel);
-        return panel;
-      };
-
-      var placePanel = function () {
-        if (!quickAccess || !panel) {
-          return;
-        }
-
-        var toggleButton = quickAccess.querySelector(".qa-toggle");
-        if (!toggleButton) {
-          return;
-        }
-
-        panel.style.visibility = "hidden";
-        panel.classList.add("is-open");
-        var rect = toggleButton.getBoundingClientRect();
-        var panelWidth = panel.offsetWidth;
-        panel.classList.remove("is-open");
-        panel.style.visibility = "";
-
-        var left = rect.right - panelWidth;
-        if (left < 8) {
-          left = 8;
-        }
-
-        if (left + panelWidth > window.innerWidth - 8) {
-          left = window.innerWidth - panelWidth - 8;
-        }
-
-        panel.style.left = left + "px";
-        panel.style.top = rect.bottom + 10 + "px";
-      };
-
-      var openMenu = function () {
-        ensurePanel();
-        placePanel();
-        panel.classList.add("is-open");
-        var toggleButton = quickAccess ? quickAccess.querySelector(".qa-toggle") : null;
-        if (toggleButton) {
-          toggleButton.setAttribute("aria-expanded", "true");
-        }
-      };
-
-      var closeMenu = function () {
-        if (!quickAccess || !panel) {
-          return;
-        }
-        panel.classList.remove("is-open");
-        var toggleButton = quickAccess.querySelector(".qa-toggle");
-        if (toggleButton) {
-          toggleButton.setAttribute("aria-expanded", "false");
-        }
-      };
-
-      var ensureMounted = function () {
-        var navbar = document.querySelector('header [data-framer-name="Navbar"]');
-        if (!navbar) {
-          return;
-        }
-
-        if (!quickAccess || !document.body.contains(quickAccess)) {
-          quickAccess = createQuickAccess();
-        }
-
-        if (!navbar.contains(quickAccess)) {
-          navbar.appendChild(quickAccess);
-          quickAccess.classList.add("quick-access--in-header");
-        }
-      };
-
-      ensureMounted();
-
-      var retries = 0;
-      var retryTimer = setInterval(function () {
-        ensureMounted();
-        retries += 1;
-        if (retries > 30) {
-          clearInterval(retryTimer);
-        }
-      }, 300);
-
-      var observer = new MutationObserver(function () {
-        ensureMounted();
-      });
-      observer.observe(document.documentElement, { childList: true, subtree: true });
-
-      window.addEventListener("resize", function () {
-        if (panel && panel.classList.contains("is-open")) {
-          placePanel();
-        }
-      });
-
-      window.addEventListener("scroll", function () {
-        if (panel && panel.classList.contains("is-open")) {
-          placePanel();
-        }
-      }, true);
-
-      document.addEventListener("click", function (event) {
-        if (!event.target.closest(".quick-access") && !event.target.closest(".qa-panel")) {
-          closeMenu();
-        }
-      });
-
-      document.addEventListener("keydown", function (event) {
-        if (event.key === "Escape") {
-          closeMenu();
-        }
-      });
-    });
-  </script>
+  <div class="quick-access" aria-label="Accesos rapidos">
+    <a class="qa-login" href="https://panel.jactourspuntacana.com/">Iniciar sesion</a>
+    <a class="qa-register" href="https://panel.jactourspuntacana.com/cliente-registro.html">Registrarse</a>
+  </div>
 	<script async src="https://events.framer.com/script?v=2" data-fid="54f8cc6db7befd500b0fed1de41c1fca0e8685b691cc88082e852f18e7f6a041" data-no-nt></script>
 	<!-- Start of bodyStart -->
     

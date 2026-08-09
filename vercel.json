@@ -4,6 +4,26 @@
   "rewrites": [
     {
       "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "panel.jactourspuntacana.com"
+        }
+      ],
+      "destination": "/02-sistema-reservas/panelweb/index.html"
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "panel.jactourspuntacana.com"
+        }
+      ],
+      "destination": "/02-sistema-reservas/panelweb/:path*"
+    },
+    {
+      "source": "/",
       "destination": "/01-website-mirror/site/index.html"
     },
     {
@@ -36,6 +56,36 @@
     }
   ],
   "headers": [
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "panel.jactourspuntacana.com"
+        }
+      ],
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "panel.jactourspuntacana.com"
+        }
+      ],
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        }
+      ]
+    },
     {
       "source": "/panelweb",
       "headers": [
