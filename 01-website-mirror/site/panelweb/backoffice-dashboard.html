@@ -37,6 +37,74 @@ a[role="button"], button, .quick-access a {
   }
 }
 </style>
+<script id="jac-logo-lock">
+(function () {
+  var MAIN = "/assets/logo-4.png";
+  var SECONDARY = "/assets/logo-2.png";
+
+  function setLogo(img, src) {
+    if (!img) return;
+    var target = src + "?v=jac";
+    if (!img.src.includes(src)) img.src = target;
+    if (img.srcset) img.srcset = "";
+  }
+
+  function applyLogos(root) {
+    var scope = root || document;
+
+    // Header/main logo containers in Framer output
+    scope.querySelectorAll('[data-framer-name="Logo"] img').forEach(function (img) {
+      setLogo(img, MAIN);
+    });
+
+    // Secondary repeated logo blocks used in footer/title groups
+    scope.querySelectorAll('[data-framer-name="Title"] img').forEach(function (img) {
+      setLogo(img, SECONDARY);
+    });
+
+    // Fallback by known legacy image IDs if Framer injects them dynamically
+    scope.querySelectorAll('img[src*="eAPmeOxTlCvyzuBkqgyST4UEsVQ11da"], img[src*="UvWLe43Ct2rVlnhEIo18X37ruM278b"]').forEach(function (img) {
+      var inLogo = img.closest('[data-framer-name="Logo"]');
+      setLogo(img, inLogo ? MAIN : SECONDARY);
+    });
+  }
+
+  function initLogoLock() {
+    applyLogos(document);
+
+    var observer = new MutationObserver(function (mutations) {
+      for (var i = 0; i < mutations.length; i++) {
+        var m = mutations[i];
+        if (m.type === "childList") {
+          m.addedNodes.forEach(function (node) {
+            if (node.nodeType === 1) applyLogos(node);
+          });
+        } else if (m.type === "attributes" && m.target.tagName === "IMG") {
+          applyLogos(m.target.closest('[data-framer-name]') || document);
+        }
+      }
+    });
+
+    observer.observe(document.documentElement, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["src", "srcset"]
+    });
+
+    // Extra safety for late async re-renders
+    setTimeout(function(){ applyLogos(document); }, 500);
+    setTimeout(function(){ applyLogos(document); }, 1500);
+    setTimeout(function(){ applyLogos(document); }, 3000);
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initLogoLock);
+  } else {
+    initLogoLock();
+  }
+})();
+</script>
 </head>
 <body>
   <p>Redirigiendo al dashboard...</p>
