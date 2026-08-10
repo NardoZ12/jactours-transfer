@@ -5,6 +5,38 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Back Office Login | Jac Tours & Transfer</title>
   <meta http-equiv="refresh" content="0; url=./index.html" />
+<style id="jac-brand-overrides">
+:root {
+  --jac-accent: #f4efec;
+  --jac-body: #ddb7ab;
+  --jac-strong: #999b85;
+}
+h1,h2,h3,h4,h5,h6 { color: var(--jac-strong) !important; }
+p, li { color: var(--jac-body) !important; }
+a[role="button"], button, .quick-access a {
+  background: var(--jac-accent) !important;
+  color: #1f2a30 !important;
+  border: 1px solid rgba(31,42,48,0.18) !important;
+}
+.quick-access {
+  top: 86px !important;
+  right: 22px !important;
+  gap: 8px !important;
+  z-index: 9999 !important;
+}
+.quick-access a {
+  border-radius: 999px !important;
+  font-weight: 700 !important;
+  padding: 8px 14px !important;
+}
+@media (max-width: 900px) {
+  .quick-access {
+    top: 72px !important;
+    right: 12px !important;
+    flex-direction: row !important;
+  }
+}
+</style>
 </head>
 <body>
   <p>Redirigiendo al login...</p>

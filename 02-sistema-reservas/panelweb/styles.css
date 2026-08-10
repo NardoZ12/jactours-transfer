@@ -1,12 +1,12 @@
 :root {
-  --bg: #f3f8ff;
-  --ink: #0f172a;
-  --muted: #5b6476;
-  --card: #ffffffcc;
-  --line: #dbe6f5;
-  --accent: #ff7a18;
-  --accent-2: #1c7ed6;
-  --danger: #d9480f;
+  --bg: #f4efec;
+  --ink: #999b85;
+  --muted: #ddb7ab;
+  --card: #ffffffe6;
+  --line: #e4d6cf;
+  --accent: #f4efec;
+  --accent-2: #ddb7ab;
+  --danger: #999b85;
 }
 
 * { box-sizing: border-box; }
@@ -16,8 +16,8 @@ body {
   font-family: "Sora", sans-serif;
   color: var(--ink);
   background:
-    radial-gradient(1200px 600px at 20% -10%, #b3e5ff 0%, transparent 70%),
-    radial-gradient(1200px 600px at 100% 0%, #ffe8cc 0%, transparent 65%),
+    radial-gradient(1200px 600px at 20% -10%, #f4efec 0%, transparent 70%),
+    radial-gradient(1200px 600px at 100% 0%, #ddb7ab 0%, transparent 65%),
     var(--bg);
   min-height: 100vh;
 }
@@ -32,7 +32,7 @@ body {
 .bg-a {
   width: 420px;
   height: 420px;
-  background: #8ed8ff;
+  background: #ddb7ab;
   top: -180px;
   left: -120px;
 }
@@ -40,9 +40,16 @@ body {
 .bg-b {
   width: 380px;
   height: 380px;
-  background: #ffd29d;
+  background: #999b85;
   top: 50px;
   right: -140px;
+}
+
+.brand-mark {
+  width: 168px;
+  height: auto;
+  display: block;
+  margin: 0 0 14px;
 }
 
 .wrap {
@@ -109,17 +116,18 @@ button {
   font-weight: 700;
   font-family: inherit;
   cursor: pointer;
-  color: #fff;
-  background: linear-gradient(100deg, var(--accent), #ff9a3d);
+  color: #2a3027;
+  background: linear-gradient(100deg, var(--accent), #e9ded8);
 }
 
 .btn-light {
-  background: #e7f1ff;
-  color: #1a3d68;
+  background: #ddb7ab;
+  color: #2a3027;
 }
 
 .btn-danger {
-  background: linear-gradient(100deg, #ff922b, var(--danger));
+  background: linear-gradient(100deg, #a5a88f, var(--danger));
+  color: #f4efec;
 }
 
 .msg {
@@ -171,7 +179,7 @@ button {
   margin: 10px 0 0;
   font-size: 28px;
   font-weight: 800;
-  color: #0b467d;
+  color: #999b85;
 }
 
 .grid-2 {
@@ -210,5 +218,5 @@ th, td {
 }
 
 th {
-  color: #264a72;
+  color: #999b85;
 }
