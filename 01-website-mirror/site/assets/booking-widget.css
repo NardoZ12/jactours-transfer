@@ -1,0 +1,148 @@
+:root {
+  --jac-bg-soft: #f4efec;
+  --jac-sand: #ddb7ab;
+  --jac-olive: #999b85;
+  --jac-ink: #1f2a30;
+  --jac-line: rgba(31, 42, 48, 0.18);
+}
+
+.jac-booking-widget {
+  width: 100%;
+  border: 1px solid var(--jac-line);
+  border-radius: 20px;
+  background: linear-gradient(180deg, #fff 0%, var(--jac-bg-soft) 100%);
+  box-shadow: 0 20px 40px rgba(31, 42, 48, 0.12);
+  overflow: hidden;
+  color: var(--jac-ink);
+  font-family: "Sora", "Segoe UI", sans-serif;
+}
+
+.jac-booking-head {
+  padding: 18px 20px;
+  background: linear-gradient(120deg, var(--jac-sand), var(--jac-bg-soft));
+  border-bottom: 1px solid var(--jac-line);
+}
+
+.jac-booking-head h3 {
+  margin: 0;
+  font-size: 20px;
+  color: var(--jac-ink);
+}
+
+.jac-booking-head p {
+  margin: 6px 0 0;
+  color: rgba(31, 42, 48, 0.8);
+  font-size: 13px;
+}
+
+.jac-booking-body {
+  padding: 18px 20px 20px;
+}
+
+.jac-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.jac-grid-1 {
+  grid-column: 1 / -1;
+}
+
+.jac-label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--jac-ink);
+}
+
+.jac-input,
+.jac-select {
+  width: 100%;
+  border: 1px solid var(--jac-line);
+  border-radius: 12px;
+  background: #fff;
+  padding: 10px 12px;
+  font-size: 14px;
+  color: var(--jac-ink);
+}
+
+.jac-summary {
+  margin-top: 12px;
+  border: 1px solid var(--jac-line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 12px;
+}
+
+.jac-summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.jac-summary-row:last-child {
+  margin-bottom: 0;
+}
+
+.jac-total {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--jac-olive);
+}
+
+.jac-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+
+.jac-btn {
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 10px 16px;
+  font-weight: 800;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.jac-btn-primary {
+  background: var(--jac-olive);
+  color: #fff;
+}
+
+.jac-btn-ghost {
+  background: #fff;
+  color: var(--jac-ink);
+  border-color: var(--jac-line);
+}
+
+.jac-step {
+  display: none;
+}
+
+.jac-step.is-active {
+  display: block;
+}
+
+.jac-note {
+  margin-top: 8px;
+  font-size: 12px;
+  color: rgba(31, 42, 48, 0.7);
+}
+
+.jac-msg {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #2f5f3e;
+}
+
+@media (max-width: 760px) {
+  .jac-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -33,12 +33,39 @@ function parseQuery() {
     token: query.get("token"),
     email: query.get("email"),
     orderId: query.get("orderId"),
+    prefill: query.get("prefill"),
   };
+}
+
+function hydrateCheckoutDraft() {
+  const form = qs("#checkoutForm");
+  if (!form) return;
+
+  const query = parseQuery();
+  if (query.prefill !== "1") return;
+
+  try {
+    const raw = localStorage.getItem("jacBookingDraft");
+    if (!raw) return;
+    const draft = JSON.parse(raw);
+
+    if (draft?.serviceDate && qs("#serviceDate")) qs("#serviceDate").value = draft.serviceDate;
+    if (typeof draft?.adults !== "undefined" && qs("#adults")) qs("#adults").value = String(draft.adults);
+    if (typeof draft?.children !== "undefined" && qs("#children")) qs("#children").value = String(draft.children);
+    if (draft?.customerName && qs("#customerName")) qs("#customerName").value = draft.customerName;
+    if (draft?.customerEmail && qs("#customerEmail")) qs("#customerEmail").value = draft.customerEmail;
+    if (draft?.customerPhone && qs("#customerPhone")) qs("#customerPhone").value = draft.customerPhone;
+    if (draft?.product && qs("#notes")) qs("#notes").value = `Reserva iniciada desde: ${draft.product}`;
+  } catch (_error) {
+    // Ignore malformed local draft and continue with blank form.
+  }
 }
 
 async function initCheckoutPage() {
   const form = qs("#checkoutForm");
   if (!form) return;
+
+  hydrateCheckoutDraft();
 
   const msg = qs("#checkoutMsg");
 
