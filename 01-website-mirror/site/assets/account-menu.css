@@ -6,19 +6,28 @@
   --jac-menu-shadow: 0 18px 40px rgba(31, 42, 48, 0.16);
 }
 
-.jac-account-menu {
-  position: fixed;
-  top: 18px;
-  right: 16px;
-  z-index: 10000;
-  font-family: "Inter", "Segoe UI", sans-serif;
-}
-
 .quick-access {
   display: none !important;
 }
 
-.jac-account-button {
+.jac-account-host {
+  position: relative !important;
+}
+
+.jac-account-trigger {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  z-index: 6;
+}
+
+.jac-account-fallback {
+  position: fixed;
+  top: 18px;
+  right: 16px;
+  z-index: 10000;
   width: 42px;
   height: 42px;
   border: 1px solid var(--jac-menu-border);
@@ -33,28 +42,64 @@
   backdrop-filter: blur(10px);
 }
 
-.jac-account-button svg {
+.jac-account-fallback svg {
   width: 20px;
   height: 20px;
 }
 
-.jac-account-panel {
-  position: absolute;
-  top: 50px;
-  right: 0;
-  min-width: 190px;
-  padding: 8px;
-  border: 1px solid var(--jac-menu-border);
-  border-radius: 16px;
-  background: var(--jac-menu-bg);
-  box-shadow: var(--jac-menu-shadow);
-  backdrop-filter: blur(12px);
+.jac-account-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10010;
+}
+
+.jac-account-modal[hidden] {
   display: none;
 }
 
-.jac-account-menu.is-open .jac-account-panel {
+.jac-account-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 24, 29, 0.42);
+}
+
+.jac-account-dialog {
+  position: relative;
+  width: min(92vw, 420px);
+  margin: 10vh auto 0;
+  border-radius: 18px;
+  border: 1px solid var(--jac-menu-border);
+  background: #ffffff;
+  box-shadow: var(--jac-menu-shadow);
+  padding: 20px;
   display: grid;
-  gap: 8px;
+  gap: 10px;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  color: var(--jac-menu-ink);
+}
+
+.jac-account-dialog h3 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.jac-account-dialog p {
+  margin: 0 0 6px;
+  color: #4f5c62;
+}
+
+.jac-account-close {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  border: 0;
+  background: transparent;
+  color: #51616a;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  font-size: 18px;
+  cursor: pointer;
 }
 
 .jac-account-link {
@@ -75,17 +120,23 @@
   background: var(--jac-menu-accent);
 }
 
-.jac-account-link:hover {
-  transform: translateY(-1px);
+.jac-account-dialog small {
+  color: #5f6f77;
+  font-size: 12px;
+}
+
+.jac-modal-open {
+  overflow: hidden;
 }
 
 @media (max-width: 640px) {
-  .jac-account-menu {
+  .jac-account-fallback {
     top: 14px;
     right: 12px;
   }
 
-  .jac-account-panel {
-    min-width: 176px;
+  .jac-account-dialog {
+    margin-top: 8vh;
+    padding: 18px 16px;
   }
 }

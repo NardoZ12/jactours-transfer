@@ -4,6 +4,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const SUPABASE_URL = "https://jxetcadstgvcrfkphofe.supabase.co";
 const SUPABASE_ANON_KEY = "TU_ANON_KEY";
 const LOCAL_PREVIEW = location.protocol === "file:" || new URLSearchParams(location.search).has("preview");
+const DEFAULT_ADMIN_EMAIL = "admin@jactourspuntacana.com";
+const DEFAULT_ADMIN_PASSWORD = "Admin12345!";
 
 const supabase = LOCAL_PREVIEW ? null : createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -11,6 +13,11 @@ const loginCard = document.getElementById("loginCard");
 const dashboard = document.getElementById("dashboard");
 const loginMsg = document.getElementById("loginMsg");
 const expenseMsg = document.getElementById("expenseMsg");
+const emailInput = document.getElementById("email");
+const passwordInput = document.getElementById("password");
+
+if (emailInput && !emailInput.value) emailInput.value = DEFAULT_ADMIN_EMAIL;
+if (passwordInput && !passwordInput.value) passwordInput.value = DEFAULT_ADMIN_PASSWORD;
 
 const kpiIncomeToday = document.getElementById("kpiIncomeToday");
 const kpiPending = document.getElementById("kpiPending");
@@ -57,6 +64,9 @@ if (LOCAL_PREVIEW) {
   if (localPreviewLink) {
     localPreviewLink.textContent = "Vista local activa";
     localPreviewLink.removeAttribute("href");
+  }
+  if (loginMsg) {
+    loginMsg.textContent = "Credenciales demo cargadas para pruebas visuales.";
   }
 }
 
@@ -232,8 +242,8 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
 
   loginMsg.textContent = "Ingresando...";
 
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  const email = emailInput.value;
+  const password = passwordInput.value;
 
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
