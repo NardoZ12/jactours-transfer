@@ -1,0 +1,91 @@
+:root {
+  --jac-menu-bg: rgba(255, 255, 255, 0.92);
+  --jac-menu-border: rgba(31, 42, 48, 0.14);
+  --jac-menu-ink: #1f2a30;
+  --jac-menu-accent: #f4efec;
+  --jac-menu-shadow: 0 18px 40px rgba(31, 42, 48, 0.16);
+}
+
+.jac-account-menu {
+  position: fixed;
+  top: 18px;
+  right: 16px;
+  z-index: 10000;
+  font-family: "Inter", "Segoe UI", sans-serif;
+}
+
+.quick-access {
+  display: none !important;
+}
+
+.jac-account-button {
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--jac-menu-border);
+  border-radius: 999px;
+  background: var(--jac-menu-bg);
+  color: var(--jac-menu-ink);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--jac-menu-shadow);
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+}
+
+.jac-account-button svg {
+  width: 20px;
+  height: 20px;
+}
+
+.jac-account-panel {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  min-width: 190px;
+  padding: 8px;
+  border: 1px solid var(--jac-menu-border);
+  border-radius: 16px;
+  background: var(--jac-menu-bg);
+  box-shadow: var(--jac-menu-shadow);
+  backdrop-filter: blur(12px);
+  display: none;
+}
+
+.jac-account-menu.is-open .jac-account-panel {
+  display: grid;
+  gap: 8px;
+}
+
+.jac-account-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  border-radius: 12px;
+  color: var(--jac-menu-ink);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  background: #fff;
+  border: 1px solid rgba(31, 42, 48, 0.08);
+}
+
+.jac-account-link.primary {
+  background: var(--jac-menu-accent);
+}
+
+.jac-account-link:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 640px) {
+  .jac-account-menu {
+    top: 14px;
+    right: 12px;
+  }
+
+  .jac-account-panel {
+    min-width: 176px;
+  }
+}
