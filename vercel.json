@@ -1,18 +1,6 @@
 {
   "version": 2,
   "cleanUrls": false,
-  "redirects": [
-    {
-      "source": "/panelweb",
-      "destination": "https://panel.jactourspuntacana.com/",
-      "permanent": true
-    },
-    {
-      "source": "/panelweb/:path*",
-      "destination": "https://panel.jactourspuntacana.com/:path*",
-      "permanent": true
-    }
-  ],
   "rewrites": [
     {
       "source": "/",
@@ -32,6 +20,14 @@
           "value": "panel.jactourspuntacana.com"
         }
       ],
+      "destination": "/02-sistema-reservas/panelweb/:path*"
+    },
+    {
+      "source": "/panelweb",
+      "destination": "/02-sistema-reservas/panelweb/index.html"
+    },
+    {
+      "source": "/panelweb/:path*",
       "destination": "/02-sistema-reservas/panelweb/:path*"
     },
     {
