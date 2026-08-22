@@ -22,9 +22,21 @@ const kpiMargin = document.getElementById("kpiMargin");
 const reservationsBody = document.getElementById("reservationsBody");
 const incomeBody = document.getElementById("incomeBody");
 const marginBody = document.getElementById("marginBody");
+const servicesBody = document.getElementById("servicesBody");
+const servicesCount = document.getElementById("servicesCount");
+const servicesMsg = document.getElementById("servicesMsg");
 
 function money(value) {
   return new Intl.NumberFormat("es-DO", { style: "currency", currency: "USD" }).format(Number(value || 0));
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 function toDateInputValue(date = new Date()) {
@@ -91,6 +103,7 @@ async function loadDashboard() {
     loadReservations(),
     loadIncomeDaily(),
     loadMarginTable(),
+    loadServices(),
   ]);
 }
 
@@ -133,7 +146,78 @@ async function loadDemoDashboard() {
   kpiIncomeToday.textContent = money(demoIncome.find((row) => row.day === toDateInputValue())?.income || 0);
   kpiMargin.textContent = money(demoMargin.reduce((acc, row) => acc + Number(row.gross_margin || 0), 0));
   loginMsg.textContent = "Modo vista local activo. No usa Supabase.";
+  renderServices([
+    { id: "demo-1", title: "Isla Saona Clasica", category: "excursion", base_price: 49, offer_price: 39, offer_label: "Oferta web", offer_active: true },
+    { id: "demo-2", title: "Tiara 50", category: "yate", base_price: 49, offer_price: null, offer_label: "", offer_active: false },
+  ]);
 }
+
+function renderServices(services) {
+  servicesCount.textContent = `${services.length} experiencias`;
+  servicesBody.innerHTML = services.map((service) => `
+    <tr data-service-id="${escapeHtml(service.id)}">
+      <td><strong>${escapeHtml(service.title)}</strong></td>
+      <td>${escapeHtml(service.category)}</td>
+      <td><input class="price-input" data-field="base_price" type="number" min="0" step="0.01" value="${Number(service.base_price || 0)}" aria-label="Precio de ${escapeHtml(service.title)}"></td>
+      <td><input class="price-input" data-field="offer_price" type="number" min="0" step="0.01" value="${service.offer_price ?? ""}" placeholder="Sin oferta" aria-label="Precio de oferta de ${escapeHtml(service.title)}"></td>
+      <td><input class="offer-label-input" data-field="offer_label" type="text" maxlength="80" value="${escapeHtml(service.offer_label)}" placeholder="Ej. Oferta web" aria-label="Etiqueta de oferta de ${escapeHtml(service.title)}"></td>
+      <td><label class="offer-toggle"><input data-field="offer_active" type="checkbox" ${service.offer_active ? "checked" : ""}><span>Publicar</span></label></td>
+      <td><button class="service-save" type="button">Guardar</button></td>
+    </tr>
+  `).join("");
+}
+
+async function loadServices() {
+  if (LOCAL_PREVIEW) return;
+
+  servicesMsg.textContent = "";
+  const { data, error } = await supabase
+    .from("services")
+    .select("id,slug,title,category,base_price,offer_price,offer_label,offer_active")
+    .order("category")
+    .order("title");
+
+  if (error) {
+    servicesBody.innerHTML = `<tr><td colspan="7">${escapeHtml(error.message)}</td></tr>`;
+    return;
+  }
+
+  renderServices(data);
+}
+
+servicesBody.addEventListener("click", async (event) => {
+  const button = event.target.closest(".service-save");
+  if (!button) return;
+  const row = button.closest("tr[data-service-id]");
+
+  if (LOCAL_PREVIEW) {
+    servicesMsg.textContent = "Vista local: los cambios no se guardaron.";
+    return;
+  }
+
+  const basePrice = Number(row.querySelector('[data-field="base_price"]').value);
+  const offerInput = row.querySelector('[data-field="offer_price"]');
+  const offerPrice = offerInput.value === "" ? null : Number(offerInput.value);
+  const offerActive = row.querySelector('[data-field="offer_active"]').checked;
+  if (!Number.isFinite(basePrice) || basePrice < 0 || (offerActive && (offerPrice === null || offerPrice < 0))) {
+    servicesMsg.textContent = "Revisa los precios: una oferta activa necesita un precio valido.";
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Guardando...";
+  const payload = {
+    base_price: basePrice,
+    offer_price: offerPrice,
+    offer_label: row.querySelector('[data-field="offer_label"]').value.trim() || null,
+    offer_active: offerActive,
+  };
+  const { error } = await supabase.from("services").update(payload).eq("id", row.dataset.serviceId);
+
+  button.disabled = false;
+  button.textContent = "Guardar";
+  servicesMsg.textContent = error ? `Error: ${error.message}` : "Precio y oferta actualizados.";
+});
 
 async function loadReservations() {
   if (LOCAL_PREVIEW) return;

@@ -84,6 +84,28 @@
   margin-bottom: 6px;
 }
 
+.jac-offer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  color: #2a3027;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.jac-offer span {
+  padding: 4px 7px;
+  border-radius: 6px;
+  background: #f27d2e;
+  color: #fff;
+}
+
+.jac-offer del {
+  color: #6d7477;
+  font-weight: 600;
+}
+
 .jac-summary-row:last-child {
   margin-bottom: 0;
 }

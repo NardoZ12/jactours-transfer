@@ -1,5 +1,7 @@
 (function () {
   var SELECTOR_IFRAME = 'iframe[src*="calendly.com"]';
+  var SUPABASE_URL = 'https://jxetcadstgvcrfkphofe.supabase.co';
+  var SUPABASE_ANON_KEY = 'sb_publishable_aN6W7TXtid9mCFeDHovBlw_B5ieoxGG';
 
   function money(value) {
     return new Intl.NumberFormat('es-DO', { style: 'currency', currency: 'USD' }).format(Number(value || 0));
@@ -32,7 +34,35 @@
     return document.title.replace(/\s*\|.*$/, '').trim() || 'Excursion';
   }
 
-  function buildMarkup(title, basePrice) {
+  function detectSlug() {
+    var filename = (window.location.pathname || '').split('/').pop() || '';
+    return decodeURIComponent(filename).replace(/\.html$/i, '');
+  }
+
+  function loadCatalogService() {
+    var slug = detectSlug();
+    if (!slug) return Promise.resolve(null);
+    var endpoint = SUPABASE_URL + '/rest/v1/services?select=title,base_price,offer_price,offer_label,offer_active&active=eq.true&slug=eq.' + encodeURIComponent(slug) + '&limit=1';
+    return fetch(endpoint, {
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: 'Bearer ' + SUPABASE_ANON_KEY
+      }
+    })
+      .then(function (response) {
+        if (!response.ok) throw new Error('No se pudo cargar el precio');
+        return response.json();
+      })
+      .then(function (rows) { return rows[0] || null; })
+      .catch(function () { return null; });
+  }
+
+  function buildMarkup(title, basePrice, service) {
+    var hasOffer = service && service.offer_active && service.offer_price !== null;
+    var regularPrice = service ? Number(service.base_price || 0) : basePrice;
+    var offerMarkup = hasOffer
+      ? '<div class="jac-offer"><span>' + (service.offer_label || 'Oferta') + '</span><del>' + money(regularPrice) + '</del></div>'
+      : '';
     return '' +
       '<section class="jac-booking-widget">' +
       '  <div class="jac-booking-head">' +
@@ -47,7 +77,8 @@
       '        <label class="jac-label">Ninos<input class="jac-input" data-jac-children type="number" min="0" value="0" /></label>' +
       '      </div>' +
       '      <div class="jac-summary">' +
-      '        <div class="jac-summary-row"><span>Precio base por persona</span><strong data-jac-base>' + money(basePrice) + '</strong></div>' +
+      '        <div class="jac-summary-row"><span>Precio por persona</span><strong data-jac-base>' + money(basePrice) + '</strong></div>' +
+      offerMarkup +
       '        <div class="jac-summary-row"><span>Total estimado</span><strong class="jac-total" data-jac-total>' + money(basePrice) + '</strong></div>' +
       '      </div>' +
       '      <div class="jac-actions">' +
@@ -87,12 +118,16 @@
     return 'checkout.html?prefill=1';
   }
 
-  function mountWidget(host) {
+  async function mountWidget(host) {
     if (!host || host.dataset.jacBookingApplied === '1') return;
-    var title = detectTitle();
-    var basePrice = detectBasePrice(document.body);
-    host.innerHTML = buildMarkup(title, basePrice);
     host.dataset.jacBookingApplied = '1';
+    var service = await loadCatalogService();
+    var title = service && service.title ? service.title : detectTitle();
+    var fallbackPrice = detectBasePrice(document.body);
+    var basePrice = service
+      ? Number(service.offer_active && service.offer_price !== null ? service.offer_price : service.base_price)
+      : fallbackPrice;
+    host.innerHTML = buildMarkup(title, basePrice, service);
 
     var step1 = host.querySelector('[data-jac-step="1"]');
     var step2 = host.querySelector('[data-jac-step="2"]');
