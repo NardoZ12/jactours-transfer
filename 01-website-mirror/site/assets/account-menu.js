@@ -1,5 +1,4 @@
 (function () {
-  // TODO: replace with the real Supabase anon key (Project Settings > API) before this can log in for real.
   var SUPABASE_URL = "https://jxetcadstgvcrfkphofe.supabase.co";
   var SUPABASE_ANON_KEY = "sb_publishable_aN6W7TXtid9mCFeDHovBlw_B5ieoxGG";
 
@@ -31,7 +30,6 @@
       '<button type="submit" class="jac-account-link primary">Entrar</button>' +
       '</form>' +
       '<a class="jac-account-link" href="' + base + 'cliente-registro.html">Registrarse</a>' +
-      '<small>Usuario demo: admin@jactourspuntacana.com</small>' +
       '</div>';
 
     modal.addEventListener("click", function (event) {
