@@ -1,7 +1,7 @@
 (function () {
   // TODO: replace with the real Supabase anon key (Project Settings > API) before this can log in for real.
   var SUPABASE_URL = "https://jxetcadstgvcrfkphofe.supabase.co";
-  var SUPABASE_ANON_KEY = "TU_ANON_KEY";
+  var SUPABASE_ANON_KEY = "sb_publishable_aN6W7TXtid9mCFeDHovBlw_B5ieoxGG";
 
   function panelBasePath() {
     var path = (window.location.pathname || "").replace(/\\/g, "/");

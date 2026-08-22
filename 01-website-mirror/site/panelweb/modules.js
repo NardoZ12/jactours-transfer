@@ -1,7 +1,7 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const SUPABASE_URL = "https://jxetcadstgvcrfkphofe.supabase.co";
-const SUPABASE_ANON_KEY = "TU_ANON_KEY";
+const SUPABASE_ANON_KEY = "sb_publishable_aN6W7TXtid9mCFeDHovBlw_B5ieoxGG";
 const LOCAL_PREVIEW = location.protocol === "file:" || new URLSearchParams(location.search).has("preview");
 const supabase = LOCAL_PREVIEW ? null : createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 

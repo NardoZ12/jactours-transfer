@@ -2,7 +2,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 // Reemplaza estos valores por los de tu proyecto Supabase.
 const SUPABASE_URL = "https://jxetcadstgvcrfkphofe.supabase.co";
-const SUPABASE_ANON_KEY = "TU_ANON_KEY";
+const SUPABASE_ANON_KEY = "sb_publishable_aN6W7TXtid9mCFeDHovBlw_B5ieoxGG";
 const LOCAL_PREVIEW = location.protocol === "file:" || new URLSearchParams(location.search).has("preview");
 const DEFAULT_ADMIN_EMAIL = "admin@jactourspuntacana.com";
 const DEFAULT_ADMIN_PASSWORD = "Admin12345!";
