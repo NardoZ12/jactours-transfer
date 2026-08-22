@@ -1,50 +1,92 @@
 :root {
-  --jac-menu-bg: rgba(255, 255, 255, 0.92);
+  --jac-menu-bg: rgba(255, 255, 255, 0.82);
   --jac-menu-border: rgba(31, 42, 48, 0.14);
   --jac-menu-ink: #1f2a30;
   --jac-menu-accent: #f4efec;
   --jac-menu-shadow: 0 18px 40px rgba(31, 42, 48, 0.16);
+  --jac-menu-button-bg: #f3f0eb;
+  --jac-menu-button-text: #1f2a30;
 }
 
 .quick-access {
   display: none !important;
 }
 
-.jac-account-host {
-  position: relative !important;
+/* Remove the weather widget and language selector from the header CTA row. */
+.framer-un2Zd,
+.framer-locale-picker,
+.framer-1a4jszc-container {
+  display: none !important;
 }
 
-.jac-account-trigger {
-  position: absolute;
-  inset: 0;
-  border: 0;
-  background: transparent;
+.jac-menu-login-link {
+  display: block;
+  width: fit-content;
+  color: #fff;
+  font-family: "Inter", "Segoe UI", sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  text-decoration: none;
   cursor: pointer;
-  z-index: 6;
+  white-space: nowrap;
 }
 
-.jac-account-fallback {
+.jac-menu-login-link:hover,
+.jac-menu-login-link:focus-visible {
+  color: rgb(0, 153, 255);
+  text-decoration: underline;
+}
+
+/* Desktop persistent header CTA row: the link is the right-most item, sitting almost flush
+   against the viewport edge (nav only has 20px padding); pull it away from the corner a bit. */
+.framer-QBn32 .framer-vazdh3 .jac-menu-login-link {
+  margin-right: 24px;
+}
+
+/* That wrapper is sized to fit exactly one button; let it grow for the added link. */
+.framer-1wbumrc {
+  height: auto !important;
+}
+
+.jac-account-header-button {
   position: fixed;
   top: 18px;
-  right: 16px;
+  right: 20px;
   z-index: 10000;
-  width: 42px;
-  height: 42px;
-  border: 1px solid var(--jac-menu-border);
-  border-radius: 999px;
-  background: var(--jac-menu-bg);
-  color: var(--jac-menu-ink);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--jac-menu-shadow);
+  min-width: 170px;
+  height: 46px;
+  padding: 0 20px;
+  border: 1px solid rgba(31, 42, 48, 0.08);
+  border-radius: 999px;
+  background: var(--jac-menu-button-bg);
+  color: var(--jac-menu-button-text);
+  font-family: "Inter", "Segoe UI", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-decoration: none;
   cursor: pointer;
+  box-shadow: 0 12px 30px rgba(31, 42, 48, 0.12);
   backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
 }
 
-.jac-account-fallback svg {
-  width: 20px;
-  height: 20px;
+.jac-account-header-button:hover,
+.jac-account-header-button:focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 32px rgba(31, 42, 48, 0.14);
+  background: #ece7e2;
+  outline: none;
+}
+
+.jac-account-header-button:active {
+  transform: translateY(0);
 }
 
 .jac-account-modal {
@@ -105,6 +147,7 @@
 .jac-account-link {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 10px;
   padding: 11px 12px;
   border-radius: 12px;
@@ -114,10 +157,50 @@
   font-weight: 700;
   background: #fff;
   border: 1px solid rgba(31, 42, 48, 0.08);
+  cursor: pointer;
 }
 
 .jac-account-link.primary {
   background: var(--jac-menu-accent);
+}
+
+.jac-account-form {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
+.jac-account-form label {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: #4f5c62;
+}
+
+.jac-account-form input {
+  font: inherit;
+  font-weight: 400;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(31, 42, 48, 0.16);
+  color: var(--jac-menu-ink);
+}
+
+.jac-account-form input:focus-visible {
+  outline: 2px solid rgb(0, 153, 255);
+  outline-offset: 1px;
+}
+
+.jac-account-form button[disabled] {
+  opacity: 0.7;
+  cursor: default;
+}
+
+.jac-account-error {
+  margin: 0;
+  color: #c0392b;
+  font-size: 13px;
 }
 
 .jac-account-dialog small {

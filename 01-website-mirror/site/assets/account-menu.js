@@ -1,12 +1,7 @@
 (function () {
-  var observerStarted = false;
-  var fallbackTimer = null;
-
-  function isVisible(el) {
-    if (!el) return false;
-    var style = window.getComputedStyle(el);
-    return style.display !== "none" && style.visibility !== "hidden" && el.offsetParent !== null;
-  }
+  // TODO: replace with the real Supabase anon key (Project Settings > API) before this can log in for real.
+  var SUPABASE_URL = "https://jxetcadstgvcrfkphofe.supabase.co";
+  var SUPABASE_ANON_KEY = "TU_ANON_KEY";
 
   function panelBasePath() {
     var path = (window.location.pathname || "").replace(/\\/g, "/");
@@ -25,11 +20,16 @@
     modal.setAttribute("hidden", "hidden");
     modal.innerHTML =
       '<div class="jac-account-backdrop" data-close="1"></div>' +
-      '<div class="jac-account-dialog" role="dialog" aria-modal="true" aria-label="Acceso de cuenta">' +
+      '<div class="jac-account-dialog" role="dialog" aria-modal="true" aria-label="Iniciar sesi\u00f3n">' +
       '<button class="jac-account-close" type="button" aria-label="Cerrar" data-close="1">x</button>' +
-      '<h3>Tu cuenta</h3>' +
-      '<p>Elige como quieres continuar.</p>' +
-      '<a class="jac-account-link primary" href="' + base + 'index.html?preview=1">Iniciar sesion</a>' +
+      '<h3>Iniciar sesi\u00f3n</h3>' +
+      '<p>Ingresa con tu correo y contrase\u00f1a.</p>' +
+      '<form class="jac-account-form" novalidate>' +
+      '<label>Correo electr\u00f3nico<input type="email" name="email" autocomplete="email" required></label>' +
+      '<label>Contrase\u00f1a<input type="password" name="password" autocomplete="current-password" required></label>' +
+      '<p class="jac-account-error" hidden></p>' +
+      '<button type="submit" class="jac-account-link primary">Entrar</button>' +
+      '</form>' +
       '<a class="jac-account-link" href="' + base + 'cliente-registro.html">Registrarse</a>' +
       '<small>Usuario demo: admin@jactourspuntacana.com</small>' +
       '</div>';
@@ -45,7 +45,39 @@
       if (event.key === "Escape") closeModal();
     });
 
+    modal.querySelector(".jac-account-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      handleLoginSubmit(event.target, base);
+    });
+
     document.body.appendChild(modal);
+  }
+
+  function handleLoginSubmit(form, base) {
+    var email = form.email.value.trim();
+    var password = form.password.value;
+    var errorEl = form.querySelector(".jac-account-error");
+    var submitBtn = form.querySelector('button[type="submit"]');
+
+    errorEl.hidden = true;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Entrando...";
+
+    import("https://esm.sh/@supabase/supabase-js@2")
+      .then(function (mod) {
+        var supabase = mod.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        return supabase.auth.signInWithPassword({ email: email, password: password });
+      })
+      .then(function (result) {
+        if (result.error) throw result.error;
+        window.location.href = base + "index.html";
+      })
+      .catch(function (err) {
+        errorEl.textContent = (err && err.message) || "No se pudo iniciar sesi\u00f3n.";
+        errorEl.hidden = false;
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Entrar";
+      });
   }
 
   function openModal() {
@@ -62,117 +94,35 @@
     document.body.classList.remove("jac-modal-open");
   }
 
-  function findHeaderBadgeHost() {
-    var oldHosts = document.querySelectorAll(".jac-account-host");
-    for (var h = 0; h < oldHosts.length; h++) {
-      if (!isVisible(oldHosts[h])) {
-        oldHosts[h].classList.remove("jac-account-host");
-        var oldTrigger = oldHosts[h].querySelector(".jac-account-trigger");
-        if (oldTrigger) oldTrigger.remove();
-      }
-    }
+  function ensureMenuLoginLink() {
+    document.querySelectorAll('[data-framer-name="Bottones"]').forEach(function (bottones) {
+      // Two "Bottones" nodes exist: the compact always-visible header widget, and the
+      // full mobile menu panel (identified by the nav link <ul> right before it). Only
+      // the latter is the "menu" the login link should live in.
+      var prev = bottones.previousElementSibling;
+      if (!prev || prev.tagName !== "UL") return;
+      if (bottones.querySelector(".jac-menu-login-link")) return;
 
-    var nodes = document.querySelectorAll("p,span,div");
-    for (var i = 0; i < nodes.length; i++) {
-      var node = nodes[i];
-      var text = (node.textContent || "").trim();
-      if (!/^(\+\s*\d+|error\s*c|error|asf|c\u00b0)$/i.test(text)) continue;
-      if (!isVisible(node)) continue;
-
-      var host = node.parentElement;
-      while (host && host !== document.body) {
-        if (host.querySelector("svg") && host.children.length >= 2) {
-          return { host: host, label: node };
-        }
-        host = host.parentElement;
-      }
-    }
-    return null;
-  }
-
-  function ensureDockedTrigger() {
-    var found = findHeaderBadgeHost();
-    if (!found || !found.host) return false;
-    var host = found.host;
-
-    if (found.label && found.label.parentElement) {
-      found.label.textContent = "";
-      found.label.parentElement.style.display = "none";
-    }
-
-    host.classList.add("jac-account-host");
-
-    var noisyLabels = host.querySelectorAll("p,span,div");
-    for (var i = 0; i < noisyLabels.length; i++) {
-      var raw = (noisyLabels[i].textContent || "").trim();
-      if (/^(\+\s*\d+|error\s*c|error|asf|c\u00b0)$/i.test(raw)) {
-        noisyLabels[i].textContent = "";
-        noisyLabels[i].style.display = "none";
-      }
-    }
-
-    if (!host.querySelector(".jac-account-trigger")) {
-      var trigger = document.createElement("button");
-      trigger.type = "button";
-      trigger.className = "jac-account-trigger";
-      trigger.setAttribute("aria-label", "Iniciar sesion o registrarse");
-      trigger.addEventListener("click", function (event) {
+      var link = document.createElement("a");
+      link.href = "#";
+      link.className = "jac-menu-login-link";
+      link.textContent = "Iniciar sesión";
+      link.addEventListener("click", function (event) {
         event.preventDefault();
-        event.stopPropagation();
         openModal();
       });
-      host.appendChild(trigger);
-    }
 
-    return true;
-  }
-
-  function ensureFallbackButton() {
-    if (document.querySelector(".jac-account-fallback")) return;
-    var button = document.createElement("button");
-    button.type = "button";
-    button.className = "jac-account-fallback";
-    button.setAttribute("aria-label", "Cuenta");
-    button.innerHTML =
-      '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
-      '<path d="M12 12a4 4 0 1 0-4-4 4 4 0 0 0 4 4Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' +
-      '<path d="M4.5 20a7.5 7.5 0 0 1 15 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>' +
-      '</svg>';
-    button.addEventListener("click", function () {
-      openModal();
+      // The weather/language widgets are hidden via CSS; put the link in that same
+      // row, next to the button, instead of stacking it above the whole "Bottones" box.
+      var row = bottones.querySelector('[data-framer-name="Desktop"]') || bottones;
+      row.appendChild(link);
     });
-    document.body.appendChild(button);
-  }
-
-  function removeFallbackButton() {
-    var fallback = document.querySelector(".jac-account-fallback");
-    if (fallback) fallback.remove();
   }
 
   function ensureAccountAccess() {
     if (!document.body) return;
     ensureModal();
-    if (ensureDockedTrigger()) {
-      removeFallbackButton();
-      if (fallbackTimer) {
-        clearTimeout(fallbackTimer);
-        fallbackTimer = null;
-      }
-    } else if (!fallbackTimer) {
-      fallbackTimer = setTimeout(function () {
-        if (!ensureDockedTrigger()) {
-          ensureFallbackButton();
-        }
-        fallbackTimer = null;
-      }, 2000);
-    }
-
-    if (observerStarted) return;
-    observerStarted = true;
-    var observer = new MutationObserver(function () {
-      ensureAccountAccess();
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
+    ensureMenuLoginLink();
   }
 
   if (document.readyState === "loading") {
@@ -180,4 +130,9 @@
   } else {
     ensureAccountAccess();
   }
+
+  // Framer re-renders the mobile menu after hydration; keep watching for it.
+  new MutationObserver(function () {
+    ensureMenuLoginLink();
+  }).observe(document.documentElement, { childList: true, subtree: true });
 })();

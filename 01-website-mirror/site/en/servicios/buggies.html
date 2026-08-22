@@ -6,6 +6,9 @@
 
 <head>
 	<meta charset="utf-8">
+	<link rel="preconnect" href="https://framerusercontent.com" crossorigin>
+	<link rel="dns-prefetch" href="https://framerusercontent.com">
+	<link rel="preconnect" href="https://events.framer.com">
 	
 	
 	<script>try{if(localStorage.get("__framer_force_showing_editorbar_since")){const n=document.createElement("link");n.rel = "modulepreload";n.href="https://framer.com/edit/init.mjs";document.head.appendChild(n)}}catch(e){}</script>
@@ -18,8 +21,8 @@
     <meta name="description" content="Descubre la Zona Colonial de Santo Domingo: Catedral Primada, Alcázar de Colón, Los Tres Ojos y más en un recorrido histórico único.">
     <meta name="framer-search-index" content="https://framerusercontent.com/sites/3Db3JrAOpEaTE5Tf2jPAnk/searchIndex-hXqpEDDgD2I7.json">
     <meta name="framer-search-index-fallback" content="https://framerusercontent.com/sites/3Db3JrAOpEaTE5Tf2jPAnk/searchIndex-JKJWxU79PbFg.json">
-    <link rel="icon" href="assets/favicon-jac.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="assets/favicon-jac.svg">
+    <link rel="icon" href="assets/favicon-jac.png" type="image/png">
+    <link rel="apple-touch-icon" href="assets/apple-touch-icon-jac.png">
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Excursión Zona Colonial Santo Domingo | Historia y Cultura">
@@ -337,11 +340,18 @@ fbq('track', 'PageView');
 <style data-custom-hide-framer-badge>#n0ccwk,[title^='Create a free website with Framer']{display:none!important;visibility:hidden!important;opacity:0!important;pointer-events:none!important}</style><style id="jac-brand-overrides">
 :root {
   --jac-accent: #f4efec;
-  --jac-body: #ddb7ab;
+  --jac-body: #29509d;
   --jac-strong: #999b85;
 }
 h1,h2,h3,h4,h5,h6 { color: var(--jac-strong) !important; }
 p, li { color: var(--jac-body) !important; }
+/* Hero title override to match the Jac logo green */
+body [data-framer-name="Title"] .framer-text,
+body [data-framer-name="Contenido"] .framer-text,
+body .framer-text.framer-styles-preset-h0vlk9 {
+  color: #999b85 !important;
+  --framer-text-color: #999b85 !important;
+}
 a[role="button"], button, .quick-access a {
   background: var(--jac-accent) !important;
   color: #1f2a30 !important;
