@@ -1,6 +1,16 @@
 (function () {
   var SUPABASE_URL = "https://jxetcadstgvcrfkphofe.supabase.co";
   var SUPABASE_ANON_KEY = "sb_publishable_aN6W7TXtid9mCFeDHovBlw_B5ieoxGG";
+  var supabaseClientPromise;
+
+  function getSupabaseClient() {
+    if (!supabaseClientPromise) {
+      supabaseClientPromise = import("https://esm.sh/@supabase/supabase-js@2").then(function (mod) {
+        return mod.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      });
+    }
+    return supabaseClientPromise;
+  }
 
   function panelBasePath() {
     var path = (window.location.pathname || "").replace(/\\/g, "/");
@@ -29,7 +39,13 @@
       '<p class="jac-account-error" hidden></p>' +
       '<button type="submit" class="jac-account-link primary">Entrar</button>' +
       '</form>' +
-      '<a class="jac-account-link" href="' + base + 'cliente-registro.html">Registrarse</a>' +
+      '<form class="jac-account-form jac-account-password-form" hidden>' +
+      '<label>Nueva contrase\u00f1a<input type="password" name="newPassword" autocomplete="new-password" minlength="8" required></label>' +
+      '<label>Confirmar contrase\u00f1a<input type="password" name="confirmPassword" autocomplete="new-password" minlength="8" required></label>' +
+      '<p class="jac-account-error" hidden></p>' +
+      '<button type="submit" class="jac-account-link primary">Guardar contrase\u00f1a</button>' +
+      '</form>' +
+      '<a class="jac-account-link jac-account-register-link" href="' + base + 'cliente-registro.html">Registrarse</a>' +
       '</div>';
 
     modal.addEventListener("click", function (event) {
@@ -47,6 +63,10 @@
       event.preventDefault();
       handleLoginSubmit(event.target, base);
     });
+    modal.querySelector(".jac-account-password-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      handlePasswordSubmit(event.target, base);
+    });
 
     document.body.appendChild(modal);
   }
@@ -61,9 +81,8 @@
     submitBtn.disabled = true;
     submitBtn.textContent = "Entrando...";
 
-    import("https://esm.sh/@supabase/supabase-js@2")
-      .then(function (mod) {
-        var supabase = mod.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    getSupabaseClient()
+      .then(function (supabase) {
         return supabase.auth.signInWithPassword({ email: email, password: password });
       })
       .then(function (result) {
@@ -75,6 +94,65 @@
         errorEl.hidden = false;
         submitBtn.disabled = false;
         submitBtn.textContent = "Entrar";
+      });
+  }
+
+  function handlePasswordSubmit(form, base) {
+    var password = form.newPassword.value;
+    var confirmation = form.confirmPassword.value;
+    var errorEl = form.querySelector(".jac-account-error");
+    var submitBtn = form.querySelector('button[type="submit"]');
+
+    errorEl.hidden = true;
+    if (password.length < 8 || password !== confirmation) {
+      errorEl.textContent = password.length < 8
+        ? "La contrase\u00f1a debe tener al menos 8 caracteres."
+        : "Las contrase\u00f1as no coinciden.";
+      errorEl.hidden = false;
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Guardando...";
+    getSupabaseClient()
+      .then(function (supabase) {
+        return supabase.auth.updateUser({ password: password });
+      })
+      .then(function (result) {
+        if (result.error) throw result.error;
+        window.location.href = base + "index.html";
+      })
+      .catch(function (err) {
+        errorEl.textContent = (err && err.message) || "No se pudo guardar la contrase\u00f1a.";
+        errorEl.hidden = false;
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Guardar contrase\u00f1a";
+      });
+  }
+
+  function showPasswordSetup() {
+    var modal = document.querySelector(".jac-account-modal");
+    if (!modal) return;
+    modal.querySelector("h3").textContent = "Crear contrase\u00f1a";
+    modal.querySelector(".jac-account-dialog > p").textContent = "Define la contrase\u00f1a para tu cuenta administrativa.";
+    modal.querySelector(".jac-account-form:not(.jac-account-password-form)").hidden = true;
+    modal.querySelector(".jac-account-password-form").hidden = false;
+    modal.querySelector(".jac-account-register-link").hidden = true;
+    openModal();
+  }
+
+  function detectPasswordSetup() {
+    var hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    var queryParams = new URLSearchParams(window.location.search);
+    var type = hashParams.get("type") || queryParams.get("type");
+    if (type !== "invite" && type !== "recovery" && !queryParams.has("code")) return;
+
+    getSupabaseClient()
+      .then(function (supabase) {
+        return supabase.auth.getSession();
+      })
+      .then(function (result) {
+        if (result.data && result.data.session) showPasswordSetup();
       });
   }
 
@@ -121,6 +199,7 @@
     if (!document.body) return;
     ensureModal();
     ensureMenuLoginLink();
+    detectPasswordSetup();
   }
 
   if (document.readyState === "loading") {

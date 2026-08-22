@@ -170,6 +170,11 @@
   margin-bottom: 4px;
 }
 
+.jac-account-form[hidden],
+.jac-account-register-link[hidden] {
+  display: none;
+}
+
 .jac-account-form label {
   display: grid;
   gap: 6px;
