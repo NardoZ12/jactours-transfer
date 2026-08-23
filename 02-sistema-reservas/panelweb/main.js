@@ -255,17 +255,29 @@ async function loadIncomeDaily() {
   if (LOCAL_PREVIEW) return;
 
   const { data, error } = await supabase
-    .from("v_income_daily")
-    .select("day,currency,income")
-    .order("day", { ascending: false })
-    .limit(10);
+    .from("payments")
+    .select("created_at,currency,amount,status")
+    .order("created_at", { ascending: false });
 
   if (error) {
     incomeBody.innerHTML = `<tr><td colspan="3">${error.message}</td></tr>`;
     return;
   }
 
-  incomeBody.innerHTML = data
+  const byDay = new Map();
+  for (const payment of data || []) {
+    if (payment.status !== "captured") continue;
+    const day = new Date(payment.created_at).toISOString().slice(0, 10);
+    const current = Number(byDay.get(day) || 0) + Number(payment.amount || 0);
+    byDay.set(day, current);
+  }
+
+  const rows = [...byDay.entries()]
+    .map(([day, income]) => ({ day, currency: "USD", income }))
+    .sort((a, b) => b.day.localeCompare(a.day))
+    .slice(0, 10);
+
+  incomeBody.innerHTML = rows
     .map((r) => `
       <tr>
         <td>${r.day}</td>
@@ -276,25 +288,53 @@ async function loadIncomeDaily() {
     .join("");
 
   const today = toDateInputValue();
-  const rowToday = data.find((row) => row.day === today);
+  const rowToday = rows.find((row) => row.day === today);
   kpiIncomeToday.textContent = money(rowToday?.income || 0);
 }
 
 async function loadMarginTable() {
   if (LOCAL_PREVIEW) return;
 
-  const { data, error } = await supabase
-    .from("v_margin_by_reservation")
-    .select("reservation_code, paid_total, total_expenses, gross_margin")
-    .order("reservation_code", { ascending: false })
-    .limit(12);
+  const [{ data: reservations, error: reservationsError }, { data: payments, error: paymentsError }, { data: expenses, error: expensesError }] = await Promise.all([
+    supabase.from("reservations").select("id,reservation_code,total"),
+    supabase.from("payments").select("reservation_id,amount,status"),
+    supabase.from("expenses").select("reservation_id,amount"),
+  ]);
 
-  if (error) {
-    marginBody.innerHTML = `<tr><td colspan="4">${error.message}</td></tr>`;
+  if (reservationsError || paymentsError || expensesError) {
+    marginBody.innerHTML = `<tr><td colspan="4">${reservationsError?.message || paymentsError?.message || expensesError?.message}</td></tr>`;
     return;
   }
 
-  marginBody.innerHTML = data
+  const paidByReservation = new Map();
+  for (const payment of payments || []) {
+    if (payment.status !== "captured") continue;
+    const current = Number(paidByReservation.get(payment.reservation_id) || 0) + Number(payment.amount || 0);
+    paidByReservation.set(payment.reservation_id, current);
+  }
+
+  const expensesByReservation = new Map();
+  for (const expense of expenses || []) {
+    const current = Number(expensesByReservation.get(expense.reservation_id) || 0) + Number(expense.amount || 0);
+    expensesByReservation.set(expense.reservation_id, current);
+  }
+
+  const rows = (reservations || [])
+    .map((reservation) => {
+      const paidTotal = Number(paidByReservation.get(reservation.id) || 0);
+      const totalExpenses = Number(expensesByReservation.get(reservation.id) || 0);
+      const grossMargin = paidTotal - totalExpenses;
+      return {
+        reservation_code: reservation.reservation_code,
+        paid_total: paidTotal,
+        total_expenses: totalExpenses,
+        gross_margin: grossMargin,
+      };
+    })
+    .sort((a, b) => (b.reservation_code || "").localeCompare(a.reservation_code || ""))
+    .slice(0, 12);
+
+  marginBody.innerHTML = rows
     .map((r) => `
       <tr>
         <td>${r.reservation_code}</td>
@@ -305,7 +345,7 @@ async function loadMarginTable() {
     `)
     .join("");
 
-  const totalMargin = data.reduce((acc, row) => acc + Number(row.gross_margin || 0), 0);
+  const totalMargin = rows.reduce((acc, row) => acc + Number(row.gross_margin || 0), 0);
   kpiMargin.textContent = money(totalMargin);
 }
 

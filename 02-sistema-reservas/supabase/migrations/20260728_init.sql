@@ -212,6 +212,28 @@ left join public.payments p on p.reservation_id = r.id
 left join public.expenses e on e.reservation_id = r.id
 group by r.id, r.reservation_code, r.total;
 
+-- Ensure the dashboard reporting objects exist in the live schema cache.
+create or replace view public.v_income_daily as
+select
+  date_trunc('day', created_at)::date as day,
+  currency,
+  sum(case when status = 'captured' then amount else 0 end) as income
+from public.payments
+group by 1, 2;
+
+create or replace view public.v_margin_by_reservation as
+select
+  r.id as reservation_id,
+  r.reservation_code,
+  r.total as reservation_total,
+  coalesce(sum(case when p.status = 'captured' then p.amount else 0 end), 0) as paid_total,
+  coalesce(sum(e.amount), 0) as total_expenses,
+  coalesce(sum(case when p.status = 'captured' then p.amount else 0 end), 0) - coalesce(sum(e.amount), 0) as gross_margin
+from public.reservations r
+left join public.payments p on p.reservation_id = r.id
+left join public.expenses e on e.reservation_id = r.id
+group by r.id, r.reservation_code, r.total;
+
 -- RLS
 alter table public.profiles enable row level security;
 alter table public.services enable row level security;

@@ -39,10 +39,60 @@
     return decodeURIComponent(filename).replace(/\.html$/i, '');
   }
 
+  function decodeMojibake(value) {
+    if (!value) return value;
+    try {
+      return decodeURIComponent(escape(value));
+    } catch (_error) {
+      return value;
+    }
+  }
+
+  function buildServiceSlugCandidates(rawSlug) {
+    var base = (rawSlug || '').trim().toLowerCase();
+    if (!base) return [];
+
+    var variants = [];
+    var seen = {};
+
+    function add(value) {
+      if (!value) return;
+      var normalized = String(value)
+        .trim()
+        .toLowerCase()
+        .replace(/%20/g, '-')
+        .replace(/[_\s]+/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '');
+
+      if (!normalized || seen[normalized]) return;
+      seen[normalized] = true;
+      variants.push(normalized);
+    }
+
+    add(base);
+    add(decodeMojibake(base));
+    add(decodeMojibake(base).replace(/Ã¡/g, 'á'));
+    add(decodeMojibake(base).replace(/Ã©/g, 'é'));
+    add(decodeMojibake(base).replace(/Ã­/g, 'í'));
+    add(decodeMojibake(base).replace(/Ã³/g, 'ó'));
+    add(decodeMojibake(base).replace(/Ãº/g, 'ú'));
+    add(decodeMojibake(base).replace(/Ã±/g, 'ñ'));
+    add(decodeMojibake(base).replace(/Ã€/g, '€'));
+
+    return variants;
+  }
+
   function loadCatalogService() {
     var slug = detectSlug();
-    if (!slug) return Promise.resolve(null);
-    var endpoint = SUPABASE_URL + '/rest/v1/services?select=title,base_price,offer_price,offer_label,offer_active&active=eq.true&slug=eq.' + encodeURIComponent(slug) + '&limit=1';
+    var slugCandidates = buildServiceSlugCandidates(slug);
+    if (!slugCandidates.length) return Promise.resolve(null);
+
+    var orQuery = slugCandidates
+      .map(function (candidate) { return 'slug.eq.' + encodeURIComponent(candidate); })
+      .join(',');
+
+    var endpoint = SUPABASE_URL + '/rest/v1/services?select=title,base_price,offer_price,offer_label,offer_active&active=eq.true&or=(' + orQuery + ')&limit=1';
     return fetch(endpoint, {
       headers: {
         apikey: SUPABASE_ANON_KEY,

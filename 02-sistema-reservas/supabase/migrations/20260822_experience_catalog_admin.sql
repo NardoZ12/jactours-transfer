@@ -62,6 +62,7 @@ values
   ('cocobongo', 'Coco Bongo', 'excursion', 49, 'USD', true),
   ('cranchi-50-mediterranee', 'Cranchi 50 Mediterranee', 'yate', 49, 'USD', true),
   ('dorado-park', 'Dorado Park', 'excursion', 49, 'USD', true),
+  ('excursiones', 'Excursiones', 'excursion', 49, 'USD', true),
   ('express-38', 'Express 38', 'yate', 49, 'USD', true),
   ('fairline-50', 'Fairline 50', 'yate', 49, 'USD', true),
   ('hacienda-park', 'Hacienda Park', 'excursion', 49, 'USD', true),
@@ -69,6 +70,7 @@ values
   ('isla-catalina', 'Isla Catalina', 'excursion', 49, 'USD', true),
   ('isla-catalina-buceo', 'Isla Catalina Buceo', 'excursion', 49, 'USD', true),
   ('isla-saona-clasica', 'Isla Saona Clasica', 'excursion', 49, 'USD', true),
+  ('isla-saona-clÃ¡sica', 'Isla Saona Clásica', 'excursion', 49, 'USD', true),
   ('isla-saona-vip-4-playas', 'Isla Saona VIP 4 Playas', 'excursion', 49, 'USD', true),
   ('majesty-56', 'Majesty 56', 'yate', 49, 'USD', true),
   ('party-boat-en-punta-cana', 'Party Boat en Punta Cana', 'excursion', 49, 'USD', true),
@@ -79,7 +81,9 @@ values
   ('santo-domingo-privado', 'Santo Domingo Privado', 'excursion', 49, 'USD', true),
   ('sea-ray-42', 'Sea Ray 42', 'yate', 49, 'USD', true),
   ('tiara-38', 'Tiara 38', 'yate', 49, 'USD', true),
-  ('tiara-50', 'Tiara 50', 'yate', 49, 'USD', true)
+  ('tiara-50', 'Tiara 50', 'yate', 49, 'USD', true),
+  ('traslados', 'Traslados', 'traslado', 49, 'USD', true),
+  ('yates', 'Yates', 'yate', 49, 'USD', true)
 on conflict (slug) do update set
   title = excluded.title,
   category = excluded.category,
