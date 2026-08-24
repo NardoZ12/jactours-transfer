@@ -263,9 +263,36 @@
     adultsEl.addEventListener('input', computeTotal);
     childrenEl.addEventListener('input', computeTotal);
     infantsEl.addEventListener('input', computeTotal);
+    
     pickupEl.addEventListener('change', function () {
       if (pickupEl.value === 'Mi ubicación actual') {
-        pickupEl.dataset.pickupAddress = 'Mi ubicación actual';
+        if ('geolocation' in navigator) {
+          pickupEl.disabled = true;
+          pickupEl.title = 'Solicitando ubicación...';
+          navigator.geolocation.getCurrentPosition(
+            function (position) {
+              var lat = position.coords.latitude;
+              var lng = position.coords.longitude;
+              var accuracy = Math.round(position.coords.accuracy);
+              pickupEl.dataset.pickupAddress = 'Ubicación actual (' + lat.toFixed(4) + ', ' + lng.toFixed(4) + ')';
+              pickupEl.dataset.latitude = lat;
+              pickupEl.dataset.longitude = lng;
+              pickupEl.dataset.accuracy = accuracy;
+              pickupEl.disabled = false;
+              pickupEl.title = '';
+            },
+            function (error) {
+              alert('No se pudo obtener la ubicación. Por favor, verifica los permisos del navegador o selecciona un hotel.');
+              pickupEl.value = '';
+              pickupEl.disabled = false;
+              pickupEl.title = '';
+            },
+            { timeout: 10000, enableHighAccuracy: false }
+          );
+        } else {
+          alert('Tu navegador no soporta geolocalización. Por favor, selecciona un hotel de la lista.');
+          pickupEl.value = '';
+        }
       }
     });
     computeTotal();
@@ -301,8 +328,11 @@
         total: c.total,
         pickupLocation: pickupValue,
         pickupTime: pickupValue === 'Mi ubicación actual' ? 'Según confirmación del operador' : pickupValue,
-        pickupAddress: pickupValue,
+        pickupAddress: (pickupEl && pickupEl.dataset.pickupAddress) || pickupValue,
         hotel: pickupValue === 'Mi ubicación actual' ? 'Mi ubicación actual' : pickupValue,
+        latitude: (pickupEl && pickupEl.dataset.latitude) || undefined,
+        longitude: (pickupEl && pickupEl.dataset.longitude) || undefined,
+        accuracy: (pickupEl && pickupEl.dataset.accuracy) || undefined,
         customerName: (host.querySelector('[data-jac-name]') || {}).value || '',
         customerEmail: (host.querySelector('[data-jac-email]') || {}).value || '',
         customerPhone: (host.querySelector('[data-jac-phone]') || {}).value || ''

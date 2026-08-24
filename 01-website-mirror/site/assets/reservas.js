@@ -53,7 +53,18 @@ function hydrateCheckoutDraft() {
     if (typeof draft?.adults !== "undefined" && qs("#adults")) qs("#adults").value = String(draft.adults);
     if (typeof draft?.children !== "undefined" && qs("#children")) qs("#children").value = String(draft.children);
     if (typeof draft?.infants !== "undefined" && qs("#infants")) qs("#infants").value = String(draft.infants);
-    if (draft?.pickupLocation && qs("#pickupAddress")) qs("#pickupAddress").value = draft.pickupLocation;
+    
+    // Precargar ubicación: si hay GPS, mostrar con coordenadas; si no, mostrar pickupLocation
+    if (draft?.latitude && draft?.longitude) {
+      var gpsDisplay = "Ubicación GPS: " + draft.latitude.toFixed(4) + ", " + draft.longitude.toFixed(4);
+      if (qs("#pickupAddress")) qs("#pickupAddress").value = gpsDisplay;
+      if (qs("#gpsCoordinates")) {
+        qs("#gpsCoordinates").value = draft.latitude + "," + draft.longitude;
+      }
+    } else if (draft?.pickupLocation && qs("#pickupAddress")) {
+      qs("#pickupAddress").value = draft.pickupLocation;
+    }
+    
     if (draft?.pickupTime && qs("#serviceTime")) qs("#serviceTime").value = draft.pickupTime;
     if (draft?.hotel && qs("#hotel")) qs("#hotel").value = draft.hotel;
     if (draft?.customerName && qs("#customerName")) qs("#customerName").value = draft.customerName;
