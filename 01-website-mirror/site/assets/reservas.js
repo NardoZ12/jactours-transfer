@@ -52,6 +52,10 @@ function hydrateCheckoutDraft() {
     if (draft?.serviceDate && qs("#serviceDate")) qs("#serviceDate").value = draft.serviceDate;
     if (typeof draft?.adults !== "undefined" && qs("#adults")) qs("#adults").value = String(draft.adults);
     if (typeof draft?.children !== "undefined" && qs("#children")) qs("#children").value = String(draft.children);
+    if (typeof draft?.infants !== "undefined" && qs("#infants")) qs("#infants").value = String(draft.infants);
+    if (draft?.pickupLocation && qs("#pickupAddress")) qs("#pickupAddress").value = draft.pickupLocation;
+    if (draft?.pickupTime && qs("#serviceTime")) qs("#serviceTime").value = draft.pickupTime;
+    if (draft?.hotel && qs("#hotel")) qs("#hotel").value = draft.hotel;
     if (draft?.customerName && qs("#customerName")) qs("#customerName").value = draft.customerName;
     if (draft?.customerEmail && qs("#customerEmail")) qs("#customerEmail").value = draft.customerEmail;
     if (draft?.customerPhone && qs("#customerPhone")) qs("#customerPhone").value = draft.customerPhone;

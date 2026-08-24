@@ -113,21 +113,72 @@
     var offerMarkup = hasOffer
       ? '<div class="jac-offer"><span>' + (service.offer_label || 'Oferta') + '</span><del>' + money(regularPrice) + '</del></div>'
       : '';
+    var pickupOptions = [
+      'Mi ubicación actual',
+      'Uvero Alto',
+      'Excellence Punta Cana',
+      'Sirenis',
+      'Excellence del Carmen y Fi',
+      'Breathless',
+      'Now Onix',
+      'Dreams Onix',
+      'Live Aqua',
+      'Ocean El Faro',
+      'Hard Rock',
+      'Bahia Principe Punta Cana',
+      'Riu Republica',
+      'Occidental Caribe',
+      'Royalton Splash/Puj',
+      'Los Majestic',
+      'Complejo Riu',
+      'Riu Punta Cana',
+      'Riu Bambu',
+      'Riu Macao',
+      'Riu Palace Bavaro',
+      'Iberostar Selection',
+      'White Sands',
+      'Punta Cana Princess',
+      'Vik Arena',
+      'Ocean Blue',
+      'Karibo',
+      'Caribe Deluxe Princess',
+      'Bavaro Princess',
+      'Occ. Punta Cana',
+      'Los Corales',
+      'Palladium Punta Cana',
+      'Palladium Bavaro',
+      'Presidential Suites',
+      'Vista Sol',
+      'Impressive',
+      'Plaza Turquesa',
+      'Whala Bavaro',
+      'Secret/Dreams Royal',
+      'Lopesan',
+      'Hotel de Punta Cana',
+      'Otro lugar'
+    ];
+    var pickupMarkup = pickupOptions.map(function (option) {
+      return '<option value="' + option + '">' + option + '</option>';
+    }).join('');
     return '' +
       '<section class="jac-booking-widget">' +
       '  <div class="jac-booking-head">' +
       '    <h3>Reserva directa - ' + title + '</h3>' +
-      '    <p>Selecciona fecha, cantidad de personas y continua al pago.</p>' +
+      '    <p>Selecciona fecha, cantidad de personas, recogida y continua al pago.</p>' +
       '  </div>' +
       '  <div class="jac-booking-body">' +
       '    <div class="jac-step is-active" data-jac-step="1">' +
       '      <div class="jac-grid">' +
       '        <label class="jac-label jac-grid-1">Fecha del tour<input class="jac-input" data-jac-date type="date" required /></label>' +
       '        <label class="jac-label">Adultos<input class="jac-input" data-jac-adults type="number" min="1" value="1" /></label>' +
-      '        <label class="jac-label">Ninos<input class="jac-input" data-jac-children type="number" min="0" value="0" /></label>' +
+      '        <label class="jac-label">Niños 3-9 años<input class="jac-input" data-jac-children type="number" min="0" value="0" /></label>' +
+      '        <label class="jac-label">Menores de 3 años<input class="jac-input" data-jac-infants type="number" min="0" value="0" /></label>' +
+      '        <label class="jac-label jac-grid-1">Recogida<select class="jac-input" data-jac-pickup>' + pickupMarkup + '</select></label>' +
       '      </div>' +
       '      <div class="jac-summary">' +
-      '        <div class="jac-summary-row"><span>Precio por persona</span><strong data-jac-base>' + money(basePrice) + '</strong></div>' +
+      '        <div class="jac-summary-row"><span>Adulto</span><strong data-jac-base>' + money(basePrice) + '</strong></div>' +
+      '        <div class="jac-summary-row"><span>Niño 3-9 años</span><strong>' + money(basePrice * 0.5) + '</strong></div>' +
+      '        <div class="jac-summary-row"><span>Menor de 3 años</span><strong>Gratis</strong></div>' +
       offerMarkup +
       '        <div class="jac-summary-row"><span>Total estimado</span><strong class="jac-total" data-jac-total>' + money(basePrice) + '</strong></div>' +
       '      </div>' +
@@ -184,6 +235,8 @@
     var dateEl = host.querySelector('[data-jac-date]');
     var adultsEl = host.querySelector('[data-jac-adults]');
     var childrenEl = host.querySelector('[data-jac-children]');
+    var infantsEl = host.querySelector('[data-jac-infants]');
+    var pickupEl = host.querySelector('[data-jac-pickup]');
     var totalEl = host.querySelector('[data-jac-total]');
     var msgEl = host.querySelector('[data-jac-msg]');
 
@@ -198,15 +251,23 @@
     function computeTotal() {
       var adults = Math.max(0, Number(adultsEl.value || 0));
       var children = Math.max(0, Number(childrenEl.value || 0));
-      var pax = adults + children;
-      var total = pax * basePrice;
+      var infants = Math.max(0, Number(infantsEl.value || 0));
+      var childRate = basePrice * 0.5;
+      var pax = adults + children + infants;
+      var total = adults * basePrice + children * childRate;
       if (pax === 0) total = basePrice;
       totalEl.textContent = money(total);
-      return { adults: adults, children: children, total: total };
+      return { adults: adults, children: children, infants: infants, total: total };
     }
 
     adultsEl.addEventListener('input', computeTotal);
     childrenEl.addEventListener('input', computeTotal);
+    infantsEl.addEventListener('input', computeTotal);
+    pickupEl.addEventListener('change', function () {
+      if (pickupEl.value === 'Mi ubicación actual') {
+        pickupEl.dataset.pickupAddress = 'Mi ubicación actual';
+      }
+    });
     computeTotal();
 
     host.querySelector('[data-jac-next]').addEventListener('click', function () {
@@ -229,13 +290,19 @@
 
     host.querySelector('[data-jac-paypal]').addEventListener('click', function () {
       var c = computeTotal();
+      var pickupValue = (pickupEl && pickupEl.value) || 'Mi ubicación actual';
       var draft = {
         product: title,
         serviceDate: toIsoDate(dateEl.value),
         adults: c.adults,
         children: c.children,
+        infants: c.infants,
         unitPrice: basePrice,
         total: c.total,
+        pickupLocation: pickupValue,
+        pickupTime: pickupValue === 'Mi ubicación actual' ? 'Según confirmación del operador' : pickupValue,
+        pickupAddress: pickupValue,
+        hotel: pickupValue === 'Mi ubicación actual' ? 'Mi ubicación actual' : pickupValue,
         customerName: (host.querySelector('[data-jac-name]') || {}).value || '',
         customerEmail: (host.querySelector('[data-jac-email]') || {}).value || '',
         customerPhone: (host.querySelector('[data-jac-phone]') || {}).value || ''
