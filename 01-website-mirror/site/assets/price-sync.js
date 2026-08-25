@@ -7,7 +7,7 @@
   }
 
   function loadAllServices() {
-    var endpoint = SUPABASE_URL + '/rest/v1/services?select=slug,title,base_price,offer_price,offer_label,offer_active&active=eq.true';
+    var endpoint = SUPABASE_URL + '/rest/v1/services?select=id,slug,title,base_price,offer_price,offer_label,offer_active&active=eq.true&order=category,title&limit=500';
     return fetch(endpoint, {
       headers: {
         apikey: SUPABASE_ANON_KEY,
@@ -28,15 +28,17 @@
     return String(slug)
       .trim()
       .toLowerCase()
+      .normalize('NFKD')
+      .replace(/[̀-ͯ]/g, '')
+      .replace(/á|à|â|ä|ã/g, 'a')
+      .replace(/é|è|ê|ë/g, 'e')
+      .replace(/í|ì|î|ï/g, 'i')
+      .replace(/ó|ò|ô|ö|õ/g, 'o')
+      .replace(/ú|ù|û|ü/g, 'u')
+      .replace(/ñ/g, 'n')
       .replace(/[_\s]+/g, '-')
       .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '')
-      .replace(/Ã¡/g, 'á')
-      .replace(/Ã©/g, 'é')
-      .replace(/Ã­/g, 'í')
-      .replace(/Ã³/g, 'ó')
-      .replace(/Ãº/g, 'ú')
-      .replace(/Ã±/g, 'ñ');
+      .replace(/^-|-$/g, '');
   }
 
   function getCurrentPageSlug() {
@@ -65,14 +67,25 @@
   function updatePriceCard(card, service) {
     var offerPriceElement = card.querySelector('[data-framer-name="Precio"] p, [data-framer-name="Precio"] [data-price]');
     var regularPriceElement = card.querySelector('[data-framer-name="PrecioHook"] p, [data-framer-name="PrecioHook"] [data-price]');
-    var formattedPrice = money(displayPrice(service));
 
-    if (offerPriceElement) {
-      if (offerPriceElement.textContent.trim() !== formattedPrice) {
-        offerPriceElement.textContent = formattedPrice;
+    if (service.offer_active && service.offer_price !== null) {
+      var offerPriceFormatted = money(service.offer_price);
+      if (offerPriceElement && offerPriceElement.textContent.trim() !== offerPriceFormatted) {
+        offerPriceElement.textContent = offerPriceFormatted;
       }
-      offerPriceElement.style.textDecoration = 'none';
+      if (offerPriceElement) {
+        offerPriceElement.style.textDecoration = 'none';
+      }
+    } else {
+      var basePriceFormatted = money(service.base_price);
+      if (offerPriceElement && offerPriceElement.textContent.trim() !== basePriceFormatted) {
+        offerPriceElement.textContent = basePriceFormatted;
+      }
+      if (offerPriceElement) {
+        offerPriceElement.style.textDecoration = 'none';
+      }
     }
+
     if (regularPriceElement) {
       var regularPrice = money(service.base_price);
       if (regularPriceElement.textContent.trim() !== regularPrice) {
@@ -85,9 +98,11 @@
 
     var offerBadge = card.querySelector('.jac-dynamic-offer');
     if (service.offer_active && service.offer_price !== null) {
-      if (offerBadge) offerBadge.textContent = service.offer_label || 'OFERTA';
+      if (offerBadge) {
+        offerBadge.textContent = service.offer_label || 'OFERTA';
+      }
     } else if (offerBadge) {
-      offerBadge.remove();
+      offerBadge.style.display = 'none';
     }
   }
 

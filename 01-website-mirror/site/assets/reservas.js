@@ -1,4 +1,4 @@
-const SUPABASE_FUNCTIONS_BASE = "https://TU_PROYECTO.functions.supabase.co";
+const SUPABASE_FUNCTIONS_BASE = "https://jxetcadstgvcrfkphofe.supabase.co/functions/v1";
 
 function qs(selector) {
   return document.querySelector(selector);
@@ -50,30 +50,48 @@ function hydrateCheckoutDraft() {
     const draft = JSON.parse(raw);
 
     if (draft?.serviceId && qs("#serviceId")) qs("#serviceId").value = draft.serviceId;
-    if (draft?.serviceDate && qs("#serviceDate")) qs("#serviceDate").value = draft.serviceDate;
-    if (typeof draft?.adults !== "undefined" && qs("#adults")) qs("#adults").value = String(draft.adults);
-    if (typeof draft?.children !== "undefined" && qs("#children")) qs("#children").value = String(draft.children);
-    if (typeof draft?.infants !== "undefined" && qs("#infants")) qs("#infants").value = String(draft.infants);
-    
-    // Precargar ubicación: si hay GPS, mostrar con coordenadas; si no, mostrar pickupLocation
+
+    // Validar que la fecha sea futura o hoy
+    if (draft?.serviceDate && qs("#serviceDate")) {
+      var draftDate = new Date(draft.serviceDate);
+      var today = new Date();
+      today.setHours(0, 0, 0, 0);
+      if (draftDate >= today) {
+        qs("#serviceDate").value = draft.serviceDate;
+      }
+    }
+
+    if (typeof draft?.adults !== "undefined" && qs("#adults")) {
+      var adultCount = Math.max(0, Number(draft.adults) || 0);
+      qs("#adults").value = String(adultCount);
+    }
+    if (typeof draft?.children !== "undefined" && qs("#children")) {
+      var childCount = Math.max(0, Number(draft.children) || 0);
+      qs("#children").value = String(childCount);
+    }
+    if (typeof draft?.infants !== "undefined" && qs("#infants")) {
+      var infantCount = Math.max(0, Number(draft.infants) || 0);
+      qs("#infants").value = String(infantCount);
+    }
+
     if (draft?.latitude && draft?.longitude) {
-      var gpsDisplay = "Ubicación GPS: " + draft.latitude.toFixed(4) + ", " + draft.longitude.toFixed(4);
+      var gpsDisplay = "Ubicación GPS: " + Number(draft.latitude).toFixed(4) + ", " + Number(draft.longitude).toFixed(4);
       if (qs("#pickupAddress")) qs("#pickupAddress").value = gpsDisplay;
       if (qs("#gpsCoordinates")) {
         qs("#gpsCoordinates").value = draft.latitude + "," + draft.longitude;
       }
     } else if (draft?.pickupLocation && qs("#pickupAddress")) {
-      qs("#pickupAddress").value = draft.pickupLocation;
+      qs("#pickupAddress").value = String(draft.pickupLocation);
     }
-    
+
     if (draft?.pickupTime && qs("#serviceTime")) qs("#serviceTime").value = draft.pickupTime;
-    if (draft?.hotel && qs("#hotel")) qs("#hotel").value = draft.hotel;
-    if (draft?.customerName && qs("#customerName")) qs("#customerName").value = draft.customerName;
-    if (draft?.customerEmail && qs("#customerEmail")) qs("#customerEmail").value = draft.customerEmail;
-    if (draft?.customerPhone && qs("#customerPhone")) qs("#customerPhone").value = draft.customerPhone;
-    if (draft?.product && qs("#notes")) qs("#notes").value = `Reserva iniciada desde: ${draft.product}`;
+    if (draft?.hotel && qs("#hotel")) qs("#hotel").value = String(draft.hotel);
+    if (draft?.customerName && qs("#customerName")) qs("#customerName").value = String(draft.customerName);
+    if (draft?.customerEmail && qs("#customerEmail")) qs("#customerEmail").value = String(draft.customerEmail);
+    if (draft?.customerPhone && qs("#customerPhone")) qs("#customerPhone").value = String(draft.customerPhone);
+    if (draft?.product && qs("#notes")) qs("#notes").value = "Reserva iniciada desde: " + String(draft.product);
   } catch (_error) {
-    // Ignore malformed local draft and continue with blank form.
+    console.warn("Error hidratando draft:", _error);
   }
 }
 
@@ -91,12 +109,16 @@ async function initCheckoutPage() {
     msg.className = "msg";
 
     try {
-      const extras = qsa(".extra-row").map((row) => ({
-        code: row.dataset.code || null,
-        title: row.querySelector("[data-extra-title]")?.value || "Extra",
-        quantity: Number(row.querySelector("[data-extra-qty]")?.value || 1),
-        unit_price: Number(row.querySelector("[data-extra-price]")?.value || 0),
-      }));
+      const extras = qsa(".extra-row").map((row) => {
+        var qty = Number(row.querySelector("[data-extra-qty]")?.value || 1);
+        var price = Number(row.querySelector("[data-extra-price]")?.value || 0);
+        return {
+          code: row.dataset.code || null,
+          title: row.querySelector("[data-extra-title]")?.value || "Extra",
+          quantity: Math.max(0, qty),
+          unit_price: Math.max(0, price),
+        };
+      });
 
       const reservationPayload = {
         service_id: qs("#serviceId").value,

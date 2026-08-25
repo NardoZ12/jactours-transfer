@@ -182,7 +182,22 @@ async function loadServices() {
     return;
   }
 
+  window.allServices = data;
   renderServices(data);
+}
+
+function filterServices(query) {
+  if (!query.trim()) {
+    renderServices(window.allServices || []);
+    return;
+  }
+  const lowerQuery = query.toLowerCase();
+  const filtered = (window.allServices || []).filter(s =>
+    s.title.toLowerCase().includes(lowerQuery) ||
+    s.category.toLowerCase().includes(lowerQuery) ||
+    s.slug.toLowerCase().includes(lowerQuery)
+  );
+  renderServices(filtered);
 }
 
 servicesBody.addEventListener("click", async (event) => {
@@ -199,18 +214,23 @@ servicesBody.addEventListener("click", async (event) => {
   const offerInput = row.querySelector('[data-field="offer_price"]');
   const offerPrice = offerInput.value === "" ? null : Number(offerInput.value);
   const offerActive = row.querySelector('[data-field="offer_active"]').checked;
-  if (!Number.isFinite(basePrice) || basePrice < 0 || (offerActive && (offerPrice === null || offerPrice < 0))) {
-    servicesMsg.textContent = "Revisa los precios: una oferta activa necesita un precio valido.";
+  if (!Number.isFinite(basePrice) || basePrice < 0) {
+    servicesMsg.textContent = "Revisa los precios: el precio base debe ser un número positivo.";
+    return;
+  }
+  if (offerActive && (offerPrice === null || !Number.isFinite(offerPrice) || offerPrice < 0 || offerPrice > basePrice)) {
+    servicesMsg.textContent = "Revisa la oferta: debe ser positiva y menor al precio base.";
     return;
   }
 
   button.disabled = true;
   button.textContent = "Guardando...";
+  var offerLabel = row.querySelector('[data-field="offer_label"]').value.trim();
   const payload = {
     base_price: basePrice,
     offer_price: offerPrice,
-    offer_label: row.querySelector('[data-field="offer_label"]').value.trim() || null,
-    offer_active: offerActive,
+    offer_label: offerLabel && offerLabel.length > 0 ? offerLabel : null,
+    offer_active: offerActive && offerPrice !== null,
   };
   const { data: updatedService, error } = await supabase
     .from("services")
@@ -401,6 +421,13 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
 });
 
 document.getElementById("refreshBtn").addEventListener("click", loadDashboard);
+
+const servicesFilter = document.getElementById("servicesFilter");
+if (servicesFilter) {
+  servicesFilter.addEventListener("input", (e) => {
+    filterServices(e.target.value);
+  });
+}
 
 document.getElementById("expenseForm").addEventListener("submit", async (e) => {
   e.preventDefault();

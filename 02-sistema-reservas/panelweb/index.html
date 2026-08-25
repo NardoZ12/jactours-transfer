@@ -40,7 +40,11 @@
           <h2>Dashboard Operativo</h2>
           <p class="muted">Reservas, ingresos y márgenes en tiempo real</p>
         </div>
-        <div class="topbar-actions">
+        <div class="topbar-actions" style="gap:8px;display:flex;flex-wrap:wrap;">
+          <a href="./productos-tarifas.html" class="btn-light" style="text-decoration:none;display:inline-block;">Productos</a>
+          <a href="./clientes.html" class="btn-light" style="text-decoration:none;display:inline-block;">Clientes</a>
+          <a href="./calendario-operativo.html" class="btn-light" style="text-decoration:none;display:inline-block;">Calendario</a>
+          <a href="./reservas.html" class="btn-light" style="text-decoration:none;display:inline-block;">Reservas</a>
           <button id="refreshBtn" class="btn-light">Actualizar</button>
           <button id="logoutBtn" class="btn-danger">Salir</button>
         </div>
@@ -71,7 +75,10 @@
             <h3>Experiencias, precios y ofertas</h3>
             <p class="muted">Los cambios se reflejan en el formulario de reserva de cada experiencia.</p>
           </div>
-          <span id="servicesCount" class="services-count">0 experiencias</span>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input type="text" id="servicesFilter" placeholder="Buscar..." style="padding:6px 10px;border:1px solid #ddd;border-radius:4px;font-size:14px;width:150px;">
+            <span id="servicesCount" class="services-count">0 experiencias</span>
+          </div>
         </div>
         <div class="table-wrap">
           <table class="services-table">
