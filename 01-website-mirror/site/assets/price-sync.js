@@ -68,11 +68,16 @@
     var formattedPrice = money(displayPrice(service));
 
     if (offerPriceElement) {
-      offerPriceElement.textContent = formattedPrice;
+      if (offerPriceElement.textContent.trim() !== formattedPrice) {
+        offerPriceElement.textContent = formattedPrice;
+      }
       offerPriceElement.style.textDecoration = 'none';
     }
     if (regularPriceElement) {
-      regularPriceElement.textContent = money(service.base_price);
+      var regularPrice = money(service.base_price);
+      if (regularPriceElement.textContent.trim() !== regularPrice) {
+        regularPriceElement.textContent = regularPrice;
+      }
       regularPriceElement.style.textDecoration = service.offer_active && service.offer_price !== null
         ? 'line-through'
         : 'none';
@@ -102,6 +107,22 @@
       current = current.parentElement;
     }
     return card;
+  }
+
+  function normalizedWords(value) {
+    return normalizeSlug(value).replace(/[^a-z0-9áéíóúñ]+/g, ' ').trim().split(/\s+/);
+  }
+
+  function findServiceByCardText(card, services) {
+    var cardWords = normalizedWords(card.textContent || '');
+    return services.reduce(function (best, service) {
+      var serviceWords = normalizedWords(service.title);
+      var matches = serviceWords.filter(function (word) {
+        return word.length > 2 && cardWords.indexOf(word) !== -1;
+      }).length;
+      if (!best || matches > best.matches) return { service: service, matches: matches };
+      return best;
+    }, null);
   }
 
   function updatePagePrices(services) {
@@ -190,6 +211,12 @@
         }
       }
     });
+
+    document.querySelectorAll('[data-framer-name="Precio"]').forEach(function (priceBlock) {
+      var card = findPriceContainer(priceBlock);
+      var match = findServiceByCardText(card, services);
+      if (match && match.matches > 0) updatePriceCard(card, match.service);
+    });
   }
 
   function initPriceSync() {
@@ -203,6 +230,16 @@
           updateAllThumbnails(services);
         }, delay);
       });
+
+      var syncTimer;
+      var observer = new MutationObserver(function () {
+        clearTimeout(syncTimer);
+        syncTimer = setTimeout(function () {
+          updatePagePrices(services);
+          updateAllThumbnails(services);
+        }, 100);
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
 
       // Re-sincronizar cada 30 segundos
       setInterval(function () {
