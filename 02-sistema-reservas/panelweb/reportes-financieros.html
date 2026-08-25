@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reportes Financieros | Jac Tours & Transfer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="wrap">
+    <section class="card" style="padding: 18px;">
+      <header class="topbar card" style="margin-bottom: 20px;">
+        <div>
+          <h1>Reportes Financieros</h1>
+          <p class="muted">Análisis de ingresos, gastos y márgenes</p>
+        </div>
+        <div class="topbar-actions">
+          <button id="exportBtn" class="btn-light">Exportar CSV</button>
+          <button id="backBtn" class="btn-light">Volver</button>
+        </div>
+      </header>
+
+      <!-- Filtros de Período -->
+      <div class="form-grid compact" style="margin-bottom: 20px;">
+        <label>
+          Período
+          <select id="periodFilter">
+            <option value="today">Hoy</option>
+            <option value="week">Esta semana</option>
+            <option value="month" selected>Este mes</option>
+            <option value="quarter">Este trimestre</option>
+            <option value="year">Este año</option>
+            <option value="custom">Personalizado</option>
+          </select>
+        </label>
+        <div id="dateRangeContainer" style="display:none;grid-template-columns:1fr 1fr;gap:12px;">
+          <label>
+            Desde
+            <input id="startDate" type="date" />
+          </label>
+          <label>
+            Hasta
+            <input id="endDate" type="date" />
+          </label>
+        </div>
+      </div>
+
+      <!-- KPIs -->
+      <section class="kpis">
+        <article class="kpi card">
+          <h3>Ingresos Totales</h3>
+          <p id="kpiTotalIncome" class="kpi-value">$0.00</p>
+        </article>
+        <article class="kpi card">
+          <h3>Gastos Totales</h3>
+          <p id="kpiTotalExpenses" class="kpi-value">$0.00</p>
+        </article>
+        <article class="kpi card">
+          <h3>Margen Bruto</h3>
+          <p id="kpiGrossMargin" class="kpi-value">$0.00</p>
+        </article>
+        <article class="kpi card">
+          <h3>Margen %</h3>
+          <p id="kpiMarginPercent" class="kpi-value">0%</p>
+        </article>
+      </section>
+
+      <!-- Ingresos por Producto -->
+      <section class="grid-2">
+        <article class="card">
+          <div class="section-head">
+            <h3>Ingresos por Producto</h3>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Producto</th>
+                  <th>Reservas</th>
+                  <th>Ingresos</th>
+                  <th>% Total</th>
+                </tr>
+              </thead>
+              <tbody id="incomeByProductBody"></tbody>
+            </table>
+          </div>
+        </article>
+
+        <article class="card">
+          <div class="section-head">
+            <h3>Gastos por Categoría</h3>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Categoría</th>
+                  <th>Cantidad</th>
+                  <th>Monto</th>
+                  <th>% Total</th>
+                </tr>
+              </thead>
+              <tbody id="expensesByCategoryBody"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <!-- Cuentas por Cobrar -->
+      <section class="card" style="margin-top: 20px;">
+        <div class="section-head">
+          <h3>Cuentas por Cobrar (Pendientes)</h3>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Código Reserva</th>
+                <th>Cliente</th>
+                <th>Monto Total</th>
+                <th>Pagado</th>
+                <th>Pendiente</th>
+                <th>Fechavencimiento</th>
+              </tr>
+            </thead>
+            <tbody id="accountsReceivableBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Margen por Día -->
+      <section class="card" style="margin-top: 20px;">
+        <div class="section-head">
+          <h3>Evolución Diaria de Márgenes</h3>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Ingresos</th>
+                <th>Gastos</th>
+                <th>Margen</th>
+                <th>Margen %</th>
+              </tr>
+            </thead>
+            <tbody id="dailyMarginBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <p id="reportMsg" class="msg"></p>
+      <p><a href="./index.html">Volver al dashboard</a></p>
+    </section>
+  </main>
+  <script type="module" src="./reportes-financieros.js"></script>
+</body>
+</html>
