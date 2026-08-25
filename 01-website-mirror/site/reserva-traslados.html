@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Reserva de Traslados | JAC Tours & Transfer</title>
+  <meta name="description" content="Reserva tu traslado con nosotros. Calcula el precio según tu distancia y número de pasajeros." />
+  <link rel="icon" href="./assets/favicon-jac.svg" type="image/svg+xml" />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Sora', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #f4efec 0%, #ddb7ab 100%);
+      min-height: 100vh;
+      padding: 20px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+      color: #999b85;
+    }
+
+    header h1 {
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    header p {
+      font-size: 16px;
+      color: #ddb7ab;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      margin-bottom: 30px;
+    }
+
+    .form-section {
+      margin-bottom: 30px;
+    }
+
+    .form-section h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #999b85;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #ddb7ab;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: flex;
+      flex-direction: column;
+      font-size: 14px;
+      font-weight: 600;
+      color: #666;
+      gap: 8px;
+    }
+
+    input,
+    select {
+      padding: 10px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.3s;
+    }
+
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: #f27d2e;
+      box-shadow: 0 0 0 3px rgba(242, 125, 46, 0.1);
+    }
+
+    .location-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+
+    .btn-location {
+      padding: 10px 16px;
+      background: #f27d2e;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.3s;
+      white-space: nowrap;
+    }
+
+    .btn-location:hover:not(:disabled) {
+      background: #d96b25;
+    }
+
+    .btn-location:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    #vehicleOptions {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .vehicle-card {
+      padding: 16px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      background: white;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: left;
+    }
+
+    .vehicle-card:hover {
+      border-color: #f27d2e;
+      box-shadow: 0 4px 12px rgba(242, 125, 46, 0.15);
+    }
+
+    .vehicle-card.selected {
+      border-color: #f27d2e;
+      background: rgba(242, 125, 46, 0.05);
+      box-shadow: 0 4px 12px rgba(242, 125, 46, 0.2);
+    }
+
+    .vehicle-card h4 {
+      font-size: 14px;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .vehicle-price {
+      font-size: 18px;
+      font-weight: 800;
+      color: #f27d2e;
+      margin-bottom: 6px;
+    }
+
+    .vehicle-card small {
+      font-size: 12px;
+      color: #999;
+    }
+
+    .no-vehicles {
+      text-align: center;
+      padding: 30px;
+      color: #999;
+      font-size: 16px;
+    }
+
+    .summary-box {
+      background: #f9f7f5;
+      border-left: 4px solid #f27d2e;
+      padding: 20px;
+      border-radius: 6px;
+      margin-top: 20px;
+    }
+
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      font-size: 14px;
+    }
+
+    .summary-item:last-child {
+      margin-bottom: 0;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+      font-weight: 700;
+      font-size: 16px;
+      color: #333;
+    }
+
+    .btn-checkout {
+      width: 100%;
+      padding: 14px;
+      background: #f27d2e;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s;
+      margin-top: 20px;
+    }
+
+    .btn-checkout:hover:not(:disabled) {
+      background: #d96b25;
+    }
+
+    .btn-checkout:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .info-box {
+      background: #e8f4f8;
+      border-left: 4px solid #53d2dc;
+      padding: 15px;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .info-box strong {
+      color: #0a5c7a;
+    }
+
+    @media (max-width: 600px) {
+      .card {
+        padding: 20px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      header h1 {
+        font-size: 24px;
+      }
+
+      #vehicleOptions {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🚗 Reserva tu Traslado</h1>
+      <p>Calcula el precio y reserva tu vehículo en segundos</p>
+    </header>
+
+    <div class="card">
+      <div class="info-box">
+        <strong>Tarifa especial:</strong> Primeros 15 km incluidos, luego pago por kilómetro adicional según vehículo.
+      </div>
+
+      <form id="trasladosForm">
+        <!-- Ubicación -->
+        <div class="form-section">
+          <h2>📍 Ubicación</h2>
+
+          <label>
+            Punto de salida
+            <div class="location-row">
+              <select id="pickupLocation" required>
+                <option value="">Selecciona ubicación de salida</option>
+              </select>
+              <button type="button" id="getCurrentLocationBtn" class="btn-location">
+                📱 Mi ubicación
+              </button>
+            </div>
+          </label>
+
+          <label>
+            Destino
+            <select id="destination" required>
+              <option value="">Selecciona destino</option>
+            </select>
+          </label>
+
+          <input type="hidden" id="gpsCoordinates" />
+        </div>
+
+        <!-- Distancia y Pasajeros -->
+        <div class="form-section">
+          <h2>📏 Distancia y Pasajeros</h2>
+
+          <div class="form-grid">
+            <label>
+              Distancia (KM)
+              <input type="number" id="distance" min="0" step="0.1" placeholder="15" required />
+            </label>
+            <label>
+              Cantidad de pasajeros
+              <input type="number" id="passengers" min="1" max="49" value="1" required />
+            </label>
+          </div>
+        </div>
+
+        <!-- Vehículos -->
+        <div class="form-section">
+          <h2>🚐 Selecciona tu vehículo</h2>
+          <div id="vehicleOptions"></div>
+          <input type="hidden" id="selectedVehicle" />
+          <input type="hidden" id="transportPrice" />
+        </div>
+
+        <!-- Datos personales -->
+        <div class="form-section">
+          <h2>👤 Datos Personales</h2>
+
+          <div class="form-grid">
+            <label>
+              Nombre completo
+              <input type="text" id="customerName" placeholder="Juan Pérez" required />
+            </label>
+            <label>
+              Email
+              <input type="email" id="customerEmail" placeholder="juan@example.com" required />
+            </label>
+            <label>
+              Teléfono
+              <input type="tel" id="customerPhone" placeholder="+1 829 123 4567" required />
+            </label>
+            <label>
+              Nota especial (opcional)
+              <input type="text" id="notes" placeholder="Requiere silla de ruedas, etc." />
+            </label>
+          </div>
+        </div>
+
+        <!-- Resumen -->
+        <div class="summary-box">
+          <div class="summary-item">
+            <span>Traslado:</span>
+            <span id="summaryVehicle">No seleccionado</span>
+          </div>
+          <div class="summary-item">
+            <span>Distancia:</span>
+            <span id="summaryDistance">0 km</span>
+          </div>
+          <div class="summary-item">
+            <span>Pasajeros:</span>
+            <span id="summaryPassengers">1 persona</span>
+          </div>
+          <div class="summary-item">
+            <span>Precio total:</span>
+            <span id="summaryPrice">$0.00</span>
+          </div>
+        </div>
+
+        <button type="submit" class="btn-checkout" id="checkoutBtn" disabled>
+          Proceder al Pago
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="./assets/traslados-calculator.js"></script>
+  <script>
+    // Actualizar resumen en tiempo real
+    function updateSummary() {
+      if (!window.trasladosCalc) return;
+
+      const data = window.trasladosCalc.getSelectedData();
+      const vehicle = data.vehicleName || 'No seleccionado';
+      const distance = data.distance || 0;
+      const passengers = data.passengers || 1;
+      const price = data.price || 0;
+
+      document.getElementById('summaryVehicle').textContent = vehicle;
+      document.getElementById('summaryDistance').textContent = distance + ' km';
+      document.getElementById('summaryPassengers').textContent = passengers + (passengers === 1 ? ' persona' : ' personas');
+      document.getElementById('summaryPrice').textContent = '$' + price.toFixed(2);
+
+      // Habilitar botón solo si hay vehículo seleccionado
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      checkoutBtn.disabled = !data.vehicle;
+    }
+
+    // Observar cambios
+    setInterval(updateSummary, 500);
+
+    // Manejar envío del formulario
+    document.getElementById('trasladosForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (!window.trasladosCalc) {
+        alert('Calculador no inicializado');
+        return;
+      }
+
+      const data = window.trasladosCalc.getSelectedData();
+
+      if (!data.vehicle) {
+        alert('Por favor selecciona un vehículo');
+        return;
+      }
+
+      // Guardar datos en localStorage para checkout
+      const booking = {
+        type: 'traslado',
+        vehicle: data.vehicle,
+        vehicleName: data.vehicleName,
+        distance: data.distance,
+        passengers: data.passengers,
+        price: data.price,
+        pickup: data.pickup,
+        destination: data.destination,
+        gps: data.gps,
+        customerName: document.getElementById('customerName').value,
+        customerEmail: document.getElementById('customerEmail').value,
+        customerPhone: document.getElementById('customerPhone').value,
+        notes: document.getElementById('notes').value,
+      };
+
+      localStorage.setItem('jacBookingDraft', JSON.stringify(booking));
+
+      // Redirigir a checkout
+      window.location.href = './checkout.html?prefill=1&type=traslado';
+    });
+  </script>
+</body>
+</html>
