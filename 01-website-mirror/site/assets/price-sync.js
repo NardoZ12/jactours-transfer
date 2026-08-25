@@ -93,6 +93,17 @@
     }
   }
 
+  function findPriceContainer(card) {
+    var current = card;
+    for (var level = 0; current && level < 8; level += 1) {
+      if (current.querySelector('[data-framer-name="Precio"], [data-framer-name="PrecioHook"]')) {
+        return current;
+      }
+      current = current.parentElement;
+    }
+    return card;
+  }
+
   function updatePagePrices(services) {
     if (!services || services.length === 0) return;
 
@@ -161,7 +172,7 @@
         if (priceEl.textContent.trim() !== formattedPrice) priceEl.textContent = formattedPrice;
       }
 
-      updatePriceCard(card, service);
+      updatePriceCard(findPriceContainer(card), service);
 
       var priceHook = card.matches('[data-framer-name="PrecioHook"]')
         ? card
