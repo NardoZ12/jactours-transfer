@@ -45,6 +45,54 @@
     return decodeURIComponent(filename).replace(/\.html$/i, '');
   }
 
+  function displayPrice(service) {
+    return service.offer_active && service.offer_price !== null
+      ? service.offer_price
+      : service.base_price;
+  }
+
+  function updatePriceHook(hook, service) {
+    var priceElement = hook.querySelector('p, [data-price], .price') || hook;
+    var formattedPrice = money(service.base_price);
+    if (priceElement.textContent.trim() !== formattedPrice) {
+      priceElement.textContent = formattedPrice;
+    }
+    priceElement.style.textDecoration = service.offer_active && service.offer_price !== null
+      ? 'line-through'
+      : 'none';
+  }
+
+  function updatePriceCard(card, service) {
+    var offerPriceElement = card.querySelector('[data-framer-name="Precio"] p, [data-framer-name="Precio"] [data-price]');
+    var regularPriceElement = card.querySelector('[data-framer-name="PrecioHook"] p, [data-framer-name="PrecioHook"] [data-price]');
+    var formattedPrice = money(displayPrice(service));
+
+    if (offerPriceElement) {
+      offerPriceElement.textContent = formattedPrice;
+      offerPriceElement.style.textDecoration = 'none';
+    }
+    if (regularPriceElement) {
+      regularPriceElement.textContent = money(service.base_price);
+      regularPriceElement.style.textDecoration = service.offer_active && service.offer_price !== null
+        ? 'line-through'
+        : 'none';
+    }
+
+    var offerBadge = card.querySelector('.jac-dynamic-offer');
+    if (service.offer_active && service.offer_price !== null) {
+      if (!offerBadge) {
+        offerBadge = document.createElement('span');
+        offerBadge.className = 'jac-dynamic-offer';
+        offerBadge.style.cssText = 'display:inline-block;margin-right:8px;padding:3px 6px;border-radius:4px;background:#f27d2e;color:#fff;font-size:11px;font-weight:700;';
+        (offerPriceElement || card).parentElement.insertBefore(offerBadge, offerPriceElement || card);
+      }
+      var label = service.offer_label || 'OFERTA';
+      if (offerBadge.textContent !== label) offerBadge.textContent = label;
+    } else if (offerBadge) {
+      offerBadge.remove();
+    }
+  }
+
   function updatePagePrices(services) {
     if (!services || services.length === 0) return;
 
@@ -62,11 +110,14 @@
     priceElements.forEach(function (el) {
       var currentText = el.textContent || '';
       if (currentText.includes('USD') || currentText.match(/\$|[0-9]+/)) {
-        var displayPrice = currentService.offer_active && currentService.offer_price !== null
-          ? currentService.offer_price
-          : currentService.base_price;
-        el.textContent = money(displayPrice);
+        var formattedPrice = money(displayPrice(currentService));
+        if (el.textContent.trim() !== formattedPrice) el.textContent = formattedPrice;
       }
+    });
+
+    document.querySelectorAll('[data-framer-name="PrecioHook"]').forEach(function (hook) {
+      var card = hook.closest('a') || hook.parentElement?.parentElement?.parentElement || hook;
+      updatePriceCard(card, currentService);
     });
 
     // Actualizar oferta si existe
@@ -88,7 +139,7 @@
 
   function updateAllThumbnails(services) {
     // Buscar todas las miniaturas/cards de servicios
-    var serviceCards = document.querySelectorAll('[data-service-slug], .service-card, [data-framer-name*="Serv"], a[href*="/servicios/"]');
+    var serviceCards = document.querySelectorAll('[data-service-slug], .service-card, [data-framer-name*="Serv"], a[href*="servicios/"]');
 
     serviceCards.forEach(function (card) {
       var href = card.href || card.getAttribute('href') || '';
@@ -106,10 +157,17 @@
       // Buscar elementos de precio dentro de la tarjeta o cerca de ella
       var priceEl = card.querySelector('[data-price], .price, [data-jac-price]');
       if (priceEl) {
-        var displayPrice = service.offer_active && service.offer_price !== null
-          ? service.offer_price
-          : service.base_price;
-        priceEl.textContent = money(displayPrice);
+        var formattedPrice = money(displayPrice(service));
+        if (priceEl.textContent.trim() !== formattedPrice) priceEl.textContent = formattedPrice;
+      }
+
+      updatePriceCard(card, service);
+
+      var priceHook = card.matches('[data-framer-name="PrecioHook"]')
+        ? card
+        : card.querySelector('[data-framer-name="PrecioHook"]');
+      if (priceHook && !card.querySelector('[data-framer-name="Precio"]')) {
+        updatePriceHook(priceHook, service);
       }
 
       // Buscar elemento de oferta
@@ -127,6 +185,12 @@
     loadAllServices().then(function (services) {
       updatePagePrices(services);
       updateAllThumbnails(services);
+
+      var observer = new MutationObserver(function () {
+        updatePagePrices(services);
+        updateAllThumbnails(services);
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
 
       // Re-sincronizar cada 30 segundos
       setInterval(function () {

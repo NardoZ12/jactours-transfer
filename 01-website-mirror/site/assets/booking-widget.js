@@ -92,7 +92,7 @@
       .map(function (candidate) { return 'slug.eq.' + encodeURIComponent(candidate); })
       .join(',');
 
-    var endpoint = SUPABASE_URL + '/rest/v1/services?select=title,base_price,offer_price,offer_label,offer_active&active=eq.true&or=(' + orQuery + ')&limit=1';
+    var endpoint = SUPABASE_URL + '/rest/v1/services?select=id,title,base_price,offer_price,offer_label,offer_active&active=eq.true&or=(' + orQuery + ')&limit=1';
     return fetch(endpoint, {
       headers: {
         apikey: SUPABASE_ANON_KEY,
@@ -205,6 +205,33 @@
       '</section>';
   }
 
+  function syncStaticPrice(service) {
+    if (!service) return;
+    var price = service.offer_active && service.offer_price !== null
+      ? service.offer_price
+      : service.base_price;
+    document.querySelectorAll('[data-framer-name="PrecioHook"]').forEach(function (hook) {
+      var priceElement = hook.querySelector('p') || hook;
+      var formattedPrice = money(price);
+      if (priceElement.textContent.trim() !== formattedPrice) {
+        priceElement.textContent = formattedPrice;
+      }
+
+      var badge = hook.querySelector('.jac-dynamic-offer');
+      if (service.offer_active && service.offer_price !== null) {
+        if (!badge) {
+          badge = document.createElement('span');
+          badge.className = 'jac-dynamic-offer';
+          badge.style.cssText = 'display:inline-block;margin-right:8px;padding:3px 6px;border-radius:4px;background:#f27d2e;color:#fff;font-size:11px;font-weight:700;';
+          hook.insertBefore(badge, hook.firstChild);
+        }
+        badge.textContent = service.offer_label || 'OFERTA';
+      } else if (badge) {
+        badge.remove();
+      }
+    });
+  }
+
   function toIsoDate(value) {
     if (!value) return '';
     var d = new Date(value + 'T00:00:00');
@@ -228,6 +255,7 @@
     var basePrice = service
       ? Number(service.offer_active && service.offer_price !== null ? service.offer_price : service.base_price)
       : fallbackPrice;
+    syncStaticPrice(service);
     host.innerHTML = buildMarkup(title, basePrice, service);
 
     var step1 = host.querySelector('[data-jac-step="1"]');
@@ -319,6 +347,7 @@
       var c = computeTotal();
       var pickupValue = (pickupEl && pickupEl.value) || 'Mi ubicación actual';
       var draft = {
+        serviceId: service && service.id ? service.id : undefined,
         product: title,
         serviceDate: toIsoDate(dateEl.value),
         adults: c.adults,

@@ -12,6 +12,10 @@
   display: none !important;
 }
 
+header, [role="banner"], [class*="header"] {
+  background-color: #b9dff5 !important;
+}
+
 /* Remove the weather widget and language selector from the header CTA row. */
 .framer-un2Zd,
 .framer-locale-picker,

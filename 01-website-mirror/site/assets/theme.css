@@ -23,7 +23,7 @@ h1, h2, h3, h4, h5, h6 {
 /* Estilos para el header sticky */
 header, [role="banner"], [class*="header"] {
   backdrop-filter: blur(10px) !important;
-  background-color: rgba(255, 255, 255, 0.95) !important;
+  background-color: #b9dff5 !important;
   position: sticky;
   top: 0;
   z-index: 1000;

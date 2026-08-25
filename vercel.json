@@ -3,6 +3,10 @@
   "cleanUrls": false,
   "rewrites": [
     {
+      "source": "/favicon.ico",
+      "destination": "/01-website-mirror/site/assets/favicon-jac.png"
+    },
+    {
       "source": "/",
       "has": [
         {

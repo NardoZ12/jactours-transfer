@@ -49,6 +49,7 @@ function hydrateCheckoutDraft() {
     if (!raw) return;
     const draft = JSON.parse(raw);
 
+    if (draft?.serviceId && qs("#serviceId")) qs("#serviceId").value = draft.serviceId;
     if (draft?.serviceDate && qs("#serviceDate")) qs("#serviceDate").value = draft.serviceDate;
     if (typeof draft?.adults !== "undefined" && qs("#adults")) qs("#adults").value = String(draft.adults);
     if (typeof draft?.children !== "undefined" && qs("#children")) qs("#children").value = String(draft.children);

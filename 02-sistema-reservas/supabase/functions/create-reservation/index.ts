@@ -91,7 +91,7 @@ Deno.serve(async (req) => {
 
     const { data: service, error: serviceError } = await supabase
       .from("services")
-      .select("id,base_price,currency,active")
+      .select("id,base_price,offer_price,offer_active,currency,active")
       .eq("id", body.service_id)
       .single();
 
@@ -123,7 +123,10 @@ Deno.serve(async (req) => {
       .filter((extra: { total: number }) => extra.total > 0);
 
     const extrasAmount = roundMoney(extras.reduce((acc: number, item: { total: number }) => acc + item.total, 0));
-    const subtotal = roundMoney(Number(service.base_price) * Math.max(pax, 1));
+    const unitPrice = service.offer_active && service.offer_price != null
+      ? Number(service.offer_price)
+      : Number(service.base_price);
+    const subtotal = roundMoney(unitPrice * Math.max(pax, 1));
     const discount = roundMoney(Math.max(toNumber(body.discount, 0), 0));
     const taxAmount = roundMoney(Math.max(toNumber(body.tax_amount, 0), 0));
     const commissionAmount = roundMoney(Math.max(toNumber(body.commission_amount, 0), 0));
