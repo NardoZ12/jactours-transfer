@@ -1,4 +1,14 @@
-<!doctype html>
+git add "01-website-mirror/site/index.html" "01-website-mirror/site/assets/price-sync.js"
+git commit -m "Mejorar velocidad de carga de la portada"
+git push origin maingit add "01-website-mirror/site/index.html" "01-website-mirror/site/assets/price-sync.js"
+git commit -m "Mejorar velocidad de carga de la portada"
+git push origin maingit add "01-website-mirror/site/index.html" "01-website-mirror/site/assets/price-sync.js"
+git commit -m "Mejorar velocidad de carga de la portada"
+git push origin maingit add "01-website-mirror/site/index.html" "01-website-mirror/site/assets/price-sync.js"
+git commit -m "Mejorar velocidad de carga de la portada"
+git push origin maingit add "01-website-mirror/site/index.html" "01-website-mirror/site/assets/price-sync.js"
+git commit -m "Mejorar velocidad de carga de la portada"
+git push origin main<!doctype html>
 <!-- Made in Framer · framer.com ✨ -->
 <!-- Published Jan 26, 2026, 2:57 PM UTC -->
 <html lang="es">
@@ -481,7 +491,16 @@ a[role="button"], button, .quick-access a {
   <script defer src="assets/account-menu.js"></script>
 </head>
 <body>
-	<script async src="https://events.framer.com/script?v=2" data-fid="54f8cc6db7befd500b0fed1de41c1fca0e8685b691cc88082e852f18e7f6a041" data-no-nt></script>
+  <script>
+  window.addEventListener('load', function () {
+    var script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://events.framer.com/script?v=2';
+    script.dataset.fid = '54f8cc6db7befd500b0fed1de41c1fca0e8685b691cc88082e852f18e7f6a041';
+    script.dataset.noNt = '';
+    document.body.appendChild(script);
+  });
+  </script>
 	<!-- Start of bodyStart -->
     
     <!-- End of bodyStart -->

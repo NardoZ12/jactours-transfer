@@ -186,11 +186,12 @@
       updatePagePrices(services);
       updateAllThumbnails(services);
 
-      var observer = new MutationObserver(function () {
-        updatePagePrices(services);
-        updateAllThumbnails(services);
+      [500, 1500, 3000].forEach(function (delay) {
+        setTimeout(function () {
+          updatePagePrices(services);
+          updateAllThumbnails(services);
+        }, delay);
       });
-      observer.observe(document.body, { childList: true, subtree: true });
 
       // Re-sincronizar cada 30 segundos
       setInterval(function () {
