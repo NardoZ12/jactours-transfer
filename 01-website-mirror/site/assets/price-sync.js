@@ -85,14 +85,7 @@
 
     var offerBadge = card.querySelector('.jac-dynamic-offer');
     if (service.offer_active && service.offer_price !== null) {
-      if (!offerBadge) {
-        offerBadge = document.createElement('span');
-        offerBadge.className = 'jac-dynamic-offer';
-        offerBadge.style.cssText = 'display:inline-block;margin-right:8px;padding:3px 6px;border-radius:4px;background:#f27d2e;color:#fff;font-size:11px;font-weight:700;';
-        (offerPriceElement || card).parentElement.insertBefore(offerBadge, offerPriceElement || card);
-      }
-      var label = service.offer_label || 'OFERTA';
-      if (offerBadge.textContent !== label) offerBadge.textContent = label;
+      if (offerBadge) offerBadge.textContent = service.offer_label || 'OFERTA';
     } else if (offerBadge) {
       offerBadge.remove();
     }
