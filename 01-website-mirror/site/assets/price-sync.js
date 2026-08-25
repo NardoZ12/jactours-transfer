@@ -1,25 +1,50 @@
 (function () {
   var SUPABASE_URL = 'https://jxetcadstgvcrfkphofe.supabase.co';
   var SUPABASE_ANON_KEY = 'sb_publishable_aN6W7TXtid9mCFeDHovBlw_B5ieoxGG';
+  var supabaseClient = null;
+
+  function initSupabase() {
+    if (typeof window.supabase === 'undefined') {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+      script.onload = function () {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      };
+      document.head.appendChild(script);
+      return false;
+    } else if (!supabaseClient) {
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+    return true;
+  }
 
   function money(value) {
     return new Intl.NumberFormat('es-DO', { style: 'currency', currency: 'USD' }).format(Number(value || 0));
   }
 
   function loadAllServices() {
-    var endpoint = SUPABASE_URL + '/rest/v1/services?select=id,slug,title,base_price,offer_price,offer_label,offer_active&active=eq.true&order=category,title&limit=500';
-    return fetch(endpoint, {
+    var functionUrl = 'https://jxetcadstgvcrfkphofe.supabase.co/functions/v1/get-services';
+
+    return fetch(functionUrl, {
+      method: 'GET',
       headers: {
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: 'Bearer ' + SUPABASE_ANON_KEY
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
       }
     })
       .then(function (response) {
-        if (!response.ok) throw new Error('No se pudo cargar servicios');
+        if (!response.ok) {
+          console.error('HTTP Error:', response.status, response.statusText);
+          throw new Error('HTTP ' + response.status);
+        }
         return response.json();
       })
+      .then(function (data) {
+        console.log('📦 Servicios obtenidos:', data.length);
+        return data || [];
+      })
       .catch(function (error) {
-        console.error('Error cargando servicios:', error);
+        console.error('❌ Error cargando servicios:', error);
         return [];
       });
   }
@@ -228,7 +253,17 @@
   }
 
   function initPriceSync() {
+    console.log('🔄 Iniciando sincronización de precios...');
+
     loadAllServices().then(function (services) {
+      console.log('✅ Servicios cargados:', services.length);
+
+      if (!services || services.length === 0) {
+        console.warn('⚠️ No se cargaron servicios. Reintentando en 2s...');
+        setTimeout(initPriceSync, 2000);
+        return;
+      }
+
       updatePagePrices(services);
       updateAllThumbnails(services);
 
@@ -249,13 +284,17 @@
       });
       observer.observe(document.body, { childList: true, subtree: true });
 
-      // Re-sincronizar cada 30 segundos
+      // Re-sincronizar cada 15 segundos (más frecuente)
       setInterval(function () {
+        console.log('🔄 Re-sincronizando precios...');
         loadAllServices().then(function (updated) {
-          updatePagePrices(updated);
-          updateAllThumbnails(updated);
+          if (updated && updated.length > 0) {
+            console.log('✅ Precios actualizados:', updated.length);
+            updatePagePrices(updated);
+            updateAllThumbnails(updated);
+          }
         });
-      }, 30000);
+      }, 15000);
     });
 
     // Inyectar botón de WhatsApp
