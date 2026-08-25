@@ -203,7 +203,7 @@
   }
 
   function updateAllThumbnails(services) {
-    // Buscar todas las miniaturas/cards de servicios
+    // Buscar todas las miniaturas/cards de servicios (incluyendo links Framer)
     var serviceCards = document.querySelectorAll('[data-service-slug], .service-card, [data-framer-name*="Serv"], a[href*="servicios/"]');
 
     serviceCards.forEach(function (card) {
@@ -219,7 +219,7 @@
 
       if (!service) return;
 
-      // Buscar elementos de precio dentro de la tarjeta o cerca de ella
+      // Buscar elementos de precio en múltiples selectores
       var priceEl = card.querySelector('[data-price], .price, [data-jac-price]');
       if (priceEl) {
         var formattedPrice = money(displayPrice(service));
@@ -234,6 +234,19 @@
       if (priceHook && !card.querySelector('[data-framer-name="Precio"]')) {
         updatePriceHook(priceHook, service);
       }
+
+      // Buscar h2 con precios en tarjetas Framer (en el index/excursiones)
+      var h2Elements = card.querySelectorAll('h2.framer-text');
+      h2Elements.forEach(function (h2) {
+        var text = h2.textContent.trim();
+        if (text.includes('USD') || text.match(/\d+/)) {
+          var displayPriceValue = displayPrice(service);
+          var formattedPrice = money(displayPriceValue);
+          if (h2.textContent.trim() !== formattedPrice) {
+            h2.textContent = formattedPrice;
+          }
+        }
+      });
 
       // Buscar elemento de oferta
       if (service.offer_active && service.offer_price !== null) {
