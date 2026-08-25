@@ -71,7 +71,7 @@
   "routes": [
     {
       "src": "/favicon.ico",
-      "dest": "/assets/favicon-jac-current.svg"
+      "dest": "/assets/logo-3.png"
     },
     {
       "src": "/signals/(.*)",
