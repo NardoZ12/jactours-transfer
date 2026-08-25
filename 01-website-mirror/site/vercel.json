@@ -70,6 +70,10 @@
   ],
   "routes": [
     {
+      "src": "/favicon.ico",
+      "dest": "/assets/favicon-jac.png"
+    },
+    {
       "src": "/signals/(.*)",
       "status": 404,
       "dest": "/404.html"

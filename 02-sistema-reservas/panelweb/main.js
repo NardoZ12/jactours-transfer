@@ -212,11 +212,22 @@ servicesBody.addEventListener("click", async (event) => {
     offer_label: row.querySelector('[data-field="offer_label"]').value.trim() || null,
     offer_active: offerActive,
   };
-  const { error } = await supabase.from("services").update(payload).eq("id", row.dataset.serviceId);
+  const { data: updatedService, error } = await supabase
+    .from("services")
+    .update(payload)
+    .eq("id", row.dataset.serviceId)
+    .select("id,offer_active,offer_price,base_price")
+    .maybeSingle();
 
   button.disabled = false;
   button.textContent = "Guardar";
-  servicesMsg.textContent = error ? `Error: ${error.message}` : "Precio y oferta actualizados.";
+  if (error) {
+    servicesMsg.textContent = `Error al guardar: ${error.message}`;
+  } else if (!updatedService) {
+    servicesMsg.textContent = "No se guardo: tu usuario no tiene permiso para editar servicios.";
+  } else {
+    servicesMsg.textContent = "Precio y oferta actualizados.";
+  }
 });
 
 async function loadReservations() {
