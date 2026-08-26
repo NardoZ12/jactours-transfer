@@ -3,16 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Redirección | Reserva de Traslados</title>
-  <script>
-    // Redirigir a la nueva página de traslados
-    window.location.replace('/reserva-traslados-v2.html');
-  </script>
-  <noscript>
-    <meta http-equiv="refresh" content="0;url=/reserva-traslados-v2.html" />
-  </noscript>
+  <title>Reserva de Traslados | JAC Tours & Transfer</title>
+  <meta http-equiv="refresh" content="0;url=/reserva-traslados-v2.html" />
 </head>
 <body>
+  <script>
+    // Redirección inmediata y forzada
+    if (window.location.pathname === '/traslados' || window.location.pathname === '/traslados/') {
+      window.location.href = '/reserva-traslados-v2.html';
+    }
+  </script>
   <p>Redirigiendo a la página de reserva de traslados...</p>
 </body>
 </html>
