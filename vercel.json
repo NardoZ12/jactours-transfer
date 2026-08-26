@@ -7,6 +7,14 @@
       "destination": "/01-website-mirror/site/assets/favicon-jac.png"
     },
     {
+      "source": "/traslados",
+      "destination": "/01-website-mirror/site/traslados.html"
+    },
+    {
+      "source": "/traslados/",
+      "destination": "/01-website-mirror/site/traslados.html"
+    },
+    {
       "source": "/",
       "has": [
         {
