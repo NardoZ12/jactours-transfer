@@ -49,11 +49,22 @@ class TrasladosCalculatorV2 {
 
   init() {
     console.log('🚗 Traslados Calculator v2 inicializando...');
-    loadGoogleMapsScript(() => {
+    this.setupEventListeners();
+
+    // Esperar a que Google Maps esté disponible
+    if (window.google && window.google.maps) {
+      console.log('✅ Google Maps ya cargado');
       this.setupMap();
       this.setupAutocomplete();
-      this.setupEventListeners();
-    });
+    } else {
+      console.log('⏳ Esperando Google Maps...');
+      loadGoogleMapsScript(() => {
+        setTimeout(() => {
+          this.setupMap();
+          this.setupAutocomplete();
+        }, 500);
+      });
+    }
   }
 
   setupMap() {
@@ -81,48 +92,57 @@ class TrasladosCalculatorV2 {
   }
 
   setupAutocomplete() {
+    if (!window.google || !window.google.maps) {
+      console.warn('⚠️ Google Maps no disponible aún para Autocomplete');
+      return;
+    }
+
     const pickupInput = document.getElementById('pickupInput');
     const destinationInput = document.getElementById('destinationInput');
 
-    if (pickupInput) {
-      this.pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, {
-        componentRestrictions: { country: 'do' },
-        fields: ['geometry', 'formatted_address', 'name'],
-        types: ['establishment', 'geocode'],
-      });
+    try {
+      if (pickupInput) {
+        this.pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, {
+          componentRestrictions: { country: 'do' },
+          fields: ['geometry', 'formatted_address', 'name'],
+          types: ['establishment', 'geocode'],
+        });
 
-      this.pickupAutocomplete.addListener('place_changed', () => {
-        const place = this.pickupAutocomplete.getPlace();
-        if (place.geometry) {
-          this.setPickupLocation(
-            place.geometry.location.lat(),
-            place.geometry.location.lng(),
-            place.formatted_address || place.name
-          );
-        }
-      });
+        this.pickupAutocomplete.addListener('place_changed', () => {
+          const place = this.pickupAutocomplete.getPlace();
+          if (place.geometry) {
+            this.setPickupLocation(
+              place.geometry.location.lat(),
+              place.geometry.location.lng(),
+              place.formatted_address || place.name
+            );
+          }
+        });
+      }
+
+      if (destinationInput) {
+        this.destinationAutocomplete = new google.maps.places.Autocomplete(destinationInput, {
+          componentRestrictions: { country: 'do' },
+          fields: ['geometry', 'formatted_address', 'name'],
+          types: ['establishment', 'geocode'],
+        });
+
+        this.destinationAutocomplete.addListener('place_changed', () => {
+          const place = this.destinationAutocomplete.getPlace();
+          if (place.geometry) {
+            this.setDestinationLocation(
+              place.geometry.location.lat(),
+              place.geometry.location.lng(),
+              place.formatted_address || place.name
+            );
+          }
+        });
+      }
+
+      console.log('✅ Autocomplete configurado');
+    } catch (error) {
+      console.error('❌ Error configurando Autocomplete:', error);
     }
-
-    if (destinationInput) {
-      this.destinationAutocomplete = new google.maps.places.Autocomplete(destinationInput, {
-        componentRestrictions: { country: 'do' },
-        fields: ['geometry', 'formatted_address', 'name'],
-        types: ['establishment', 'geocode'],
-      });
-
-      this.destinationAutocomplete.addListener('place_changed', () => {
-        const place = this.destinationAutocomplete.getPlace();
-        if (place.geometry) {
-          this.setDestinationLocation(
-            place.geometry.location.lat(),
-            place.geometry.location.lng(),
-            place.formatted_address || place.name
-          );
-        }
-      });
-    }
-
-    console.log('✅ Autocomplete configurado');
   }
 
   setupEventListeners() {

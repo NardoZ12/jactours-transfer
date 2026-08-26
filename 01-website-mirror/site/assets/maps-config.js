@@ -51,18 +51,37 @@ const COMMON_LOCATIONS = [
 // Función para cargar Google Maps Script dinámicamente
 function loadGoogleMapsScript(callback) {
   if (window.google && window.google.maps) {
-    // Ya está cargado
+    console.log('✅ Google Maps ya estaba cargado');
     callback();
     return;
   }
+
+  // Evitar cargar múltiples veces
+  if (window._googleMapsLoading) {
+    console.log('⏳ Google Maps ya se está cargando...');
+    const checkInterval = setInterval(() => {
+      if (window.google && window.google.maps) {
+        clearInterval(checkInterval);
+        callback();
+      }
+    }, 100);
+    return;
+  }
+
+  window._googleMapsLoading = true;
+  console.log('📍 Cargando Google Maps API...');
 
   const script = document.createElement('script');
   script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_CONFIG.mapsApiKey}&libraries=places,geometry&language=es&region=DO`;
   script.async = true;
   script.defer = true;
-  script.onload = callback;
+  script.onload = () => {
+    console.log('✅ Google Maps API cargado correctamente');
+    callback();
+  };
   script.onerror = () => {
-    console.error('Error cargando Google Maps');
+    console.error('❌ Error cargando Google Maps API');
+    alert('Error al cargar Google Maps. Por favor recarga la página.');
   };
   document.head.appendChild(script);
 }
