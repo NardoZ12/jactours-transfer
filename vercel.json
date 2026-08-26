@@ -19,6 +19,14 @@
       "destination": "/01-website-mirror/site/traslados.html"
     },
     {
+      "source": "/servicios/traslados",
+      "destination": "/01-website-mirror/site/traslados.html"
+    },
+    {
+      "source": "/servicios/traslados/",
+      "destination": "/01-website-mirror/site/traslados.html"
+    },
+    {
       "source": "/",
       "has": [
         {
