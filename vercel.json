@@ -20,11 +20,11 @@
     },
     {
       "source": "/servicios/traslados",
-      "destination": "/01-website-mirror/site/traslados.html"
+      "destination": "/01-website-mirror/site/servicios/traslados.html"
     },
     {
       "source": "/servicios/traslados/",
-      "destination": "/01-website-mirror/site/traslados.html"
+      "destination": "/01-website-mirror/site/servicios/traslados.html"
     },
     {
       "source": "/",
