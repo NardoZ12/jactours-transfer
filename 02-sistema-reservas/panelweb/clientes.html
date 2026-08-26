@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Clientes | Jac Tours & Transfer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main class="wrap">
+    <section class="card" style="padding: 18px;">
+      <header class="topbar card" style="margin-bottom: 20px;">
+        <div>
+          <h1>Gestión de Clientes</h1>
+          <p class="muted">Historial de reservas y comunicación por cliente</p>
+        </div>
+        <div class="topbar-actions">
+          <button id="refreshBtn" class="btn-light">Actualizar</button>
+          <button id="backBtn" class="btn-light">Volver</button>
+        </div>
+      </header>
+
+      <!-- Búsqueda y Filtros -->
+      <div class="form-grid compact" style="margin-bottom: 20px;">
+        <label>
+          Buscar cliente
+          <input id="clientFilter" type="text" placeholder="Nombre, email o teléfono..." />
+        </label>
+        <label>
+          Ordenar por
+          <select id="sortBy">
+            <option value="recent">Más reciente</option>
+            <option value="name">Nombre A-Z</option>
+            <option value="spending">Mayor gasto</option>
+          </select>
+        </label>
+      </div>
+
+      <!-- Tabla de Clientes -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Teléfono</th>
+              <th>Reservas</th>
+              <th>Total Gastado</th>
+              <th>Última Reserva</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="clientsBody">
+            <tr><td colspan="7">Cargando clientes...</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p id="clientsMsg" class="msg"></p>
+
+      <!-- Panel de Detalles del Cliente -->
+      <div id="clientDetailPanel" style="display:none;margin-top:28px;">
+        <section class="card" style="padding:18px;">
+          <div class="section-head">
+            <h3>Historial de Reservas</h3>
+            <button id="closeDetailBtn" class="btn-light">Cerrar</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Código</th>
+                  <th>Fecha Servicio</th>
+                  <th>Producto</th>
+                  <th>Estado</th>
+                  <th>Monto</th>
+                  <th>Pago</th>
+                </tr>
+              </thead>
+              <tbody id="reservationHistoryBody">
+                <tr><td colspan="6">Cargando...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <p><a href="./index.html">Volver al dashboard</a></p>
+    </section>
+  </main>
+  <script type="module" src="./clientes.js"></script>
+</body>
+</html>
