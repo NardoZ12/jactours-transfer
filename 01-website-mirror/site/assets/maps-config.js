@@ -1,8 +1,8 @@
 // Configuración de Google Maps
-// NOTA: Estas keys están restringidas por dominio en Google Cloud Console
+// NOTA: API key restringida por dominio en Google Cloud Console
+// Incluye: Maps JS, Places, Geocoding, Directions, Distance Matrix y más
 const GOOGLE_MAPS_CONFIG = {
-  mapsApiKey: 'AIzaSyBQs1JgAxNdd4ZiDT5OkR9VqOQvLcMc-fQ',
-  placesApiKey: 'AIzaSyBCM6sOhI8MgNcKdchLqg1LZWs4DPm5fAo',
+  apiKey: 'AIzaSyBQs1JgAxNdd4ZiDT5OkR9VqOQvLcMc-fQ',
   defaultLocation: {
     lat: 18.7298,
     lng: -86.7325, // Centro de Punta Cana
@@ -72,7 +72,7 @@ function loadGoogleMapsScript(callback) {
   console.log('📍 Cargando Google Maps API...');
 
   const script = document.createElement('script');
-  script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_CONFIG.mapsApiKey}&libraries=places,geometry&language=es&region=DO`;
+  script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_CONFIG.apiKey}&libraries=places,geometry&language=es&region=DO`;
   script.async = true;
   script.defer = true;
   script.onload = () => {
