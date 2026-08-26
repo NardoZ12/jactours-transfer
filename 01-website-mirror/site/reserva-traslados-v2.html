@@ -4,9 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Reserva de Traslados | JAC Tours & Transfer</title>
-  <meta name="description" content="Reserva tu traslado con Google Maps. Selecciona tu ubicación en el mapa o escribe la dirección." />
+  <meta name="description" content="Reserva tu traslado con mapa interactivo. Selecciona tu ubicación en el mapa o escribe la dirección." />
   <link rel="icon" href="./assets/favicon-jac.svg" type="image/svg+xml" />
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" />
   <style>
     * {
       box-sizing: border-box;
@@ -301,6 +302,50 @@
       color: #0a5c7a;
     }
 
+    .autocomplete-suggestions {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      list-style: none;
+      margin-top: 4px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 100;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .autocomplete-suggestions li {
+      padding: 10px 12px;
+      cursor: pointer;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 13px;
+      color: #333;
+      transition: background 0.2s;
+    }
+
+    .autocomplete-suggestions li:last-child {
+      border-bottom: none;
+    }
+
+    .autocomplete-suggestions li:hover {
+      background: #f9f7f5;
+      color: #f27d2e;
+    }
+
+    .autocomplete-suggestions li.no-results {
+      color: #999;
+      cursor: default;
+      text-align: center;
+    }
+
+    .form-group {
+      position: relative;
+    }
+
     @media (max-width: 900px) {
       .main-layout {
         grid-template-columns: 1fr;
@@ -342,7 +387,7 @@
   <div class="container">
     <header>
       <h1>🚗 Reserva tu Traslado</h1>
-      <p>Con Google Maps - Selecciona tu ubicación en el mapa o escribe la dirección</p>
+      <p>Con Mapa Interactivo - Selecciona tu ubicación en el mapa o escribe la dirección</p>
     </header>
 
     <div class="main-layout">
@@ -455,13 +500,11 @@
     </div>
   </div>
 
-  <!-- Google Maps Configuration -->
-  <script src="./assets/maps-config.js"></script>
+  <!-- Leaflet Map Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 
-  <!-- Google Maps API (se carga dinámicamente en maps-config.js) -->
-
-  <!-- Traslados Calculator -->
-  <script src="./assets/traslados-calculator-v2.js"></script>
+  <!-- Traslados Calculator (Leaflet version) -->
+  <script src="./assets/traslados-calculator-leaflet.js"></script>
 
   <!-- Main Logic -->
   <script>
