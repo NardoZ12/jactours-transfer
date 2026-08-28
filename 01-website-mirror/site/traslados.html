@@ -380,6 +380,14 @@
       #vehicleOptions {
         grid-template-columns: 1fr;
       }
+
+      .input-row {
+        grid-template-columns: 1fr;
+      }
+
+      .btn-location {
+        width: 100%;
+      }
     }
   </style>
 </head>
@@ -514,7 +522,7 @@
 
       const data = window.trasladosCalc.getSelectedData();
       const vehicle = data.vehicleName || '-';
-      const distance = data.distance ? data.distance + ' km' : '-';
+      const distance = data.distance ? parseFloat(data.distance).toFixed(1) + ' km' : '-';
       const passengers = data.passengers + (data.passengers === 1 ? ' persona' : ' personas');
       const price = data.price || 0;
 
