@@ -55,16 +55,24 @@
       "destination": "/01-website-mirror/site/en/:path*"
     },
     {
+      "source": "/traslados.html",
+      "destination": "/01-website-mirror/site/traslados.html"
+    },
+    {
       "source": "/traslados",
-      "destination": "/traslados"
+      "destination": "/01-website-mirror/site/traslados.html"
     },
     {
       "source": "/traslados/",
-      "destination": "/traslados/"
+      "destination": "/01-website-mirror/site/traslados.html"
     },
     {
-      "source": "/servicios-traslados",
-      "destination": "/servicios-traslados"
+      "source": "/servicios/traslados",
+      "destination": "/01-website-mirror/site/servicios/traslados.html"
+    },
+    {
+      "source": "/servicios/traslados/",
+      "destination": "/01-website-mirror/site/servicios/traslados.html"
     },
     {
       "source": "/:path*",
