@@ -55,6 +55,18 @@
       "destination": "/01-website-mirror/site/en/:path*"
     },
     {
+      "source": "/traslados",
+      "destination": "/traslados"
+    },
+    {
+      "source": "/traslados/",
+      "destination": "/traslados/"
+    },
+    {
+      "source": "/servicios-traslados",
+      "destination": "/servicios-traslados"
+    },
+    {
       "source": "/:path*",
       "destination": "/01-website-mirror/site/:path*"
     }
