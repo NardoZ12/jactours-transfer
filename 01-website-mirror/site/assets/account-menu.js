@@ -197,17 +197,27 @@
 
   var TRASLADO_URL = "https://traslados.jactourspuntacana.com/";
 
+  function forceTrasladoNavigation(event) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    window.location.href = TRASLADO_URL;
+  }
+
   function redirectTrasladoLinks() {
     var links = document.querySelectorAll("a");
     for (var i = 0; i < links.length; i++) {
       var a = links[i];
-      if (a.href === TRASLADO_URL) continue;
+      if (a.dataset.jacTrasladoFixed === "1") continue;
       var href = a.getAttribute("href") || "";
       var text = (a.textContent || "").trim().toLowerCase();
       var isTrasladoHref = /(^|\/)traslados(\.html)?(\?.*)?(#.*)?$/i.test(href) || href.indexOf("servicios/traslados") !== -1;
       var isTrasladoText = text === "traslados" || text === "solicitar traslado";
       if (isTrasladoHref || isTrasladoText) {
         a.setAttribute("href", TRASLADO_URL);
+        a.dataset.jacTrasladoFixed = "1";
+        // Framer's own SPA click handler ignores href changes made after hydration;
+        // intercept the click in the capture phase to force real navigation.
+        a.addEventListener("click", forceTrasladoNavigation, true);
       }
     }
   }
