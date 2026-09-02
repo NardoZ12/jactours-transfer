@@ -92,7 +92,7 @@
       .map(function (candidate) { return 'slug.eq.' + encodeURIComponent(candidate); })
       .join(',');
 
-    var endpoint = SUPABASE_URL + '/rest/v1/services?select=id,title,base_price,offer_price,offer_label,offer_active&active=eq.true&or=(' + orQuery + ')&limit=1';
+     var endpoint = SUPABASE_URL + '/rest/v1/services?select=id,title,base_price,offer_price,offer_label,offer_active&active=eq.true&or=(' + orQuery + ')&limit=1';
     return fetch(endpoint, {
       headers: {
         apikey: SUPABASE_ANON_KEY,
