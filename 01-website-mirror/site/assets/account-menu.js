@@ -195,10 +195,28 @@
     });
   }
 
+  var TRASLADO_URL = "https://traslados.jactourspuntacana.com/";
+
+  function redirectTrasladoLinks() {
+    var links = document.querySelectorAll("a");
+    for (var i = 0; i < links.length; i++) {
+      var a = links[i];
+      if (a.href === TRASLADO_URL) continue;
+      var href = a.getAttribute("href") || "";
+      var text = (a.textContent || "").trim().toLowerCase();
+      var isTrasladoHref = /(^|\/)traslados(\.html)?(\?.*)?(#.*)?$/i.test(href) || href.indexOf("servicios/traslados") !== -1;
+      var isTrasladoText = text === "traslados" || text === "solicitar traslado";
+      if (isTrasladoHref || isTrasladoText) {
+        a.setAttribute("href", TRASLADO_URL);
+      }
+    }
+  }
+
   function ensureAccountAccess() {
     if (!document.body) return;
     ensureModal();
     ensureMenuLoginLink();
+    redirectTrasladoLinks();
     detectPasswordSetup();
   }
 
@@ -211,5 +229,6 @@
   // Framer re-renders the mobile menu after hydration; keep watching for it.
   new MutationObserver(function () {
     ensureMenuLoginLink();
+    redirectTrasladoLinks();
   }).observe(document.documentElement, { childList: true, subtree: true });
 })();
