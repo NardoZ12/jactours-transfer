@@ -74,6 +74,20 @@
       "dest": "/assets/logo-3.png"
     },
     {
+      "src": "/traslados/?$",
+      "dest": "/traslados.html",
+      "headers": {
+        "Cache-Control": "public, max-age=0, must-revalidate"
+      }
+    },
+    {
+      "src": "/servicios/traslados/?$",
+      "dest": "/servicios/traslados.html",
+      "headers": {
+        "Cache-Control": "public, max-age=0, must-revalidate"
+      }
+    },
+    {
       "src": "/signals/(.*)",
       "status": 404,
       "dest": "/404.html"
