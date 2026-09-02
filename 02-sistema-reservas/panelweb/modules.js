@@ -93,7 +93,7 @@ async function loadManifestPage() {
     const body = document.getElementById("manifestBody");
     const { data, error } = await supabase
       .from("reservations")
-      .select("id,reservation_code,customer_name,customer_phone,pickup_address,hotel,service_time,status")
+      .select("id,reservation_code,customer_name,customer_phone,pickup_address,hotel,service_time,status,created_at")
       .eq("service_date", dateValue)
       .order("service_time", { ascending: true });
 
@@ -102,17 +102,25 @@ async function loadManifestPage() {
       return;
     }
 
+    if (!data || data.length === 0) {
+      body.innerHTML = '<tr><td colspan="6">No hay reservas para esta fecha</td></tr>';
+      return;
+    }
+
     body.innerHTML = data
-      .map((r) => `
-        <tr>
-          <td>${r.service_time || "-"}</td>
+      .map((r) => {
+        var statusClass = r.status === "confirmed" ? "status-confirmed" : r.status === "pending" ? "status-pending" : "status-cancelled";
+        return `
+        <tr class="${statusClass}">
+          <td><strong>${r.service_time || "-"}</strong></td>
           <td>${r.reservation_code}</td>
           <td>${r.customer_name}</td>
           <td>${r.pickup_address || r.hotel || "-"}</td>
           <td>${r.customer_phone || "-"}</td>
-          <td>${r.status}</td>
+          <td><span class="badge ${statusClass}">${r.status}</span></td>
         </tr>
-      `)
+      `;
+      })
       .join("");
   }
 

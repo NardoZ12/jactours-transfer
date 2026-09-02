@@ -1,25 +1,50 @@
 (function () {
   var SUPABASE_URL = 'https://jxetcadstgvcrfkphofe.supabase.co';
   var SUPABASE_ANON_KEY = 'sb_publishable_aN6W7TXtid9mCFeDHovBlw_B5ieoxGG';
+  var supabaseClient = null;
+
+  function initSupabase() {
+    if (typeof window.supabase === 'undefined') {
+      var script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+      script.onload = function () {
+        supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      };
+      document.head.appendChild(script);
+      return false;
+    } else if (!supabaseClient) {
+      supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    }
+    return true;
+  }
 
   function money(value) {
     return new Intl.NumberFormat('es-DO', { style: 'currency', currency: 'USD' }).format(Number(value || 0));
   }
 
   function loadAllServices() {
-    var endpoint = SUPABASE_URL + '/rest/v1/services?select=slug,title,base_price,offer_price,offer_label,offer_active&active=eq.true';
-    return fetch(endpoint, {
+    var functionUrl = 'https://jxetcadstgvcrfkphofe.supabase.co/functions/v1/get-services';
+
+    return fetch(functionUrl, {
+      method: 'GET',
       headers: {
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: 'Bearer ' + SUPABASE_ANON_KEY
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_ANON_KEY,
       }
     })
       .then(function (response) {
-        if (!response.ok) throw new Error('No se pudo cargar servicios');
+        if (!response.ok) {
+          console.error('HTTP Error:', response.status, response.statusText);
+          throw new Error('HTTP ' + response.status);
+        }
         return response.json();
       })
+      .then(function (data) {
+        console.log('📦 Servicios obtenidos:', data.length);
+        return data || [];
+      })
       .catch(function (error) {
-        console.error('Error cargando servicios:', error);
+        console.error('❌ Error cargando servicios:', error);
         return [];
       });
   }
@@ -28,15 +53,17 @@
     return String(slug)
       .trim()
       .toLowerCase()
+      .normalize('NFKD')
+      .replace(/[̀-ͯ]/g, '')
+      .replace(/á|à|â|ä|ã/g, 'a')
+      .replace(/é|è|ê|ë/g, 'e')
+      .replace(/í|ì|î|ï/g, 'i')
+      .replace(/ó|ò|ô|ö|õ/g, 'o')
+      .replace(/ú|ù|û|ü/g, 'u')
+      .replace(/ñ/g, 'n')
       .replace(/[_\s]+/g, '-')
       .replace(/-+/g, '-')
-      .replace(/^-|-$/g, '')
-      .replace(/Ã¡/g, 'á')
-      .replace(/Ã©/g, 'é')
-      .replace(/Ã­/g, 'í')
-      .replace(/Ã³/g, 'ó')
-      .replace(/Ãº/g, 'ú')
-      .replace(/Ã±/g, 'ñ');
+      .replace(/^-|-$/g, '');
   }
 
   function getCurrentPageSlug() {
@@ -65,14 +92,25 @@
   function updatePriceCard(card, service) {
     var offerPriceElement = card.querySelector('[data-framer-name="Precio"] p, [data-framer-name="Precio"] [data-price]');
     var regularPriceElement = card.querySelector('[data-framer-name="PrecioHook"] p, [data-framer-name="PrecioHook"] [data-price]');
-    var formattedPrice = money(displayPrice(service));
 
-    if (offerPriceElement) {
-      if (offerPriceElement.textContent.trim() !== formattedPrice) {
-        offerPriceElement.textContent = formattedPrice;
+    if (service.offer_active && service.offer_price !== null) {
+      var offerPriceFormatted = money(service.offer_price);
+      if (offerPriceElement && offerPriceElement.textContent.trim() !== offerPriceFormatted) {
+        offerPriceElement.textContent = offerPriceFormatted;
       }
-      offerPriceElement.style.textDecoration = 'none';
+      if (offerPriceElement) {
+        offerPriceElement.style.textDecoration = 'none';
+      }
+    } else {
+      var basePriceFormatted = money(service.base_price);
+      if (offerPriceElement && offerPriceElement.textContent.trim() !== basePriceFormatted) {
+        offerPriceElement.textContent = basePriceFormatted;
+      }
+      if (offerPriceElement) {
+        offerPriceElement.style.textDecoration = 'none';
+      }
     }
+
     if (regularPriceElement) {
       var regularPrice = money(service.base_price);
       if (regularPriceElement.textContent.trim() !== regularPrice) {
@@ -85,9 +123,11 @@
 
     var offerBadge = card.querySelector('.jac-dynamic-offer');
     if (service.offer_active && service.offer_price !== null) {
-      if (offerBadge) offerBadge.textContent = service.offer_label || 'OFERTA';
+      if (offerBadge) {
+        offerBadge.textContent = service.offer_label || 'OFERTA';
+      }
     } else if (offerBadge) {
-      offerBadge.remove();
+      offerBadge.style.display = 'none';
     }
   }
 
@@ -163,7 +203,7 @@
   }
 
   function updateAllThumbnails(services) {
-    // Buscar todas las miniaturas/cards de servicios
+    // Buscar todas las miniaturas/cards de servicios (incluyendo links Framer)
     var serviceCards = document.querySelectorAll('[data-service-slug], .service-card, [data-framer-name*="Serv"], a[href*="servicios/"]');
 
     serviceCards.forEach(function (card) {
@@ -179,7 +219,7 @@
 
       if (!service) return;
 
-      // Buscar elementos de precio dentro de la tarjeta o cerca de ella
+      // Buscar elementos de precio en múltiples selectores
       var priceEl = card.querySelector('[data-price], .price, [data-jac-price]');
       if (priceEl) {
         var formattedPrice = money(displayPrice(service));
@@ -194,6 +234,19 @@
       if (priceHook && !card.querySelector('[data-framer-name="Precio"]')) {
         updatePriceHook(priceHook, service);
       }
+
+      // Buscar h2 con precios en tarjetas Framer (en el index/excursiones)
+      var h2Elements = card.querySelectorAll('h2.framer-text');
+      h2Elements.forEach(function (h2) {
+        var text = h2.textContent.trim();
+        if (text.includes('USD') || text.match(/\d+/)) {
+          var displayPriceValue = displayPrice(service);
+          var formattedPrice = money(displayPriceValue);
+          if (h2.textContent.trim() !== formattedPrice) {
+            h2.textContent = formattedPrice;
+          }
+        }
+      });
 
       // Buscar elemento de oferta
       if (service.offer_active && service.offer_price !== null) {
@@ -213,7 +266,17 @@
   }
 
   function initPriceSync() {
+    console.log('🔄 Iniciando sincronización de precios...');
+
     loadAllServices().then(function (services) {
+      console.log('✅ Servicios cargados:', services.length);
+
+      if (!services || services.length === 0) {
+        console.warn('⚠️ No se cargaron servicios. Reintentando en 2s...');
+        setTimeout(initPriceSync, 2000);
+        return;
+      }
+
       updatePagePrices(services);
       updateAllThumbnails(services);
 
@@ -234,13 +297,17 @@
       });
       observer.observe(document.body, { childList: true, subtree: true });
 
-      // Re-sincronizar cada 30 segundos
+      // Re-sincronizar cada 15 segundos (más frecuente)
       setInterval(function () {
+        console.log('🔄 Re-sincronizando precios...');
         loadAllServices().then(function (updated) {
-          updatePagePrices(updated);
-          updateAllThumbnails(updated);
+          if (updated && updated.length > 0) {
+            console.log('✅ Precios actualizados:', updated.length);
+            updatePagePrices(updated);
+            updateAllThumbnails(updated);
+          }
         });
-      }, 30000);
+      }, 15000);
     });
 
     // Inyectar botón de WhatsApp

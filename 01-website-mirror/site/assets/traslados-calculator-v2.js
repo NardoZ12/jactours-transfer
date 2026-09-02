@@ -30,9 +30,8 @@ const VEHICLES = {
 };
 
 const FREE_KM = 15;
-const DEFAULT_CENTER = [18.7298, -86.7325]; // Punta Cana
 
-class TrasladosCalculatorLeaflet {
+class TrasladosCalculatorV2 {
   constructor() {
     this.currentLocation = null;
     this.destination = null;
@@ -43,113 +42,153 @@ class TrasladosCalculatorLeaflet {
     this.map = null;
     this.pickupMarker = null;
     this.destinationMarker = null;
-    this.polyline = null;
+    this.pickupAutocomplete = null;
+    this.destinationAutocomplete = null;
     this.init();
   }
 
   init() {
-    console.log('🚗 Traslados Calculator Leaflet inicializando...');
-    this.setupMap();
-    this.setupAutocomplete();
+    console.log('🚗 Traslados Calculator v2 inicializando...');
     this.setupEventListeners();
-    console.log('✅ Calculador inicializado sin Google Maps');
+
+    // Esperar a que Google Maps esté disponible
+    if (window.google && window.google.maps) {
+      console.log('✅ Google Maps ya cargado');
+      this.setupMap();
+      this.setupAutocomplete();
+    } else {
+      console.log('⏳ Esperando Google Maps...');
+      loadGoogleMapsScript(() => {
+        setTimeout(() => {
+          this.setupMap();
+          this.setupAutocomplete();
+        }, 500);
+      });
+    }
   }
 
   setupMap() {
     const mapContainer = document.getElementById('map');
     if (!mapContainer) {
-      console.warn('⚠️ Contenedor de mapa no encontrado');
+      console.warn('Contenedor de mapa no encontrado');
       return;
     }
 
-    // Inicializar mapa con Leaflet
-    this.map = L.map('map').setView(DEFAULT_CENTER, 11);
-
-    // Agregar OpenStreetMap tiles
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap contributors',
-      maxZoom: 19,
-    }).addTo(this.map);
-
-    // Click en el mapa para seleccionar ubicación
-    this.map.on('click', (e) => {
-      const isPickup = document.getElementById('mapMode')?.value === 'pickup';
-      this.selectLocationFromMap(e.latlng.lat, e.latlng.lng, isPickup);
+    this.map = new google.maps.Map(mapContainer, {
+      zoom: 12,
+      center: GOOGLE_MAPS_CONFIG.defaultLocation,
+      mapTypeControl: true,
+      fullscreenControl: true,
+      streetViewControl: false,
     });
 
-    console.log('✅ Mapa Leaflet inicializado');
+    // Click en el mapa para seleccionar ubicación
+    this.map.addListener('click', (event) => {
+      const isPickup = document.getElementById('mapMode')?.value === 'pickup';
+      this.selectLocationFromMap(event.latLng, isPickup);
+    });
+
+    console.log('✅ Mapa inicializado');
   }
 
   setupAutocomplete() {
+    if (!window.google || !window.google.maps) {
+      console.warn('⚠️ Google Maps no disponible aún para Autocomplete');
+      return;
+    }
+
     const pickupInput = document.getElementById('pickupInput');
     const destinationInput = document.getElementById('destinationInput');
 
-    if (pickupInput) {
-      this.setupAddressAutocomplete(pickupInput, (lat, lng, address) => {
-        this.setPickupLocation(lat, lng, address);
-      });
-    }
+    try {
+      if (pickupInput) {
+        this.pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput, {
+          componentRestrictions: { country: 'do' },
+          fields: ['geometry', 'formatted_address', 'name'],
+          types: ['establishment', 'geocode'],
+        });
 
-    if (destinationInput) {
-      this.setupAddressAutocomplete(destinationInput, (lat, lng, address) => {
-        this.setDestinationLocation(lat, lng, address);
-      });
-    }
-
-    console.log('✅ Autocomplete configurado (Nominatim)');
-  }
-
-  setupAddressAutocomplete(input, callback) {
-    let autocompleteTimeout;
-    const suggestionsList = document.createElement('ul');
-    suggestionsList.className = 'autocomplete-suggestions';
-    input.parentElement.appendChild(suggestionsList);
-
-    input.addEventListener('input', (e) => {
-      const query = e.target.value.trim();
-      if (query.length < 3) {
-        suggestionsList.innerHTML = '';
-        return;
+        this.pickupAutocomplete.addListener('place_changed', () => {
+          const place = this.pickupAutocomplete.getPlace();
+          if (place.geometry) {
+            this.setPickupLocation(
+              place.geometry.location.lat(),
+              place.geometry.location.lng(),
+              place.formatted_address || place.name
+            );
+          }
+        });
       }
 
-      clearTimeout(autocompleteTimeout);
-      autocompleteTimeout = setTimeout(() => {
-        this.searchNominatim(query, (results) => {
-          suggestionsList.innerHTML = '';
-          if (results.length === 0) {
-            const li = document.createElement('li');
-            li.textContent = 'No se encontraron resultados';
-            li.className = 'no-results';
-            suggestionsList.appendChild(li);
-            return;
-          }
-
-          results.slice(0, 5).forEach((result) => {
-            const li = document.createElement('li');
-            li.textContent = result.display_name;
-            li.addEventListener('click', () => {
-              input.value = result.display_name;
-              suggestionsList.innerHTML = '';
-              callback(parseFloat(result.lat), parseFloat(result.lon), result.display_name);
-            });
-            suggestionsList.appendChild(li);
-          });
+      if (destinationInput) {
+        this.destinationAutocomplete = new google.maps.places.Autocomplete(destinationInput, {
+          componentRestrictions: { country: 'do' },
+          fields: ['geometry', 'formatted_address', 'name'],
+          types: ['establishment', 'geocode'],
         });
-      }, 300);
-    });
+
+        this.destinationAutocomplete.addListener('place_changed', () => {
+          const place = this.destinationAutocomplete.getPlace();
+          if (place.geometry) {
+            this.setDestinationLocation(
+              place.geometry.location.lat(),
+              place.geometry.location.lng(),
+              place.formatted_address || place.name
+            );
+          }
+        });
+      }
+
+      console.log('✅ Autocomplete configurado');
+    } catch (error) {
+      console.error('❌ Error configurando Autocomplete:', error);
+    }
   }
 
-  searchNominatim(query, callback) {
-    // Buscar en OpenStreetMap Nominatim API (gratuito)
-    const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=do&limit=5`;
+  setupEventListeners() {
+    // Botón de ubicación actual
+    const currentLocationBtn = document.getElementById('getCurrentLocationBtn');
+    if (currentLocationBtn) {
+      currentLocationBtn.addEventListener('click', () => this.getCurrentLocation());
+    }
 
-    fetch(url)
-      .then((res) => res.json())
-      .then((data) => callback(data))
-      .catch((err) => {
-        console.error('Error en Nominatim:', err);
-        callback([]);
+    // Distancia
+    const distanceInput = document.getElementById('distance');
+    if (distanceInput) {
+      distanceInput.addEventListener('change', () => this.calculatePrices());
+      distanceInput.addEventListener('input', () => this.calculatePrices());
+    }
+
+    // Pasajeros
+    const passengersInput = document.getElementById('passengers');
+    if (passengersInput) {
+      passengersInput.addEventListener('change', () => {
+        this.passengers = Math.max(1, Number(passengersInput.value) || 1);
+        this.calculatePrices();
       });
+    }
+
+    // Modo de mapa
+    const mapModeSelect = document.getElementById('mapMode');
+    if (mapModeSelect) {
+      mapModeSelect.addEventListener('change', (e) => {
+        const label = document.getElementById('mapModeLabel');
+        if (label) {
+          label.textContent = e.target.value === 'pickup' ? '📍 Clickea en el mapa para seleccionar SALIDA' : '📍 Clickea en el mapa para seleccionar DESTINO';
+        }
+      });
+    }
+
+    // Vehículos
+    document.querySelectorAll('[data-vehicle]').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const vehicleKey = btn.dataset.vehicle;
+        this.selectVehicle(vehicleKey);
+      });
+    });
+
+    console.log('✅ Event listeners configurados');
   }
 
   setPickupLocation(lat, lng, address) {
@@ -161,19 +200,17 @@ class TrasladosCalculatorLeaflet {
     const gpsInput = document.getElementById('gpsCoordinates');
     if (gpsInput) gpsInput.value = `${lat},${lng}`;
 
-    // Actualizar marcador
-    if (this.pickupMarker) this.map.removeLayer(this.pickupMarker);
-    this.pickupMarker = L.marker([lat, lng], {
-      title: 'Punto de salida',
-      icon: L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41],
-      }),
-    }).addTo(this.map);
+    // Actualizar marcador en mapa
+    if (this.map) {
+      if (this.pickupMarker) this.pickupMarker.setMap(null);
+      this.pickupMarker = new google.maps.Marker({
+        position: { lat, lng },
+        map: this.map,
+        title: 'Punto de salida',
+        icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+      });
+      this.map.panTo({ lat, lng });
+    }
 
     this.calculateDistance();
     console.log('📍 Pickup:', address, lat, lng);
@@ -185,19 +222,17 @@ class TrasladosCalculatorLeaflet {
     const destinationInput = document.getElementById('destinationInput');
     if (destinationInput) destinationInput.value = address || `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
 
-    // Actualizar marcador
-    if (this.destinationMarker) this.map.removeLayer(this.destinationMarker);
-    this.destinationMarker = L.marker([lat, lng], {
-      title: 'Destino',
-      icon: L.icon({
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        shadowSize: [41, 41],
-      }),
-    }).addTo(this.map);
+    // Actualizar marcador en mapa
+    if (this.map) {
+      if (this.destinationMarker) this.destinationMarker.setMap(null);
+      this.destinationMarker = new google.maps.Marker({
+        position: { lat, lng },
+        map: this.map,
+        title: 'Destino',
+        icon: 'http://maps.google.com/mapfiles/ms/icons/red-dot.png',
+      });
+      this.map.panTo({ lat, lng });
+    }
 
     this.calculateDistance();
     console.log('📍 Destination:', address, lat, lng);
@@ -206,46 +241,35 @@ class TrasladosCalculatorLeaflet {
   calculateDistance() {
     if (!this.currentLocation || !this.destination || !this.map) return;
 
-    const R = 6371; // Radio de la Tierra en km
-    const dLat = ((this.destination.lat - this.currentLocation.lat) * Math.PI) / 180;
-    const dLon = ((this.destination.lng - this.currentLocation.lng) * Math.PI) / 180;
-    const a =
-      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-      Math.cos((this.currentLocation.lat * Math.PI) / 180) *
-        Math.cos((this.destination.lat * Math.PI) / 180) *
-        Math.sin(dLon / 2) *
-        Math.sin(dLon / 2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    this.distance = Math.round((R * c) * 10) / 10;
+    const pickup = new google.maps.LatLng(this.currentLocation.lat, this.currentLocation.lng);
+    const dest = new google.maps.LatLng(this.destination.lat, this.destination.lng);
+
+    const distanceMeters = google.maps.geometry.spherical.computeDistanceBetween(pickup, dest);
+    this.distance = Math.round((distanceMeters / 1000) * 10) / 10; // Redondear a 1 decimal
 
     const distanceInput = document.getElementById('distance');
     if (distanceInput) distanceInput.value = this.distance;
 
-    // Dibujar polyline
-    if (this.polyline) this.map.removeLayer(this.polyline);
-    this.polyline = L.polyline(
-      [
-        [this.currentLocation.lat, this.currentLocation.lng],
-        [this.destination.lat, this.destination.lng],
-      ],
-      { color: '#f27d2e', weight: 3, opacity: 0.7 }
-    ).addTo(this.map);
+    // Dibujar línea entre marcadores
+    if (this.pickupMarker && this.destinationMarker) {
+      const polyline = new google.maps.Polyline({
+        path: [pickup, dest],
+        geodesic: true,
+        strokeColor: '#f27d2e',
+        strokeOpacity: 0.7,
+        strokeWeight: 2,
+        map: this.map,
+      });
 
-    // Ajustar zoom
-    const group = new L.featureGroup([this.pickupMarker, this.destinationMarker]);
-    this.map.fitBounds(group.getBounds(), { padding: [50, 50] });
+      // Ajustar zoom para ver ambos puntos
+      const bounds = new google.maps.LatLngBounds();
+      bounds.extend(pickup);
+      bounds.extend(dest);
+      this.map.fitBounds(bounds);
+    }
 
     this.calculatePrices();
     console.log('📏 Distancia calculada:', this.distance, 'km');
-  }
-
-  selectLocationFromMap(lat, lng, isPickup) {
-    const address = `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
-    if (isPickup) {
-      this.setPickupLocation(lat, lng, address);
-    } else {
-      this.setDestinationLocation(lat, lng, address);
-    }
   }
 
   getCurrentLocation() {
@@ -369,35 +393,6 @@ class TrasladosCalculatorLeaflet {
     });
   }
 
-  setupEventListeners() {
-    const currentLocationBtn = document.getElementById('getCurrentLocationBtn');
-    if (currentLocationBtn) {
-      currentLocationBtn.addEventListener('click', () => this.getCurrentLocation());
-    }
-
-    const distanceInput = document.getElementById('distance');
-    if (distanceInput) {
-      distanceInput.addEventListener('change', () => this.calculatePrices());
-      distanceInput.addEventListener('input', () => this.calculatePrices());
-    }
-
-    const passengersInput = document.getElementById('passengers');
-    if (passengersInput) {
-      passengersInput.addEventListener('change', () => {
-        this.passengers = Math.max(1, Number(passengersInput.value) || 1);
-        this.calculatePrices();
-      });
-    }
-
-    document.querySelectorAll('[data-vehicle]').forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        const vehicleKey = btn.dataset.vehicle;
-        this.selectVehicle(vehicleKey);
-      });
-    });
-  }
-
   getSelectedData() {
     return {
       vehicle: this.selectedVehicle,
@@ -418,8 +413,8 @@ class TrasladosCalculatorLeaflet {
 // Inicializar cuando DOM esté listo
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
-    window.trasladosCalc = new TrasladosCalculatorLeaflet();
+    window.trasladosCalc = new TrasladosCalculatorV2();
   });
 } else {
-  window.trasladosCalc = new TrasladosCalculatorLeaflet();
+  window.trasladosCalc = new TrasladosCalculatorV2();
 }
