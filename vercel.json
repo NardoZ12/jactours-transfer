@@ -7,6 +7,16 @@
       "destination": "/01-website-mirror/site/assets/favicon-jac.png"
     },
     {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "traslados.jactourspuntacana.com"
+        }
+      ],
+      "destination": "/01-website-mirror/site/traslados.html"
+    },
+    {
       "source": "/",
       "has": [
         {

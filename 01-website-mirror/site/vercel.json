@@ -74,6 +74,19 @@
       "dest": "/assets/logo-3.png"
     },
     {
+      "src": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "traslados.jactourspuntacana.com"
+        }
+      ],
+      "dest": "/traslados.html",
+      "headers": {
+        "Cache-Control": "public, max-age=0, must-revalidate"
+      }
+    },
+    {
       "src": "/traslados/?$",
       "dest": "/traslados.html",
       "headers": {
