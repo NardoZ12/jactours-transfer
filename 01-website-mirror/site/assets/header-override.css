@@ -1,0 +1,41 @@
+/* Header Color Override - JAC Tours Blue Theme */
+
+/* Main header background - Dark blue from logo */
+[data-framer-component-type="Header"],
+header,
+nav {
+  background: linear-gradient(135deg, #1a3a52 0%, #0f2537 100%) !important;
+}
+
+/* Header text colors - White for dark background */
+header h1,
+header h2,
+header h3,
+header h4,
+header h5,
+header h6,
+header span,
+header a,
+nav a,
+nav span {
+  color: white !important;
+}
+
+/* Navigation links hover state */
+nav a:hover,
+header a:hover {
+  opacity: 0.9 !important;
+}
+
+/* Ensure header elements are visible on dark background */
+header button,
+nav button {
+  color: white !important;
+}
+
+/* Logo section adjustment if needed */
+[data-testid="navbar-logo"],
+.navbar-logo,
+header .logo {
+  filter: brightness(1.1);
+}
