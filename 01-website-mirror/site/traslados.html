@@ -42,43 +42,54 @@
       min-height: 100vh;
       padding: 0;
       color: #2c2c2c;
+      font-size: 14px;
     }
 
     .container {
-      max-width: 1300px;
+      max-width: 1000px;
       margin: 0 auto;
-      padding: 40px 20px;
+      padding: 20px 20px;
     }
 
     header {
       text-align: center;
-      margin-bottom: 50px;
+      margin-bottom: 30px;
       animation: slideDown 0.6s ease;
       background: linear-gradient(135deg, #161e34 0%, #0d1520 100%);
-      padding: 60px 20px 40px;
-      margin: -40px -20px 50px -20px;
+      padding: 20px 20px 20px;
+      margin: -40px -20px 30px -20px;
+    }
+
+    .header-top {
+      margin-bottom: 12px;
+    }
+
+    .header-logo {
+      height: 35px;
+      width: auto;
+      filter: brightness(1.1);
     }
 
     header h1 {
-      font-size: 48px;
+      font-size: 32px;
       font-weight: 800;
       color: white;
-      margin-bottom: 12px;
+      margin-bottom: 6px;
       letter-spacing: -0.5px;
     }
 
     header p {
-      font-size: 18px;
-      color: rgba(255, 255, 255, 0.85);
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.8);
       font-weight: 300;
     }
 
     .hero {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 40px;
+      gap: 24px;
       align-items: stretch;
-      margin-bottom: 40px;
+      margin-bottom: 20px;
     }
 
     .map-section {
@@ -89,7 +100,7 @@
     }
 
     .map-container {
-      height: 600px;
+      height: 480px;
       border-radius: 16px;
       overflow: hidden;
     }
@@ -103,7 +114,7 @@
       animation: slideInRight 0.7s ease;
       background: white;
       border-radius: 16px;
-      padding: 40px;
+      padding: 24px;
       box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
       display: flex;
       flex-direction: column;
@@ -111,7 +122,7 @@
     }
 
     .form-section {
-      margin-bottom: 32px;
+      margin-bottom: 20px;
       animation: fadeIn 0.8s ease;
     }
 
@@ -132,7 +143,7 @@
     }
 
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
     .form-group:last-child {
@@ -141,10 +152,10 @@
 
     label {
       display: block;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 600;
       color: #555;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -152,10 +163,10 @@
     input,
     select {
       width: 100%;
-      padding: 12px 16px;
+      padding: 10px 14px;
       border: 1px solid #e0e0e0;
       border-radius: 8px;
-      font-size: 14px;
+      font-size: 13px;
       font-family: inherit;
       font-weight: 500;
       transition: all 0.3s ease;
@@ -254,7 +265,7 @@
     }
 
     .vehicle-card {
-      padding: 16px;
+      padding: 12px;
       border: 2px solid #e0e0e0;
       border-radius: 10px;
       background: white;
@@ -334,9 +345,9 @@
       background: linear-gradient(135deg, #f9f7f5 0%, #fafafa 100%);
       border: 1px solid #e0e0e0;
       border-left: 4px solid #f27d2e;
-      padding: 20px;
+      padding: 16px;
       border-radius: 10px;
-      margin-top: 24px;
+      margin-top: 16px;
     }
 
     .summary-item {
@@ -363,16 +374,16 @@
 
     .btn-checkout {
       width: 100%;
-      padding: 14px;
+      padding: 12px;
       background: linear-gradient(135deg, #f27d2e 0%, #d96b25 100%);
       color: white;
       border: none;
       border-radius: 8px;
       font-weight: 700;
-      font-size: 15px;
+      font-size: 14px;
       cursor: pointer;
       transition: all 0.3s ease;
-      margin-top: 20px;
+      margin-top: 16px;
       box-shadow: 0 4px 15px rgba(242, 125, 46, 0.25);
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -387,6 +398,34 @@
       opacity: 0.5;
       cursor: not-allowed;
       transform: none;
+    }
+
+    .whatsapp-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      background: #25D366;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      z-index: 999;
+    }
+
+    .whatsapp-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 16px rgba(37, 211, 102, 0.5);
+    }
+
+    .whatsapp-btn svg {
+      width: 24px;
+      height: 24px;
     }
 
     .info-box {
@@ -522,6 +561,9 @@
 <body>
   <div class="container">
     <header>
+      <div class="header-top">
+        <img src="./assets/logo-3.png" alt="JAC Tours" class="header-logo" />
+      </div>
       <h1>Reserva tu Traslado</h1>
       <p>Puntacana · Transporte Seguro y Confiable · v2.0</p>
     </header>
@@ -636,6 +678,12 @@
             <button type="submit" class="btn-checkout" id="checkoutBtn" disabled>
               Proceder al Pago
             </button>
+
+            <a href="https://wa.me/1234567890" class="whatsapp-btn" target="_blank" rel="noopener">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.272-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.67-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.076 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421-7.403h-.004a9.87 9.87 0 00-9.746 9.798c0 2.718.738 5.33 2.139 7.592l-2.26 6.541 6.753-2.212c2.176 1.185 4.602 1.812 7.06 1.812 5.376 0 9.797-4.41 9.798-9.797 0-2.616-.505-5.071-1.504-7.378-1-2.306-2.44-4.366-4.195-6.002-1.756-1.637-3.816-2.927-6.06-3.636-2.245-.71-4.65-.732-6.983-.065z"/>
+              </svg>
+            </a>
           </div>
         </form>
       </div>
