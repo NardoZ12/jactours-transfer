@@ -2,59 +2,31 @@
 (function () {
   const PAYMENT_GATEWAY_URL = 'https://jac-pay-flow.base44.app/';
 
-  function replaceBookingForm() {
-    // Busca el formulario de reserva (diferentes selectores para diferentes estructuras)
-    const formSelectors = [
-      'form[name*="reserv"]',
-      '[class*="booking"]',
-      '[class*="reserv"]',
-      '[data-testid*="booking"]',
-      '[data-testid*="reserv"]'
-    ];
-
-    let form = null;
-    for (const selector of formSelectors) {
-      form = document.querySelector(selector);
-      if (form) break;
+  function extractPrice() {
+    // Busca el precio en el texto de la página
+    const bodyText = document.body.innerText;
+    const priceMatches = bodyText.match(/US\$[\d,]+\.?\d*/g);
+    if (priceMatches && priceMatches.length > 0) {
+      // Toma el precio más alto (probablemente sea el total)
+      return priceMatches[priceMatches.length - 1].replace('US$', '');
     }
+    return null;
+  }
 
-    if (!form) return;
+  function createBookingButton() {
+    const price = extractPrice();
+    const tourName = document.querySelector('h1')?.textContent || document.title;
 
-    // Busca el precio del tour
-    const priceSelectors = [
-      '[class*="price"]',
-      '[class*="total"]',
-      '[data-testid*="price"]',
-      '[data-testid*="total"]'
-    ];
+    const container = document.createElement('div');
+    container.style.cssText = `
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, rgba(242, 125, 46, 0.05) 0%, rgba(217, 107, 37, 0.05) 100%);
+    `;
 
-    let priceElement = null;
-    let priceText = 'Reservar';
-
-    for (const selector of priceSelectors) {
-      priceElement = form.querySelector(selector);
-      if (priceElement) {
-        priceText = priceElement.textContent.trim();
-        break;
-      }
-    }
-
-    // Si no encuentra el precio dentro del form, busca en toda la página
-    if (!priceElement) {
-      for (const selector of priceSelectors) {
-        priceElement = document.querySelector(selector);
-        if (priceElement && priceElement.textContent.includes('US$')) {
-          priceText = priceElement.textContent.trim();
-          break;
-        }
-      }
-    }
-
-    // Extrae el número del precio si es necesario
-    const priceMatch = priceText.match(/[\d,]+\.?\d*/);
-    const price = priceMatch ? priceMatch[0] : null;
-
-    // Crea el nuevo botón de reserva
     const button = document.createElement('button');
     button.type = 'button';
     button.className = 'jac-reserve-button';
@@ -69,32 +41,106 @@
       e.preventDefault();
       e.stopPropagation();
 
-      // Obtén datos de la página
-      const tourName = document.querySelector('h1')?.textContent || 'Tour';
       const tourData = {
         tour: tourName,
         price: price || 'Por consultar',
         timestamp: new Date().toISOString()
       };
 
-      // Guarda los datos en sessionStorage para pasarlos a la pasarela
       sessionStorage.setItem('jac_tour_data', JSON.stringify(tourData));
-
-      // Redirige a la pasarela de pago
       window.location.href = PAYMENT_GATEWAY_URL;
     });
 
-    // Reemplaza el formulario
-    form.parentNode.replaceChild(button, form);
+    container.appendChild(button);
+    return container;
+  }
+
+  function replaceBookingForms() {
+    try {
+      // Busca botones con texto "Continuar" u "Reservar"
+      const allButtons = Array.from(document.querySelectorAll('button'));
+      let foundButton = false;
+
+      for (const btn of allButtons) {
+        const btnText = btn.textContent.toLowerCase();
+        if (
+          btnText.includes('continuar') ||
+          btnText.includes('reservar') ||
+          btnText.includes('booking') ||
+          btnText.includes('comprar')
+        ) {
+          console.log('Botón encontrado:', btn.textContent);
+
+          // Reemplaza el botón y su contexto
+          const bookingButton = createBookingButton();
+          btn.parentNode.replaceChild(bookingButton, btn);
+          foundButton = true;
+          break;
+        }
+      }
+
+      // Si no encuentra botón, busca formularios
+      if (!foundButton) {
+        const forms = document.querySelectorAll('form');
+        if (forms.length > 0) {
+          console.log('Formulario encontrado');
+          const bookingButton = createBookingButton();
+          forms[forms.length - 1].parentNode.replaceChild(bookingButton, forms[forms.length - 1]);
+          foundButton = true;
+        }
+      }
+
+      // Si aún no encuentra nada, agrega el botón al final de la página
+      if (!foundButton) {
+        console.log('No se encontró botón ni formulario. Insertando al final.');
+        const bookingButton = createBookingButton();
+        document.body.appendChild(bookingButton);
+      }
+
+      return foundButton;
+    } catch (error) {
+      console.error('Error en replaceBookingForms:', error);
+      return false;
+    }
+  }
+
+  // Usa MutationObserver para detectar cambios dinámicos
+  function observeChanges() {
+    const observer = new MutationObserver(() => {
+      // Si ya reemplazamos, no vuelvas a intentar
+      if (!document.querySelector('.jac-reserve-button')) {
+        replaceBookingForms();
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: false,
+      characterData: false
+    });
   }
 
   // Ejecuta cuando el DOM esté listo
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', replaceBookingForm);
-  } else {
-    replaceBookingForm();
+  function init() {
+    console.log('Script de reserva inicializado');
+    replaceBookingForms();
+    setTimeout(() => replaceBookingForms(), 500);
+    setTimeout(() => replaceBookingForms(), 1500);
+    setTimeout(() => replaceBookingForms(), 3000);
+
+    // Observa cambios futuros
+    observeChanges();
   }
 
-  // Intenta de nuevo después de un tiempo (para páginas dinámicas)
-  setTimeout(replaceBookingForm, 1500);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
+  } else {
+    init();
+  }
+
+  // Intenta una vez más después de que se carguen todos los recursos
+  window.addEventListener('load', () => {
+    setTimeout(() => replaceBookingForms(), 500);
+  });
 })();
