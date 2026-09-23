@@ -1,10 +1,14 @@
 /* Header Color Override - JAC Tours Blue Theme */
 
-/* Main header background - Dark blue from logo */
+/* Main header background - Dark blue from logo (#161e34) */
 [data-framer-component-type="Header"],
 header,
-nav {
-  background: linear-gradient(135deg, #1a3a52 0%, #0f2537 100%) !important;
+nav,
+[class*="header"],
+[class*="navbar"],
+[class*="navigation"] {
+  background: linear-gradient(135deg, #161e34 0%, #0d1520 100%) !important;
+  background-color: #161e34 !important;
 }
 
 /* Header text colors - White for dark background */
@@ -16,26 +20,47 @@ header h5,
 header h6,
 header span,
 header a,
+header p,
 nav a,
-nav span {
+nav span,
+nav p,
+[class*="header"] h1,
+[class*="header"] h2,
+[class*="header"] span,
+[class*="header"] p,
+[class*="navbar"] a,
+[class*="navbar"] span {
   color: white !important;
 }
 
 /* Navigation links hover state */
 nav a:hover,
-header a:hover {
+header a:hover,
+[class*="navbar"] a:hover,
+[class*="header"] a:hover {
   opacity: 0.9 !important;
 }
 
 /* Ensure header elements are visible on dark background */
 header button,
-nav button {
+nav button,
+[class*="header"] button,
+[class*="navbar"] button {
   color: white !important;
 }
 
 /* Logo section adjustment if needed */
 [data-testid="navbar-logo"],
 .navbar-logo,
-header .logo {
+header .logo,
+[class*="logo"] {
   filter: brightness(1.1);
+}
+
+/* Light text for brand text/descriptions */
+[class*="header"] [class*="subtitle"],
+[class*="header"] [class*="description"],
+nav [class*="subtitle"],
+nav [class*="description"] {
+  color: rgba(255, 255, 255, 0.85) !important;
 }
