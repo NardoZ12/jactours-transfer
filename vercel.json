@@ -85,8 +85,8 @@
       "destination": "/01-website-mirror/site/servicios/traslados.html"
     },
     {
-      "source": "/servicios/:path*",
-      "destination": "/01-website-mirror/site/servicios/:path*.html"
+      "source": "/servicios/:page",
+      "destination": "/01-website-mirror/site/servicios/:page.html"
     },
     {
       "source": "/:path*",
