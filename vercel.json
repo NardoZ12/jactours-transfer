@@ -77,18 +77,6 @@
       "destination": "/01-website-mirror/site/traslados.html"
     },
     {
-      "source": "/servicios/traslados",
-      "destination": "/01-website-mirror/site/servicios/traslados.html"
-    },
-    {
-      "source": "/servicios/traslados/",
-      "destination": "/01-website-mirror/site/servicios/traslados.html"
-    },
-    {
-      "source": "/servicios/:path*",
-      "destination": "/01-website-mirror/site/servicios/:path*.html"
-    },
-    {
       "source": "/:path*",
       "destination": "/01-website-mirror/site/:path*.html"
     }
