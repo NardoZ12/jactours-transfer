@@ -37,32 +37,12 @@
       "destination": "/02-sistema-reservas/panelweb/:path*"
     },
     {
-      "source": "/panelweb",
-      "destination": "/02-sistema-reservas/panelweb/index.html"
-    },
-    {
       "source": "/panelweb/:path*",
       "destination": "/02-sistema-reservas/panelweb/:path*"
     },
     {
-      "source": "/",
-      "destination": "/01-website-mirror/site/index.html"
-    },
-    {
-      "source": "/en",
-      "destination": "/01-website-mirror/site/en/index.html"
-    },
-    {
-      "source": "/framerusercontent.com/:path*",
-      "destination": "/01-website-mirror/external/framerusercontent.com/:path*"
-    },
-    {
-      "source": "/connect.facebook.net/:path*",
-      "destination": "/01-website-mirror/external/connect.facebook.net/:path*"
-    },
-    {
-      "source": "/en/:path*",
-      "destination": "/01-website-mirror/site/en/:path*"
+      "source": "/servicios/:path*.html",
+      "destination": "/servicios/:path*.html"
     },
     {
       "source": "/traslados.html",
@@ -75,6 +55,14 @@
     {
       "source": "/traslados/",
       "destination": "/01-website-mirror/site/traslados.html"
+    },
+    {
+      "source": "/en/:path*",
+      "destination": "/01-website-mirror/site/en/:path*"
+    },
+    {
+      "source": "/",
+      "destination": "/01-website-mirror/site/index.html"
     },
     {
       "source": "/:path*",
@@ -92,52 +80,7 @@
       ]
     },
     {
-      "source": "/assets/:path*.js",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/assets/:path*.css",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/traslados",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/traslados/",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/servicios/traslados",
-      "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=0, must-revalidate"
-        }
-      ]
-    },
-    {
-      "source": "/servicios/traslados/",
+      "source": "/assets/:path*.(js|css)",
       "headers": [
         {
           "key": "Cache-Control",
@@ -168,24 +111,6 @@
           "value": "panel.jactourspuntacana.com"
         }
       ],
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
-    },
-    {
-      "source": "/panelweb",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
-    },
-    {
-      "source": "/panelweb/:path*",
       "headers": [
         {
           "key": "X-Robots-Tag",
