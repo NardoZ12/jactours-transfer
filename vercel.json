@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "cleanUrls": true,
+  "cleanUrls": false,
   "rewrites": [
     {
       "source": "/favicon.ico",
@@ -86,11 +86,11 @@
     },
     {
       "source": "/servicios/:path*",
-      "destination": "/01-website-mirror/site/servicios/:path*"
+      "destination": "/01-website-mirror/site/servicios/:path*.html"
     },
     {
       "source": "/:path*",
-      "destination": "/01-website-mirror/site/:path*"
+      "destination": "/01-website-mirror/site/:path*.html"
     }
   ],
   "headers": [
