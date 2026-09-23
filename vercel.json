@@ -41,8 +41,8 @@
       "destination": "/02-sistema-reservas/panelweb/:path*"
     },
     {
-      "source": "/servicios/**",
-      "destination": "/servicios/:splat.html"
+      "source": "/servicios/:path+",
+      "destination": "/servicios/:path.html"
     },
     {
       "source": "/traslados.html",
