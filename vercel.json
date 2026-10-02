@@ -44,7 +44,7 @@
     },
     {
       "source": "/",
-      "destination": "/01-website-mirror/site/index.html"
+      "destination": "/01-website-mirror/site/traslados.html"
     },
     {
       "source": "/en",
