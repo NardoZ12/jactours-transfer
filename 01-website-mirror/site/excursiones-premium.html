@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excursiones y Tours | JAC Tours Punta Cana</title>
+    <meta name="description" content="Descubre nuestras mejores excursiones en Punta Cana: Isla Saona, Isla Catalina, buceo, ATV y mucho más.">
+    <link rel="icon" href="assets/logo-3.png" type="image/png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #0d1520 0%, #161e34 50%, #0f172a 100%);
+            color: #e5e7eb;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, #161e34 0%, #0d1520 100%);
+            color: white;
+            padding: 25px 0;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(242, 125, 46, 0.2);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            height: 50px;
+            object-fit: contain;
+        }
+
+        header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f27d2e 0%, #ffa500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .breadcrumb {
+            padding: 15px 20px;
+            background: rgba(242, 125, 46, 0.05);
+            border-bottom: 1px solid rgba(242, 125, 46, 0.1);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb a {
+            color: #f27d2e;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .breadcrumb a:hover {
+            color: #ffa500;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 60px 20px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            border-radius: 50px;
+            padding: 8px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            background: rgba(242, 125, 46, 0.1);
+            border: 1px solid rgba(242, 125, 46, 0.3);
+            color: #f27d2e;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 48px;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 15px;
+            letter-spacing: -1px;
+        }
+
+        .section-subtitle {
+            font-size: 16px;
+            color: #a0aec0;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .cta-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: linear-gradient(135deg, #f27d2e 0%, #d96b25 100%);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            margin-top: 30px;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 4px 15px rgba(242, 125, 46, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(242, 125, 46, 0.5);
+        }
+
+        .tours-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .tour-card {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(242, 125, 46, 0.2);
+            border-radius: 20px;
+            padding: 32px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tour-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(242, 125, 46, 0.6), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tour-card:hover::before {
+            opacity: 1;
+        }
+
+        .tour-card:hover {
+            border-color: rgba(242, 125, 46, 0.5);
+            background: rgba(30, 41, 59, 0.8);
+            transform: translateY(-8px);
+            box-shadow: 0 12px 40px rgba(242, 125, 46, 0.15), 0 0 40px rgba(49, 150, 226, 0.1);
+        }
+
+        .tour-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            background: rgba(242, 125, 46, 0.1);
+            border: 1px solid rgba(242, 125, 46, 0.3);
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #f27d2e;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            width: fit-content;
+        }
+
+        .tour-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .tour-description {
+            font-size: 14px;
+            color: #cbd5e1;
+            margin-bottom: 24px;
+            line-height: 1.5;
+        }
+
+        .tour-price {
+            font-size: 32px;
+            font-weight: 800;
+            color: #f27d2e;
+            margin-bottom: 8px;
+            font-family: 'Courier New', monospace;
+        }
+
+        .tour-currency {
+            font-size: 14px;
+            color: #94a3b8;
+            margin-bottom: 24px;
+        }
+
+        .tour-features {
+            list-style: none;
+            margin-bottom: 28px;
+            flex-grow: 1;
+        }
+
+        .tour-features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 10px 0;
+            font-size: 13px;
+            color: #cbd5e1;
+        }
+
+        .feature-icon {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f27d2e 0%, #d96b25 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 11px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .tour-button {
+            background: linear-gradient(135deg, #f27d2e 0%, #d96b25 100%);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            width: 100%;
+            box-shadow: 0 4px 12px rgba(242, 125, 46, 0.3);
+        }
+
+        .tour-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(242, 125, 46, 0.4);
+            background: linear-gradient(135deg, #ffa500 0%, #f27d2e 100%);
+        }
+
+        .tour-button:active {
+            transform: translateY(0);
+        }
+
+        /* Premium highlight */
+        .tour-card.premium {
+            border-color: rgba(242, 125, 46, 0.5);
+            background: rgba(242, 125, 46, 0.05);
+            box-shadow: 0 0 40px rgba(242, 125, 46, 0.1);
+        }
+
+        .tour-card.premium:hover {
+            box-shadow: 0 12px 50px rgba(242, 125, 46, 0.25);
+        }
+
+        .tour-card.premium .tour-badge {
+            background: rgba(242, 125, 46, 0.2);
+            border-color: rgba(242, 125, 46, 0.5);
+        }
+
+        footer {
+            background: linear-gradient(135deg, #0d1520 0%, #000000 100%);
+            color: #94a3b8;
+            padding: 40px 20px;
+            text-align: center;
+            font-size: 13px;
+            border-top: 1px solid rgba(242, 125, 46, 0.1);
+        }
+
+        footer p {
+            margin-bottom: 10px;
+        }
+
+        footer a {
+            color: #f27d2e;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        footer a:hover {
+            color: #ffa500;
+        }
+
+        @media (max-width: 768px) {
+            .section-title {
+                font-size: 32px;
+            }
+
+            .tours-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .tour-card {
+                padding: 24px;
+            }
+
+            .tour-title {
+                font-size: 20px;
+            }
+
+            .tour-price {
+                font-size: 28px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <img src="assets/logo-3.png" alt="JAC Tours" class="logo">
+            <h1>Excursiones Punta Cana</h1>
+        </div>
+    </header>
+
+    <div class="breadcrumb">
+        <a href="/">← Volver al inicio</a>
+    </div>
+
+    <div class="container">
+        <div class="section-header">
+            <div class="section-badge">🌟 Experiencias Premium</div>
+            <h2 class="section-title">Nuestras Mejores Excursiones</h2>
+            <p class="section-subtitle">Vive la magia del Caribe con nuestras experiencias únicamente diseñadas para ti. Desde playas paradisíacas hasta aventuras emocionantes.</p>
+            <a href="#tours" class="cta-button">↓ Explorar Todos los Tours</a>
+        </div>
+
+        <div class="tours-grid" id="tours">
+            <!-- Isla Saona Clásica -->
+            <div class="tour-card">
+                <div class="tour-badge">⭐ Clásico</div>
+                <h3 class="tour-title">Isla Saona Clásica</h3>
+                <p class="tour-description">Disfruta del paraíso tropical con playas de arena blanca y aguas cristalinas. Incluye almuerzo y bebidas.</p>
+                <div class="tour-price">US$ 89</div>
+                <div class="tour-currency">por persona</div>
+                <ul class="tour-features">
+                    <li><span class="feature-icon">✓</span> 8 horas de experiencia</li>
+                    <li><span class="feature-icon">✓</span> Transporte incluido</li>
+                    <li><span class="feature-icon">✓</span> Almuerzo buffet</li>
+                    <li><span class="feature-icon">✓</span> Snorkel gratuito</li>
+                </ul>
+                <a href="/servicios/isla-saona-clasica" class="tour-button">Reservar Ahora</a>
+            </div>
+
+            <!-- Isla Saona VIP -->
+            <div class="tour-card premium">
+                <div class="tour-badge">👑 Premium</div>
+                <h3 class="tour-title">Isla Saona VIP 4 Playas</h3>
+                <p class="tour-description">Experiencia exclusiva en 4 playas diferentes con servicio VIP, bebidas premium y camarones frescos.</p>
+                <div class="tour-price">US$ 169</div>
+                <div class="tour-currency">por persona</div>
+                <ul class="tour-features">
+                    <li><span class="feature-icon">✓</span> 10 horas de experiencia</li>
+                    <li><span class="feature-icon">✓</span> 4 playas paraíso</li>
+                    <li><span class="feature-icon">✓</span> Bebidas premium incluidas</li>
+                    <li><span class="feature-icon">✓</span> Servicio VIP personalizado</li>
+                </ul>
+                <a href="/servicios/isla-saona-vip-4-playas" class="tour-button">Reservar Ahora</a>
+            </div>
+
+            <!-- Isla Catalina Buceo -->
+            <div class="tour-card">
+                <div class="tour-badge">🤿 Aventura</div>
+                <h3 class="tour-title">Isla Catalina Buceo</h3>
+                <p class="tour-description">Explora los arrecifes de coral y vida marina con instructores certificados. Perfecto para principiantes.</p>
+                <div class="tour-price">US$ 129</div>
+                <div class="tour-currency">por persona</div>
+                <ul class="tour-features">
+                    <li><span class="feature-icon">✓</span> 8 horas de buceo</li>
+                    <li><span class="feature-icon">✓</span> 2 inmersiones incluidas</li>
+                    <li><span class="feature-icon">✓</span> Equipo profesional</li>
+                    <li><span class="feature-icon">✓</span> Instructor certificado</li>
+                </ul>
+                <a href="/servicios/isla-catalina-buceo" class="tour-button">Reservar Ahora</a>
+            </div>
+
+            <!-- Isla Catalina -->
+            <div class="tour-card">
+                <div class="tour-badge">🏝️ Playa</div>
+                <h3 class="tour-title">Isla Catalina</h3>
+                <p class="tour-description">Navega a la hermosa isla Catalina con playas vírgenes, arrecifes de coral y fauna marina exótica.</p>
+                <div class="tour-price">US$ 99</div>
+                <div class="tour-currency">por persona</div>
+                <ul class="tour-features">
+                    <li><span class="feature-icon">✓</span> 8 horas de experiencia</li>
+                    <li><span class="feature-icon">✓</span> Barco privado</li>
+                    <li><span class="feature-icon">✓</span> Snorkel incluido</li>
+                    <li><span class="feature-icon">✓</span> Lunch box gourmet</li>
+                </ul>
+                <a href="/servicios/isla-catalina" class="tour-button">Reservar Ahora</a>
+            </div>
+
+            <!-- ATV 4WD -->
+            <div class="tour-card">
+                <div class="tour-badge">🚙 Emoción</div>
+                <h3 class="tour-title">ATV 4WD Adventure</h3>
+                <p class="tour-description">Recorre la selva tropical en cuatricíclo con guía experto. Una aventura adrenalina pura.</p>
+                <div class="tour-price">US$ 79</div>
+                <div class="tour-currency">por persona</div>
+                <ul class="tour-features">
+                    <li><span class="feature-icon">✓</span> 3 horas de conducción</li>
+                    <li><span class="feature-icon">✓</span> Ruta por la selva</li>
+                    <li><span class="feature-icon">✓</span> Equipo de seguridad</li>
+                    <li><span class="feature-icon">✓</span> Fotos profesionales</li>
+                </ul>
+                <a href="/servicios/atv-4wd" class="tour-button">Reservar Ahora</a>
+            </div>
+
+            <!-- Buggies -->
+            <div class="tour-card">
+                <div class="tour-badge">🚙 Adrenalina</div>
+                <h3 class="tour-title">Buggy Tour Extremo</h3>
+                <p class="tour-description">Vive la emoción máxima manejando un buggy por senderos de montaña y playas salvajes.</p>
+                <div class="tour-price">US$ 85</div>
+                <div class="tour-currency">por persona</div>
+                <ul class="tour-features">
+                    <li><span class="feature-icon">✓</span> 4 horas de adventure</li>
+                    <li><span class="feature-icon">✓</span> Buggy automático</li>
+                    <li><span class="feature-icon">✓</span> Ruta montaña + playa</li>
+                    <li><span class="feature-icon">✓</span> Instructor acompañante</li>
+                </ul>
+                <a href="/servicios/buggies" class="tour-button">Reservar Ahora</a>
+            </div>
+
+            <!-- Coco Bongo -->
+            <div class="tour-card premium">
+                <div class="tour-badge">🎭 Entretenimiento</div>
+                <h3 class="tour-title">Coco Bongo Show</h3>
+                <p class="tour-description">Espectáculo de clase mundial con acróbatas, luz y sonido. Noche inolvidable en Punta Cana.</p>
+                <div class="tour-price">US$ 110</div>
+                <div class="tour-currency">entrada adulto</div>
+                <ul class="tour-features">
+                    <li><span class="feature-icon">✓</span> Espectáculo 2 horas</li>
+                    <li><span class="feature-icon">✓</span> Bebida de bienvenida</li>
+                    <li><span class="feature-icon">✓</span> Asientos VIP disponibles</li>
+                    <li><span class="feature-icon">✓</span> Ambiente de clase mundial</li>
+                </ul>
+                <a href="/servicios/cocobongo" class="tour-button">Reservar Ahora</a>
+            </div>
+
+            <!-- Hacienda Park -->
+            <div class="tour-card">
+                <div class="tour-badge">🌳 Naturaleza</div>
+                <h3 class="tour-title">Hacienda Park Adventure</h3>
+                <p class="tour-description">Parque ecoturístico con cascadas, tirolesas y piscinas naturales. Ideal para familias.</p>
+                <div class="tour-price">US$ 65</div>
+                <div class="tour-currency">por persona</div>
+                <ul class="tour-features">
+                    <li><span class="feature-icon">✓</span> 6 horas de aventura</li>
+                    <li><span class="feature-icon">✓</span> 8 tirolesas</li>
+                    <li><span class="feature-icon">✓</span> Almuerzo incluido</li>
+                    <li><span class="feature-icon">✓</span> Apto para todas las edades</li>
+                </ul>
+                <a href="/servicios/hacienda-park" class="tour-button">Reservar Ahora</a>
+            </div>
+
+            <!-- Party Boat -->
+            <div class="tour-card">
+                <div class="tour-badge">⛵ Fiesta</div>
+                <h3 class="tour-title">Party Boat Nocturno</h3>
+                <p class="tour-description">Fiesta en el mar con DJ, bebidas ilimitadas y diversión sin fin. La noche más loca.</p>
+                <div class="tour-price">US$ 75</div>
+                <div class="tour-currency">por persona</div>
+                <ul class="tour-features">
+                    <li><span class="feature-icon">✓</span> 5 horas de fiesta</li>
+                    <li><span class="feature-icon">✓</span> DJ en vivo</li>
+                    <li><span class="feature-icon">✓</span> Bebidas ilimitadas</li>
+                    <li><span class="feature-icon">✓</span> Baño en el mar</li>
+                </ul>
+                <a href="/servicios/party-boat-en-punta-cana" class="tour-button">Reservar Ahora</a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 JAC Tours Punta Cana. Todos los derechos reservados.</p>
+        <p><a href="https://wa.me/1234567890" target="_blank">Contacto WhatsApp</a> | <a href="/">Volver al inicio</a></p>
+    </footer>
+
+    <script>
+        // Inyectar booking-redirect.js para manejo de botones de pago
+        const script = document.createElement('script');
+        script.src = 'assets/booking-redirect.js';
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>
