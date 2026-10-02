@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excursiones y Tours | JAC Tours & Transfer</title>
+    <meta name="description" content="Explora nuestras mejores excursiones y tours en Punta Cana.">
+    <link rel="icon" href="assets/logo-3.png" type="image/png">
+    <link rel="stylesheet" href="assets/header-override.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; background: #f5f5f5; }
+        
+        header { 
+            background: linear-gradient(135deg, #161e34 0%, #0d1520 100%); 
+            color: white; 
+            padding: 20px; 
+            text-align: center; 
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header img { height: 40px; margin-bottom: 10px; }
+        header h1 { font-size: 28px; margin: 10px 0; }
+
+        .container { max-width: 1000px; margin: 40px auto; padding: 0 20px; }
+
+        .hero { 
+            text-align: center; 
+            margin-bottom: 50px;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .hero h2 { font-size: 42px; color: #161e34; margin: 20px 0; font-weight: 700; }
+        .hero p { font-size: 16px; color: #666; max-width: 600px; margin: 0 auto; line-height: 1.6; }
+
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background: #f27d2e;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .back-btn:hover {
+            background: #d96b25;
+            transform: translateY(-2px);
+        }
+
+        .tours-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 25px; 
+            margin: 40px 0; 
+        }
+
+        .tour-card { 
+            background: white; 
+            border-radius: 10px; 
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .tour-card:hover { 
+            transform: translateY(-8px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+
+        .tour-card-header {
+            height: 180px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .tour-card-body {
+            padding: 25px;
+        }
+
+        .tour-card h3 { 
+            font-size: 20px; 
+            color: #161e34;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .tour-card p { 
+            font-size: 14px; 
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .tour-card a { 
+            display: block; 
+            padding: 12px; 
+            background: linear-gradient(135deg, #f27d2e 0%, #d96b25 100%);
+            color: white; 
+            text-decoration: none; 
+            border-radius: 5px; 
+            font-weight: 600; 
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .tour-card a:hover { 
+            transform: scale(1.02);
+            box-shadow: 0 4px 12px rgba(242, 125, 46, 0.3);
+        }
+
+        footer { 
+            background: #161e34; 
+            color: white; 
+            text-align: center; 
+            padding: 30px; 
+            margin-top: 50px; 
+        }
+
+        @media (max-width: 600px) {
+            .hero h2 { font-size: 28px; }
+            .tours-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="assets/logo-3.png" alt="JAC Tours">
+        <h1>EXCURSIONES Y TOURS</h1>
+    </header>
+
+    <div class="container">
+        <a href="/" class="back-btn">← Volver al inicio</a>
+
+        <div class="hero">
+            <h2>Nuestras Excursiones</h2>
+            <p>Descubre las mejores experiencias en Punta Cana. Desde excursiones a islas paradisíacas hasta aventuras extremas.</p>
+        </div>
+
+        <div class="tours-grid">
+            <div class="tour-card">
+                <div class="tour-card-header">🏝️ Naturaleza & Playas</div>
+                <div class="tour-card-body">
+                    <h3>Isla Saona Clásica</h3>
+                    <p>Playa de arena blanca, agua cristalina y la experiencia tropical perfecta.</p>
+                    <a href="/servicios/isla-saona-clasica">Ver detalles</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-card-header">🏛️ Historia & Cultura</div>
+                <div class="tour-card-body">
+                    <h3>Santo Domingo Colonial</h3>
+                    <p>Recorre la primera ciudad del Nuevo Mundo, Patrimonio de la Humanidad.</p>
+                    <a href="/servicios/santo-domingo">Ver detalles</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-card-header">⛵ Lujo en el Mar</div>
+                <div class="tour-card-body">
+                    <h3>Yates Privados</h3>
+                    <p>Experiencia VIP en el mar con privacidad y todo incluido.</p>
+                    <a href="/servicios/yates">Ver detalles</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-card-header">🎣 Aventura Acuática</div>
+                <div class="tour-card-body">
+                    <h3>Pesca Deportiva</h3>
+                    <p>Pesca en aguas profundas con técnicos expertos.</p>
+                    <a href="/servicios/pesca">Ver detalles</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-card-header">🏍️ Adrenalina</div>
+                <div class="tour-card-body">
+                    <h3>ATV 4x4</h3>
+                    <p>Aventura extrema a través de terrenos accidentados.</p>
+                    <a href="/servicios/atv-4wd">Ver detalles</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-card-header">🏖️ Isla Privada</div>
+                <div class="tour-card-body">
+                    <h3>Isla Catalina</h3>
+                    <p>Buceo y playa en una isla paradisíaca.</p>
+                    <a href="/servicios/isla-catalina">Ver detalles</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-card-header">🤿 Buceo</div>
+                <div class="tour-card-body">
+                    <h3>Isla Catalina Buceo</h3>
+                    <p>Exploración subacuática en arrecifes de coral.</p>
+                    <a href="/servicios/isla-catalina-buceo">Ver detalles</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-card-header">🌴 4 Playas</div>
+                <div class="tour-card-body">
+                    <h3>Isla Saona VIP 4 Playas</h3>
+                    <p>Tour completo visitando las mejores playas de Isla Saona.</p>
+                    <a href="/servicios/isla-saona-vip-4-playas">Ver detalles</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-card-header">🏞️ Naturaleza</div>
+                <div class="tour-card-body">
+                    <h3>Hacienda Park</h3>
+                    <p>Parque ecológico con actividades variadas.</p>
+                    <a href="/servicios/hacienda-park">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 JAC Tours & Transfer. Todos los derechos reservados.</p>
+    </footer>
+</body>
+</html>
