@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excursiones y Tours | JAC Tours</title>
+    <meta name="description" content="Descubre nuestras excursiones y tours en Punta Cana: Isla Saona, Isla Catalina, buceo, ATV y mucho más.">
+    <link rel="icon" href="assets/logo-3.png" type="image/png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, #161e34 0%, #0d1520 100%);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .logo {
+            height: 45px;
+            object-fit: contain;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .breadcrumb {
+            padding: 15px 20px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .breadcrumb a {
+            color: #3196e2;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .section-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #161e34;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .tours-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .tour-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tour-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .tour-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(135deg, #3196e2 0%, #2175c3 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            font-weight: 700;
+        }
+
+        .tour-content {
+            padding: 20px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .tour-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #161e34;
+            margin-bottom: 10px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+        }
+
+        .tour-button {
+            background: linear-gradient(135deg, #f27d2e 0%, #d96b25 100%);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            transition: all 0.3s ease;
+            font-family: 'Poppins', sans-serif;
+            margin-top: auto;
+        }
+
+        .tour-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(242, 125, 46, 0.4);
+        }
+
+        .tour-button:active {
+            transform: translateY(0);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: #3196e2;
+            text-decoration: none;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            gap: 12px;
+            color: #2175c3;
+        }
+
+        footer {
+            background: #1a1f2e;
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+            font-size: 14px;
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .tours-grid {
+                grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+                gap: 15px;
+            }
+
+            .section-title {
+                font-size: 24px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            .logo {
+                height: 35px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tours-grid {
+                grid-template-columns: 1fr;
+            }
+
+            header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <header-content>
+            <img src="assets/logo-3.png" alt="JAC Tours" class="logo">
+            <h1>Excursiones y Tours</h1>
+        </header-content>
+    </header>
+
+    <div class="breadcrumb">
+        <a href="/">← Volver al inicio</a>
+    </div>
+
+    <div class="container">
+        <h2 class="section-title">Descubre nuestras mejores experiencias</h2>
+
+        <div class="tours-grid">
+            <div class="tour-card">
+                <div class="tour-image">🏝️</div>
+                <div class="tour-content">
+                    <div class="tour-title">Isla Saona Clásica</div>
+                    <a href="/servicios/isla-saona-clasica" class="tour-button">Reservar Ahora</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-image">👑</div>
+                <div class="tour-content">
+                    <div class="tour-title">Isla Saona VIP 4 Playas</div>
+                    <a href="/servicios/isla-saona-vip-4-playas" class="tour-button">Reservar Ahora</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-image">🤿</div>
+                <div class="tour-content">
+                    <div class="tour-title">Isla Catalina Buceo</div>
+                    <a href="/servicios/isla-catalina-buceo" class="tour-button">Reservar Ahora</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-image">🏝️</div>
+                <div class="tour-content">
+                    <div class="tour-title">Isla Catalina</div>
+                    <a href="/servicios/isla-catalina" class="tour-button">Reservar Ahora</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-image">🚙</div>
+                <div class="tour-content">
+                    <div class="tour-title">ATV 4WD</div>
+                    <a href="/servicios/atv-4wd" class="tour-button">Reservar Ahora</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-image">🚙</div>
+                <div class="tour-content">
+                    <div class="tour-title">Buggies</div>
+                    <a href="/servicios/buggies" class="tour-button">Reservar Ahora</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-image">🎢</div>
+                <div class="tour-content">
+                    <div class="tour-title">Coco Bongo</div>
+                    <a href="/servicios/cocobongo" class="tour-button">Reservar Ahora</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-image">🎭</div>
+                <div class="tour-content">
+                    <div class="tour-title">Higuey City</div>
+                    <a href="/servicios/higuey-city" class="tour-button">Reservar Ahora</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-image">🌳</div>
+                <div class="tour-content">
+                    <div class="tour-title">Hacienda Park</div>
+                    <a href="/servicios/hacienda-park" class="tour-button">Reservar Ahora</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-image">🌳</div>
+                <div class="tour-content">
+                    <div class="tour-title">Dorado Park</div>
+                    <a href="/servicios/dorado-park" class="tour-button">Reservar Ahora</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-image">⛵</div>
+                <div class="tour-content">
+                    <div class="tour-title">Party Boat en Punta Cana</div>
+                    <a href="/servicios/party-boat-en-punta-cana" class="tour-button">Reservar Ahora</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-image">🦅</div>
+                <div class="tour-content">
+                    <div class="tour-title">Águila Marina</div>
+                    <a href="/servicios/aguila-marina" class="tour-button">Reservar Ahora</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-image">🛥️</div>
+                <div class="tour-content">
+                    <div class="tour-title">Benetti</div>
+                    <a href="/servicios/benetti" class="tour-button">Reservar Ahora</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-image">🛥️</div>
+                <div class="tour-content">
+                    <div class="tour-title">Cranchi 50 Mediterranee</div>
+                    <a href="/servicios/cranchi-50-mediterranee" class="tour-button">Reservar Ahora</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-image">🛥️</div>
+                <div class="tour-content">
+                    <div class="tour-title">Express 38</div>
+                    <a href="/servicios/express-38" class="tour-button">Reservar Ahora</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-image">🛥️</div>
+                <div class="tour-content">
+                    <div class="tour-title">Fairline 50</div>
+                    <a href="/servicios/fairline-50" class="tour-button">Reservar Ahora</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-image">🛥️</div>
+                <div class="tour-content">
+                    <div class="tour-title">Majesty 56</div>
+                    <a href="/servicios/majesty-56" class="tour-button">Reservar Ahora</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-image">✈️</div>
+                <div class="tour-content">
+                    <div class="tour-title">Aicon Fly 56</div>
+                    <a href="/servicios/aicon-fly56" class="tour-button">Reservar Ahora</a>
+                </div>
+            </div>
+
+            <div class="tour-card">
+                <div class="tour-image">🌊</div>
+                <div class="tour-content">
+                    <div class="tour-title">Tours Acuáticos</div>
+                    <a href="/servicios" class="tour-button">Ver más</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 JAC Tours Punta Cana. Todos los derechos reservados.</p>
+    </footer>
+
+    <script>
+        // Inyectar booking-redirect.js para reemplazar botones con links de pago
+        const script = document.createElement('script');
+        script.src = 'assets/booking-redirect.js';
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>
