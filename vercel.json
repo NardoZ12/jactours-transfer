@@ -27,28 +27,8 @@
       "destination": "/02-sistema-reservas/panelweb/:path*"
     },
     {
-      "source": "/panelweb",
-      "destination": "/02-sistema-reservas/panelweb/index.html"
-    },
-    {
       "source": "/panelweb/:path*",
       "destination": "/02-sistema-reservas/panelweb/:path*"
-    },
-    {
-      "source": "/excursiones-premium",
-      "destination": "/01-website-mirror/site/excursiones-premium.html"
-    },
-    {
-      "source": "/excursiones-list",
-      "destination": "/01-website-mirror/site/excursiones-list.html"
-    },
-    {
-      "source": "/traslados",
-      "destination": "/01-website-mirror/site/traslados.html"
-    },
-    {
-      "source": "/traslados.html",
-      "destination": "/01-website-mirror/site/traslados.html"
     },
     {
       "source": "/servicios/:path+",
@@ -57,10 +37,6 @@
     {
       "source": "/en/:path*",
       "destination": "/01-website-mirror/site/en/:path*.html"
-    },
-    {
-      "source": "/",
-      "destination": "/01-website-mirror/site/index.html"
     },
     {
       "source": "/:path*",
