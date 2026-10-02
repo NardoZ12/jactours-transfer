@@ -26,16 +26,29 @@
             align-items: center;
             justify-content: center;
             min-height: 100vh;
+            background: linear-gradient(135deg, #0a4a6e 0%, #1a6b8f 25%, #2a7fa8 50%, #1a6b8f 75%, #0a4a6e 100%);
         }
 
-        .video-background {
+        .bg-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            object-fit: cover;
             z-index: -2;
+            background: inherit;
+            overflow: hidden;
+        }
+
+        .video-background {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: translate(-50%, -50%);
+            opacity: 0.8;
         }
 
         .overlay {
@@ -44,8 +57,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(22, 30, 52, 0.4);
+            background: rgba(10, 40, 60, 0.35);
             z-index: -1;
+            backdrop-filter: blur(2px);
         }
 
         .container {
@@ -53,11 +67,11 @@
             max-width: 500px;
             width: 100%;
             padding: 40px;
-            backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.4), inset 0 0 20px rgba(255, 255, 255, 0.1);
             animation: slideUp 0.8s ease-out;
             margin: 20px;
         }
@@ -91,6 +105,7 @@
             margin-bottom: 15px;
             letter-spacing: -0.5px;
             animation: fadeIn 0.6s ease-out 0.4s both;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
         .subtitle {
@@ -108,7 +123,7 @@
 
         .option-btn {
             padding: 24px;
-            border: none;
+            border: 2px solid transparent;
             border-radius: 12px;
             font-size: 18px;
             font-weight: 600;
@@ -146,23 +161,25 @@
         .tours-btn {
             background: linear-gradient(135deg, #f27d2e 0%, #d96b25 100%);
             color: white;
-            box-shadow: 0 8px 24px rgba(242, 125, 46, 0.3);
+            box-shadow: 0 8px 24px rgba(242, 125, 46, 0.4);
+            border-color: rgba(255, 255, 255, 0.3);
         }
 
         .tours-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 32px rgba(242, 125, 46, 0.4);
+            box-shadow: 0 12px 32px rgba(242, 125, 46, 0.5);
         }
 
         .transport-btn {
             background: linear-gradient(135deg, #3196e2 0%, #2175c3 100%);
             color: white;
-            box-shadow: 0 8px 24px rgba(49, 150, 226, 0.3);
+            box-shadow: 0 8px 24px rgba(49, 150, 226, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.3);
         }
 
         .transport-btn:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 32px rgba(49, 150, 226, 0.4);
+            box-shadow: 0 12px 32px rgba(49, 150, 226, 0.5);
         }
 
         .option-btn:active {
@@ -172,12 +189,12 @@
         .label {
             display: block;
             font-size: 14px;
-            opacity: 0.9;
+            opacity: 0.95;
             margin-bottom: 8px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            font-size: 12px;
-            font-weight: 500;
+            font-size: 11px;
+            font-weight: 600;
         }
 
         .label-main {
@@ -236,10 +253,12 @@
     </style>
 </head>
 <body>
-    <!-- Video Background -->
-    <video class="video-background" autoplay muted loop playsinline>
-        <source src="https://cdn.coverr.co/videos/coverr-beautiful-tropical-beach-4587/1080p.mp4" type="video/mp4">
-    </video>
+    <div class="bg-container">
+        <!-- Video Background -->
+        <video class="video-background" autoplay muted loop playsinline>
+            <source src="https://videos.pexels.com/video-files/11035305/11035305-sd_640_360_25fps.mp4" type="video/mp4">
+        </video>
+    </div>
     <div class="overlay"></div>
 
     <div class="container">
