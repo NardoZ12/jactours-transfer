@@ -1,18 +1,10 @@
 {
   "version": 2,
-  "cleanUrls": false,
+  "cleanUrls": true,
   "rewrites": [
     {
       "source": "/favicon.ico",
       "destination": "/01-website-mirror/site/assets/favicon-jac.png"
-    },
-    {
-      "source": "/traslados",
-      "destination": "/01-website-mirror/site/traslados.html"
-    },
-    {
-      "source": "/traslados/",
-      "destination": "/01-website-mirror/site/traslados.html"
     },
     {
       "source": "/",
@@ -43,28 +35,36 @@
       "destination": "/02-sistema-reservas/panelweb/:path*"
     },
     {
-      "source": "/",
+      "source": "/excursiones-premium",
+      "destination": "/01-website-mirror/site/excursiones-premium.html"
+    },
+    {
+      "source": "/excursiones-list",
+      "destination": "/01-website-mirror/site/excursiones-list.html"
+    },
+    {
+      "source": "/traslados",
       "destination": "/01-website-mirror/site/traslados.html"
     },
     {
-      "source": "/en",
-      "destination": "/01-website-mirror/site/en/index.html"
+      "source": "/traslados.html",
+      "destination": "/01-website-mirror/site/traslados.html"
     },
     {
-      "source": "/framerusercontent.com/:path*",
-      "destination": "/01-website-mirror/external/framerusercontent.com/:path*"
-    },
-    {
-      "source": "/connect.facebook.net/:path*",
-      "destination": "/01-website-mirror/external/connect.facebook.net/:path*"
+      "source": "/servicios/:path+",
+      "destination": "/servicios/:path.html"
     },
     {
       "source": "/en/:path*",
-      "destination": "/01-website-mirror/site/en/:path*"
+      "destination": "/01-website-mirror/site/en/:path*.html"
+    },
+    {
+      "source": "/",
+      "destination": "/01-website-mirror/site/index.html"
     },
     {
       "source": "/:path*",
-      "destination": "/01-website-mirror/site/:path*"
+      "destination": "/01-website-mirror/site/:path*.html"
     }
   ],
   "headers": [
