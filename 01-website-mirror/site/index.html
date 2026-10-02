@@ -21,19 +21,31 @@
         }
 
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
         }
 
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .video-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(22, 30, 52, 0.4);
+            z-index: -1;
         }
 
         .container {
@@ -42,11 +54,12 @@
             width: 100%;
             padding: 40px;
             backdrop-filter: blur(10px);
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.08);
             border-radius: 20px;
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.37);
             animation: slideUp 0.8s ease-out;
+            margin: 20px;
         }
 
         @keyframes slideUp {
@@ -82,7 +95,7 @@
 
         .subtitle {
             font-size: 16px;
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.95);
             margin-bottom: 50px;
             animation: fadeIn 0.6s ease-out 0.6s both;
         }
@@ -188,6 +201,7 @@
             box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
             transition: all 0.3s ease;
             animation: fadeIn 0.6s ease-out 1s both;
+            z-index: 10;
         }
 
         .whatsapp-btn:hover {
@@ -222,6 +236,12 @@
     </style>
 </head>
 <body>
+    <!-- Video Background -->
+    <video class="video-background" autoplay muted loop playsinline>
+        <source src="https://cdn.coverr.co/videos/coverr-beautiful-tropical-beach-4587/1080p.mp4" type="video/mp4">
+    </video>
+    <div class="overlay"></div>
+
     <div class="container">
         <img src="assets/logo-3.png" alt="JAC Tours" class="logo">
         
@@ -229,7 +249,7 @@
         <p class="subtitle">Elige tu experiencia perfecta</p>
 
         <div class="options">
-            <a href="/tours" class="option-btn tours-btn">
+            <a href="/servicios/excursiones" class="option-btn tours-btn">
                 <span class="label">Aventura & Experiencias</span>
                 <span class="label-main">EXCURSIONES Y TOURS</span>
             </a>
